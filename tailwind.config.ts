@@ -1,0 +1,30 @@
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        cream: "#F5F3ED",
+        tan: "#E6DDD9",
+        "text-dark": "#54595F",
+        "heading-dark": "#333333",
+        "accent-gold": "#B8977E",
+        "btn-cta": "#C4A68A",
+      },
+      fontFamily: {
+        butler: ['"Butler Font"', "serif"],
+        moontime: ["Moontime", "cursive"],
+        roboto: ["Roboto", "sans-serif"],
+        "roboto-slab": ['"Roboto Slab"', "serif"],
+        poppins: ["Poppins", "sans-serif"],
+      },
+    },
+  },
+  plugins: [],
+};
+export default config;

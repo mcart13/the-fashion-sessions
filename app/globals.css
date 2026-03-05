@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Butler Font */
+@font-face {
+  font-family: "Butler Font";
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+  src: url("/fonts/butler/Butler-Light.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Butler Font";
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url("/fonts/butler/Butler.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Butler Font";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/butler/Butler-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Butler Font";
+  font-style: normal;
+  font-weight: bold;
+  font-display: swap;
+  src: url("/fonts/butler/Butler-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Butler Font";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/fonts/butler/Butler-ExtraBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Butler Font";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/butler/Butler-Black.woff2") format("woff2");
+}
+
+/* Moontime */
+@font-face {
+  font-family: "Moontime";
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url("/fonts/moontime/MoonTime-Regular.ttf") format("truetype");
+}
+
+body {
+  color: #54595f;
+  background: #f5f3ed;
+  font-family: "Roboto", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #333333;
+}
