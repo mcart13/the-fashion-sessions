@@ -11,35 +11,37 @@ const tiktokSections = [
 
 export default function ShopMyTiktokPage() {
   return (
-    <div className="mx-auto max-w-4xl px-6 py-12 md:px-12">
+    <div className="bg-cream">
       {/* Header */}
-      <div className="mb-10 text-center">
-        <span className="font-moontime text-[60px] leading-none text-heading-dark">
+      <div className="pt-[30px] pb-4 text-center">
+        <h2 className="font-moontime text-[80px] leading-none text-[#282828]">
           Tracy&apos;s
-        </span>
-        <h1 className="font-butler text-3xl uppercase tracking-wide text-heading-dark md:text-4xl">
+        </h2>
+        <h1 className="font-butler text-[48px] font-thin text-[#282828]">
           Shop My Tiktok
         </h1>
-        <p className="mt-3 font-poppins text-sm text-text-dark">
+        <p className="mt-3 font-poppins text-[15px] text-[#282828]">
           Click on any items below to shop my TikTok looks!
         </p>
-        <div className="mx-auto mt-4 h-px w-24 bg-accent-gold" />
+        <div className="mx-auto mt-5 h-px w-24 bg-[#282828]" />
       </div>
 
       {/* TikTok Sections */}
-      <div className="space-y-12">
-        {tiktokSections.map((title) => (
-          <div key={title}>
-            <h2 className="mb-4 font-roboto-slab text-xl font-medium text-heading-dark">
-              {title}
-            </h2>
-            <div className="flex min-h-[200px] items-center justify-center border-2 border-dashed border-gray-300 bg-white p-6">
-              <p className="font-poppins text-sm text-gray-400">
-                RewardStyle embed placeholder
-              </p>
+      <div className="mx-auto max-w-[1140px] px-5 py-10">
+        <div className="space-y-12">
+          {tiktokSections.map((title) => (
+            <div key={title}>
+              <h2 className="mb-4 font-butler text-[32px] font-thin text-[#282828]">
+                {title}
+              </h2>
+              <div className="flex min-h-[200px] items-center justify-center bg-white/60 p-6">
+                <p className="font-poppins text-sm text-[#282828]/40">
+                  RewardStyle embed placeholder
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

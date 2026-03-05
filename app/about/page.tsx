@@ -12,7 +12,7 @@ export default function AboutPage() {
             <h1 className="font-moontime text-[80px] leading-none text-heading-dark">
               About
             </h1>
-            <p className="mt-4 font-butler text-[32px] md:text-[48px] font-extralight leading-snug text-[#282828]">
+            <p className="mt-4 font-butler text-[32px] md:text-[48px] font-thin leading-snug text-[#282828]">
               FASHION SHOULD EXPRESS WHO YOU ARE &amp; MAKE YOU FEEL LIKE THE
               BEST VERSION OF YOURSELF.
             </p>
@@ -43,7 +43,7 @@ export default function AboutPage() {
           <hr className="mx-auto mt-4 mb-10 w-24 border-t-2 border-accent-gold" />
 
           {/* Story title */}
-          <h2 className="mb-8 text-center font-butler text-[40px] md:text-[64px] font-extralight leading-tight text-[#282828]">
+          <h2 className="mb-8 text-center font-butler text-[40px] md:text-[64px] font-thin leading-tight text-[#282828]">
             HOW MY STORY BEGAN
           </h2>
 

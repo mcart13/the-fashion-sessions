@@ -56,7 +56,7 @@ export default function Footer() {
     <footer>
       {/* Follow Along Section */}
       <section className="bg-cream py-10 text-center">
-        <h2 className="font-moontime text-[60px] leading-none text-heading-dark">
+        <h2 className="font-moontime text-[64px] leading-none text-[#282828]">
           follow along!
         </h2>
       </section>
@@ -85,14 +85,15 @@ export default function Footer() {
         ))}
       </section>
 
-      {/* Footer Info Section */}
-      <section className="bg-tan px-6 py-12 md:px-12">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 md:grid-cols-2">
+      {/* Dark Footer Section */}
+      <section className="bg-[#282828] px-6 pt-5 pb-3 md:px-12">
+        <div className="mx-auto grid max-w-[1140px] grid-cols-1 gap-10 md:grid-cols-2">
           {/* Shops */}
           <div>
-            <h3 className="mb-4 font-poppins text-sm font-semibold uppercase tracking-widest text-heading-dark">
+            <h3 className="font-butler text-[32px] font-extralight text-[#E6DDD9]">
               Shops
             </h3>
+            <div className="mt-2 mb-4 h-px w-12 bg-[#E6DDD9]/30" />
             <ul className="space-y-2">
               {shopLinks.map((link) => (
                 <li key={link.label}>
@@ -100,7 +101,7 @@ export default function Footer() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-poppins text-sm text-text-dark transition-colors hover:text-heading-dark"
+                    className="font-poppins text-[15px] text-[#E6DDD9] transition-colors hover:text-white"
                   >
                     {link.label}
                   </Link>
@@ -109,48 +110,48 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Instagram Feed Placeholder */}
+          {/* Instagram Feed */}
           <div>
-            <h3 className="mb-4 font-poppins text-sm font-semibold uppercase tracking-widest text-heading-dark">
+            <p className="text-center font-roboto text-[15px] text-[#E6DDD9]">
               Instagram Feed
-            </h3>
-            <div className="grid grid-cols-4 gap-2">
+            </p>
+            <div className="mt-4 grid grid-cols-4 gap-2">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
-                  className="aspect-square rounded-sm bg-[#cdc4be]"
+                  className="aspect-square rounded-sm bg-[#3a3a3a]"
                 />
               ))}
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Copyright Bar */}
-      <section className="bg-tan border-t border-[#d5ccc7] py-8 text-center">
-        <p className="font-poppins text-xs tracking-wide text-text-dark">
-          Copyright 2024 | TFS The Label | thefashionsessions.com
-        </p>
-        <div className="mt-4 flex items-center justify-center gap-4">
-          {socialLinks.map((social) => (
-            <Link
-              key={social.name}
-              href={social.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={social.name}
-              className="text-text-dark transition-colors hover:text-heading-dark"
-            >
-              <SocialIcon name={social.name} />
-            </Link>
-          ))}
+        {/* Copyright */}
+        <div className="mt-8 text-center">
+          <p className="font-poppins text-xs text-[#E6DDD9]">
+            Copyright &copy; 2023 &middot; The Fashion Sessions
+          </p>
+          <div className="mt-4 flex items-center justify-center gap-4">
+            {socialLinks.map((social) => (
+              <Link
+                key={social.name}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.name}
+                className="text-[#E6DDD9] transition-colors hover:text-white"
+              >
+                <SocialIcon name={social.name} />
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Bottom Bar */}
-      <section className="bg-[#ddd3cd] py-4 text-center">
-        <p className="font-poppins text-[11px] uppercase tracking-widest text-text-dark">
-          Powered by ~ Only Marketing Agency
+      {/* Powered By Bar */}
+      <section className="bg-black py-4 text-center">
+        <p className="font-poppins text-[10px] text-[#E6DDD9]">
+          Powered By &ndash; Only Marketing Agency
         </p>
       </section>
     </footer>

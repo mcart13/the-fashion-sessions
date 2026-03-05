@@ -86,7 +86,7 @@ export default function HomePage() {
       {/* ===== Fashion Quote Section ===== */}
       <section className="bg-cream px-6 py-20">
         <div className="mx-auto max-w-[1140px] text-center">
-          <h2 className="font-butler text-[40px] md:text-[64px] font-extralight leading-tight text-[#282828]">
+          <h2 className="font-butler text-[40px] md:text-[64px] font-thin leading-tight text-[#282828]">
             FASHION RULES DON&apos;T EXIST IN MY WORLD.
           </h2>
           <p className="mt-6 font-poppins text-[16px] leading-[1.7] text-[#282828]">
@@ -105,7 +105,7 @@ export default function HomePage() {
           <p className="font-poppins text-xs uppercase tracking-widest text-text-dark">
             Catch some of my favorite products I&apos;m loving right now
           </p>
-          <h2 className="mt-2 font-moontime text-[50px] leading-none text-heading-dark">
+          <h2 className="mt-2 font-moontime text-[50px] leading-none text-[#282828]">
             shop my favorites
           </h2>
 
@@ -157,18 +157,18 @@ export default function HomePage() {
 
                 {/* Post text */}
                 <div className="flex flex-col justify-center">
-                  <h3 className="font-roboto-slab text-lg font-medium leading-snug text-heading-dark">
+                  <h3 className="font-butler text-[32px] font-extralight leading-snug text-[#282828]">
                     {post.title}
                   </h3>
-                  <p className="mt-1 font-poppins text-xs text-gray-400">
+                  <p className="mt-1 font-poppins text-[11px] text-[#54595F]">
                     {post.date}
                   </p>
-                  <p className="mt-3 font-roboto text-sm leading-relaxed text-text-dark">
+                  <p className="mt-3 font-poppins text-[15px] leading-relaxed text-[#334155]">
                     {post.excerpt}
                   </p>
                   <Link
                     href={post.href}
-                    className="mt-3 inline-block font-poppins text-sm text-accent-gold hover:underline"
+                    className="mt-3 inline-block font-poppins text-[12px] text-[#282828] hover:text-[#BA9D95] transition-colors"
                   >
                     Continue Reading
                   </Link>
@@ -233,7 +233,7 @@ export default function HomePage() {
               <p className="font-poppins text-[16px] tracking-[2.3px] text-[#282828]">
                 MEET THE FOUNDER
               </p>
-              <h2 className="mt-3 font-butler text-[42px] font-extralight leading-tight text-[#282828]">
+              <h2 className="mt-3 font-butler text-[42px] font-thin leading-tight text-[#282828]">
                 Hey, I&apos;m Tracy!
               </h2>
               <p className="mt-4 font-poppins text-[16px] leading-[1.7] text-[#282828]">

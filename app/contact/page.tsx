@@ -93,7 +93,7 @@ export default function ContactPage() {
       <section className="relative bg-[#3a3a3a] py-24 text-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#2c2c2c] via-[#3a3a3a] to-[#4a4a4a] opacity-90" />
         <div className="relative z-10">
-          <h1 className="font-butler text-[64px] font-extralight leading-none text-white">
+          <h1 className="font-butler text-[64px] font-thin leading-none text-white">
             Contact Us
           </h1>
           <p className="mt-4 font-poppins text-[12px] tracking-[1.6px] text-white">
@@ -103,11 +103,11 @@ export default function ContactPage() {
       </section>
 
       {/* Two-column Content */}
-      <section className="mx-auto max-w-6xl px-6 py-16 md:px-12">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
+      <section className="bg-cream px-6 py-16 md:px-12">
+        <div className="mx-auto max-w-6xl grid grid-cols-1 gap-12 md:grid-cols-2">
           {/* Left Column - Info */}
           <div>
-            <h2 className="font-poppins text-sm font-bold uppercase tracking-widest text-heading-dark">
+            <h2 className="font-poppins text-[14px] font-semibold uppercase tracking-[2px] text-[#282828]">
               EMAIL
             </h2>
             <Link
@@ -125,7 +125,7 @@ export default function ContactPage() {
               you!
             </p>
 
-            <h2 className="mt-10 font-poppins text-sm font-bold uppercase tracking-widest text-heading-dark">
+            <h2 className="mt-10 font-poppins text-[14px] font-semibold uppercase tracking-[2px] text-[#282828]">
               SOCIAL
             </h2>
             <div className="mt-4 flex items-center gap-4">
@@ -152,7 +152,7 @@ export default function ContactPage() {
               className="space-y-5"
             >
               <div>
-                <label className="block font-poppins text-[11px] font-semibold uppercase tracking-[1px] text-[#282828] mb-2">
+                <label className="block font-poppins text-[11px] uppercase tracking-[1px] text-black mb-2">
                   YOUR NAME*
                 </label>
                 <input
@@ -163,7 +163,7 @@ export default function ContactPage() {
                 />
               </div>
               <div>
-                <label className="block font-poppins text-[11px] font-semibold uppercase tracking-[1px] text-[#282828] mb-2">
+                <label className="block font-poppins text-[11px] uppercase tracking-[1px] text-black mb-2">
                   YOUR EMAIL*
                 </label>
                 <input
@@ -174,7 +174,7 @@ export default function ContactPage() {
                 />
               </div>
               <div>
-                <label className="block font-poppins text-[11px] font-semibold uppercase tracking-[1px] text-[#282828] mb-2">
+                <label className="block font-poppins text-[11px] uppercase tracking-[1px] text-black mb-2">
                   WHAT ARE YOU INQUIRING ABOUT?
                 </label>
                 <input
@@ -184,7 +184,7 @@ export default function ContactPage() {
                 />
               </div>
               <div>
-                <label className="block font-poppins text-[11px] font-semibold uppercase tracking-[1px] text-[#282828] mb-2">
+                <label className="block font-poppins text-[11px] uppercase tracking-[1px] text-black mb-2">
                   YOUR MESSAGE
                 </label>
                 <textarea
@@ -197,7 +197,7 @@ export default function ContactPage() {
                 type="submit"
                 className="bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] tracking-[0.9px] text-[#282828] transition-opacity hover:opacity-80"
               >
-                SEND
+                Submit
               </button>
             </form>
           </div>

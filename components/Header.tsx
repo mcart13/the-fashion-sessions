@@ -148,7 +148,7 @@ export default function Header() {
   };
 
   const navLinkClass = (item: NavItem) =>
-    `block px-5 py-2 font-poppins text-[15px] uppercase transition-colors duration-200 ${
+    `block px-5 py-2 font-poppins text-[15px] transition-colors duration-200 ${
       isActive(item) ? "text-[#BA9D95]" : "text-[#282828] hover:text-[#BA9D95]"
     }`;
 
@@ -207,7 +207,7 @@ export default function Header() {
                   </a>
                 ) : item.dropdown ? (
                   <button
-                    className={`flex items-center gap-1 px-5 py-2 font-poppins text-[15px] uppercase transition-colors duration-200 ${
+                    className={`flex items-center gap-1 px-5 py-2 font-poppins text-[15px] transition-colors duration-200 ${
                       isActive(item)
                         ? "text-[#BA9D95]"
                         : "text-[#282828] hover:text-[#BA9D95]"
