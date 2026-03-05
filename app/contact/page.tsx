@@ -89,14 +89,17 @@ function SocialIcon({ name }: { name: string }) {
 export default function ContactPage() {
   return (
     <div>
-      {/* Hero Banner */}
-      <section className="bg-tan py-16 text-center">
-        <h1 className="font-moontime text-[80px] leading-none text-heading-dark">
-          Contact Us
-        </h1>
-        <p className="mt-4 font-poppins text-sm font-semibold uppercase tracking-[0.25em] text-text-dark">
-          WE CAN&apos;T WAIT TO HEAR FROM YOU
-        </p>
+      {/* Hero Banner with dark background (original uses video of leaves) */}
+      <section className="relative bg-[#3a3a3a] py-24 text-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#2c2c2c] via-[#3a3a3a] to-[#4a4a4a] opacity-90" />
+        <div className="relative z-10">
+          <h1 className="font-butler text-[64px] font-extralight leading-none text-white">
+            Contact Us
+          </h1>
+          <p className="mt-4 font-poppins text-[12px] tracking-[1.6px] text-white">
+            WE CAN&apos;T WAIT TO HEAR FROM YOU
+          </p>
+        </div>
       </section>
 
       {/* Two-column Content */}
@@ -149,44 +152,52 @@ export default function ContactPage() {
               className="space-y-5"
             >
               <div>
+                <label className="block font-poppins text-[11px] font-semibold uppercase tracking-[1px] text-[#282828] mb-2">
+                  YOUR NAME*
+                </label>
                 <input
                   type="text"
                   name="name"
-                  placeholder="Your Name*"
                   required
-                  className="w-full border border-[#ddd] px-4 py-3 font-poppins text-sm text-text-dark outline-none focus:border-accent-gold"
+                  className="w-full border border-[#ddd] bg-[#fafafa] px-4 py-3 font-poppins text-sm text-text-dark outline-none focus:border-accent-gold"
                 />
               </div>
               <div>
+                <label className="block font-poppins text-[11px] font-semibold uppercase tracking-[1px] text-[#282828] mb-2">
+                  YOUR EMAIL*
+                </label>
                 <input
                   type="email"
                   name="email"
-                  placeholder="Your Email*"
                   required
-                  className="w-full border border-[#ddd] px-4 py-3 font-poppins text-sm text-text-dark outline-none focus:border-accent-gold"
+                  className="w-full border border-[#ddd] bg-[#fafafa] px-4 py-3 font-poppins text-sm text-text-dark outline-none focus:border-accent-gold"
                 />
               </div>
               <div>
+                <label className="block font-poppins text-[11px] font-semibold uppercase tracking-[1px] text-[#282828] mb-2">
+                  WHAT ARE YOU INQUIRING ABOUT?
+                </label>
                 <input
                   type="text"
                   name="subject"
-                  placeholder="What are you inquiring about?"
-                  className="w-full border border-[#ddd] px-4 py-3 font-poppins text-sm text-text-dark outline-none focus:border-accent-gold"
+                  className="w-full border border-[#ddd] bg-[#fafafa] px-4 py-3 font-poppins text-sm text-text-dark outline-none focus:border-accent-gold"
                 />
               </div>
               <div>
+                <label className="block font-poppins text-[11px] font-semibold uppercase tracking-[1px] text-[#282828] mb-2">
+                  YOUR MESSAGE
+                </label>
                 <textarea
                   name="message"
-                  placeholder="Your Message"
                   rows={6}
-                  className="w-full resize-vertical border border-[#ddd] px-4 py-3 font-poppins text-sm text-text-dark outline-none focus:border-accent-gold"
+                  className="w-full resize-vertical border border-[#ddd] bg-[#fafafa] px-4 py-3 font-poppins text-sm text-text-dark outline-none focus:border-accent-gold"
                 />
               </div>
               <button
                 type="submit"
-                className="bg-btn-cta px-8 py-3 font-poppins text-sm font-semibold uppercase tracking-wider text-white transition-opacity hover:opacity-90"
+                className="bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] tracking-[0.9px] text-[#282828] transition-opacity hover:opacity-80"
               >
-                Submit
+                SEND
               </button>
             </form>
           </div>

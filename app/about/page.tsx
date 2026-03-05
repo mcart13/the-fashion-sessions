@@ -12,9 +12,9 @@ export default function AboutPage() {
             <h1 className="font-moontime text-[80px] leading-none text-heading-dark">
               About
             </h1>
-            <p className="mt-4 font-butler text-[20px] uppercase leading-snug text-heading-dark md:text-[24px]">
-              Fashion should express who you are &amp; make you feel like the
-              best version of yourself.
+            <p className="mt-4 font-butler text-[32px] md:text-[48px] font-extralight leading-snug text-[#282828]">
+              FASHION SHOULD EXPRESS WHO YOU ARE &amp; MAKE YOU FEEL LIKE THE
+              BEST VERSION OF YOURSELF.
             </p>
           </div>
         </div>
@@ -36,16 +36,16 @@ export default function AboutPage() {
       {/* ===== Bio Section ===== */}
       <section className="bg-white px-6 py-16">
         <div className="mx-auto max-w-[800px]">
-          {/* Subheading */}
-          <h2 className="text-center font-butler text-[24px] uppercase leading-tight text-heading-dark md:text-[28px]">
+          {/* Subheading label */}
+          <p className="text-center font-poppins text-[15px] tracking-[1.2px] text-[#282828]">
             Hi, loves! It&apos;s Tracy!
-          </h2>
+          </p>
           <hr className="mx-auto mt-4 mb-10 w-24 border-t-2 border-accent-gold" />
 
           {/* Story title */}
-          <p className="mb-6 font-poppins text-xs font-semibold uppercase tracking-widest text-text-dark">
-            How my story began
-          </p>
+          <h2 className="mb-8 text-center font-butler text-[40px] md:text-[64px] font-extralight leading-tight text-[#282828]">
+            HOW MY STORY BEGAN
+          </h2>
 
           {/* Bio paragraphs */}
           <div className="space-y-6 font-roboto text-[15px] leading-relaxed text-text-dark">

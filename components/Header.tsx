@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const socialLinks = [
   {
@@ -64,10 +65,10 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "HOME", href: "/" },
-  { label: "ABOUT", href: "/about" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
   {
-    label: "SHOP",
+    label: "Shop",
     href: "#",
     dropdown: [
       { label: "Shop My Instagram", href: "/shop-my-instagram" },
@@ -75,12 +76,12 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    label: "TFS | THE LABEL",
+    label: "TFS | The Label",
     href: "https://tfsthelabel.com/",
     external: true,
   },
   {
-    label: "BLOG",
+    label: "Blog",
     href: "#",
     dropdown: [
       { label: "Fashion", href: "/fashion" },
@@ -89,7 +90,7 @@ const navItems: NavItem[] = [
       { label: "Travel", href: "/travel" },
     ],
   },
-  { label: "CONTACT", href: "/contact" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Header() {
@@ -97,8 +98,8 @@ export default function Header() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileDropdown, setMobileDropdown] = useState<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pathname = usePathname();
 
-  // Close mobile menu on resize to desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -110,7 +111,6 @@ export default function Header() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -133,10 +133,29 @@ export default function Header() {
     }, 150);
   };
 
+  const isActive = (item: NavItem) => {
+    if (item.href === "/" && pathname === "/") return true;
+    if (
+      item.href !== "/" &&
+      item.href !== "#" &&
+      pathname.startsWith(item.href)
+    )
+      return true;
+    if (item.dropdown) {
+      return item.dropdown.some((sub) => pathname.startsWith(sub.href));
+    }
+    return false;
+  };
+
+  const navLinkClass = (item: NavItem) =>
+    `block px-5 py-2 font-poppins text-[15px] transition-colors duration-200 ${
+      isActive(item) ? "text-[#BA9D95]" : "text-[#282828] hover:text-[#BA9D95]"
+    }`;
+
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-white">
       {/* Social Bar */}
-      <div className="flex justify-center items-center gap-5 py-3">
+      <div className="flex justify-center items-center gap-5 py-2 bg-tan">
         {socialLinks.map((social) => (
           <a
             key={social.name}
@@ -144,143 +163,127 @@ export default function Header() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={social.name}
-            className="text-[#54595F] hover:opacity-60 transition-opacity duration-200"
+            className="text-[#282828] hover:opacity-60 transition-opacity duration-200"
           >
             {social.icon}
           </a>
         ))}
       </div>
 
-      {/* Logo */}
-      <div className="flex justify-center py-4">
-        <Link href="/">
+      {/* Logo + Nav Row */}
+      <div className="mx-auto max-w-7xl flex items-center justify-between px-6 lg:px-10">
+        {/* Logo (left) */}
+        <Link href="/" className="shrink-0 py-2">
           <Image
             src="/images/logo.png"
             alt="The Fashion Sessions"
-            width={250}
-            height={80}
-            className="w-[200px] md:w-[250px] h-auto"
+            width={350}
+            height={100}
+            className="w-[200px] md:w-[300px] h-auto"
             priority
           />
         </Link>
-      </div>
 
-      {/* Desktop Navigation */}
-      <nav className="hidden lg:flex justify-center items-center py-3">
-        <ul className="flex items-center gap-1">
-          {navItems.map((item) => (
-            <li
-              key={item.label}
-              className="relative"
-              onMouseEnter={() =>
-                item.dropdown ? handleMouseEnter(item.label) : undefined
-              }
-              onMouseLeave={item.dropdown ? handleMouseLeave : undefined}
-            >
-              {item.external ? (
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block px-4 py-2 font-poppins text-[13px] tracking-[1px] uppercase text-[#54595F] hover:text-[#333] transition-colors duration-200"
-                >
-                  {item.label}
-                </a>
-              ) : item.dropdown ? (
-                <button
-                  className="flex items-center gap-1 px-4 py-2 font-poppins text-[13px] tracking-[1px] uppercase text-[#54595F] hover:text-[#333] transition-colors duration-200"
-                  aria-expanded={openDropdown === item.label}
-                  aria-haspopup="true"
-                >
-                  {item.label}
-                  <svg
-                    className={`w-3 h-3 ml-0.5 transition-transform duration-200 ${
-                      openDropdown === item.label ? "rotate-180" : ""
-                    }`}
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
+        {/* Desktop Navigation (right) */}
+        <nav className="hidden lg:flex items-center">
+          <ul className="flex items-center">
+            {navItems.map((item) => (
+              <li
+                key={item.label}
+                className="relative"
+                onMouseEnter={() =>
+                  item.dropdown ? handleMouseEnter(item.label) : undefined
+                }
+                onMouseLeave={item.dropdown ? handleMouseLeave : undefined}
+              >
+                {item.external ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={navLinkClass(item)}
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              ) : (
-                <Link
-                  href={item.href}
-                  className="block px-4 py-2 font-poppins text-[13px] tracking-[1px] uppercase text-[#54595F] hover:text-[#333] transition-colors duration-200"
-                >
-                  {item.label}
-                </Link>
-              )}
+                    {item.label}
+                  </a>
+                ) : item.dropdown ? (
+                  <button
+                    className={`flex items-center gap-1 px-5 py-2 font-poppins text-[15px] transition-colors duration-200 ${
+                      isActive(item)
+                        ? "text-[#BA9D95]"
+                        : "text-[#282828] hover:text-[#BA9D95]"
+                    }`}
+                    aria-expanded={openDropdown === item.label}
+                    aria-haspopup="true"
+                  >
+                    {item.label}
+                    <svg
+                      className={`w-3 h-3 ml-0.5 transition-transform duration-200 ${
+                        openDropdown === item.label ? "rotate-180" : ""
+                      }`}
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                ) : (
+                  <Link href={item.href} className={navLinkClass(item)}>
+                    {item.label}
+                  </Link>
+                )}
 
-              {/* Dropdown */}
-              {item.dropdown && (
-                <div
-                  className={`absolute left-0 top-full min-w-[200px] bg-white border border-gray-100 shadow-lg transition-all duration-200 ${
-                    openDropdown === item.label
-                      ? "opacity-100 visible translate-y-0"
-                      : "opacity-0 invisible -translate-y-1"
-                  }`}
-                >
-                  <ul className="py-2">
-                    {item.dropdown.map((sub) => (
-                      <li key={sub.href}>
-                        <Link
-                          href={sub.href}
-                          className="block px-5 py-2 font-poppins text-[12px] tracking-[0.5px] text-[#54595F] hover:text-[#333] hover:bg-gray-50 transition-colors duration-150 whitespace-nowrap"
-                        >
-                          {sub.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      </nav>
+                {/* Dropdown */}
+                {item.dropdown && (
+                  <div
+                    className={`absolute left-0 top-full min-w-[200px] bg-white border border-gray-100 shadow-lg transition-all duration-200 z-50 ${
+                      openDropdown === item.label
+                        ? "opacity-100 visible translate-y-0"
+                        : "opacity-0 invisible -translate-y-1"
+                    }`}
+                  >
+                    <ul className="py-2">
+                      {item.dropdown.map((sub) => (
+                        <li key={sub.href}>
+                          <Link
+                            href={sub.href}
+                            className="block px-5 py-2 font-poppins text-[15px] text-[#282828] hover:text-[#BA9D95] transition-colors duration-150 whitespace-nowrap"
+                          >
+                            {sub.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-      {/* Mobile Hamburger */}
-      <div className="lg:hidden flex justify-center py-3">
+        {/* Mobile Hamburger */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
           aria-expanded={mobileMenuOpen}
-          className="text-[#54595F] p-2 hover:opacity-60 transition-opacity duration-200"
+          className="lg:hidden text-[#282828] p-2 hover:opacity-60 transition-opacity duration-200"
         >
-          {mobileMenuOpen ? (
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          ) : (
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          )}
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
         </button>
       </div>
 
@@ -300,12 +303,11 @@ export default function Header() {
           mobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Close button */}
         <div className="flex justify-end p-4">
           <button
             onClick={() => setMobileMenuOpen(false)}
             aria-label="Close menu"
-            className="text-[#54595F] p-1 hover:opacity-60 transition-opacity"
+            className="text-[#282828] p-1 hover:opacity-60 transition-opacity"
           >
             <svg
               className="w-6 h-6"
@@ -332,7 +334,7 @@ export default function Header() {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block py-3 font-poppins text-[13px] tracking-[1px] uppercase text-[#54595F] hover:text-[#333] transition-colors border-b border-gray-100"
+                    className="block py-3 font-poppins text-[15px] text-[#282828] hover:text-[#BA9D95] transition-colors border-b border-gray-100"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.label}
@@ -345,7 +347,7 @@ export default function Header() {
                           mobileDropdown === item.label ? null : item.label,
                         )
                       }
-                      className="flex items-center justify-between w-full py-3 font-poppins text-[13px] tracking-[1px] uppercase text-[#54595F] hover:text-[#333] transition-colors border-b border-gray-100"
+                      className="flex items-center justify-between w-full py-3 font-poppins text-[15px] text-[#282828] hover:text-[#BA9D95] transition-colors border-b border-gray-100"
                       aria-expanded={mobileDropdown === item.label}
                     >
                       {item.label}
@@ -374,7 +376,7 @@ export default function Header() {
                         <li key={sub.href}>
                           <Link
                             href={sub.href}
-                            className="block py-2.5 pl-4 font-poppins text-[12px] tracking-[0.5px] text-[#54595F] hover:text-[#333] transition-colors"
+                            className="block py-2.5 pl-4 font-poppins text-[15px] text-[#282828] hover:text-[#BA9D95] transition-colors"
                             onClick={() => setMobileMenuOpen(false)}
                           >
                             {sub.label}
@@ -386,7 +388,7 @@ export default function Header() {
                 ) : (
                   <Link
                     href={item.href}
-                    className="block py-3 font-poppins text-[13px] tracking-[1px] uppercase text-[#54595F] hover:text-[#333] transition-colors border-b border-gray-100"
+                    className="block py-3 font-poppins text-[15px] text-[#282828] hover:text-[#BA9D95] transition-colors border-b border-gray-100"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.label}
@@ -396,7 +398,6 @@ export default function Header() {
             ))}
           </ul>
 
-          {/* Mobile Social Links */}
           <div className="flex justify-center items-center gap-5 pt-8">
             {socialLinks.map((social) => (
               <a
@@ -405,7 +406,7 @@ export default function Header() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.name}
-                className="text-[#54595F] hover:opacity-60 transition-opacity duration-200"
+                className="text-[#282828] hover:opacity-60 transition-opacity duration-200"
               >
                 {social.icon}
               </a>

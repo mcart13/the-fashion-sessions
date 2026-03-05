@@ -42,37 +42,39 @@ export default function HomePage() {
   return (
     <>
       {/* ===== Hero Section ===== */}
-      <section className="bg-cream">
-        <div className="mx-auto flex max-w-7xl flex-col md:flex-row">
-          {/* Left image */}
-          <div className="relative w-full md:w-1/2">
-            <div className="relative aspect-[3/4] w-full md:aspect-auto md:h-full">
-              <Image
-                src="/images/hero-home.jpg"
-                alt="Tracy by clothing rack"
-                fill
-                className="object-cover"
-                priority
-              />
+      <section className="bg-cream py-[50px]">
+        <div className="mx-auto max-w-[1140px] px-6 relative">
+          {/* Image + overlapping white card */}
+          <div className="flex flex-col md:block">
+            <div className="relative mx-auto w-full md:w-[58%] md:mx-0">
+              <div className="relative aspect-[3/4] w-full">
+                <Image
+                  src="/images/hero-home-full.jpg"
+                  alt="Tracy by clothing rack"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Right card */}
-          <div className="flex w-full items-center justify-center md:w-1/2">
-            <div className="bg-white px-8 py-12 md:px-14 md:py-16">
-              <h1 className="font-butler text-[28px] uppercase leading-tight text-heading-dark md:text-[36px]">
-                Welcome to The Fashion Sessions.
-              </h1>
-              <p className="mt-5 font-roboto text-[15px] leading-relaxed text-text-dark">
-                I believe fashion is whatever makes you feel and look like the
-                best version of yourself. If you love it, wear it!
-              </p>
-              <Link
-                href="/about"
-                className="mt-8 inline-block bg-btn-cta px-8 py-3 font-poppins text-sm text-white transition-opacity hover:opacity-90"
-              >
-                Learn More
-              </Link>
+            {/* Overlapping white card */}
+            <div className="relative md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2 md:w-[48%] z-10">
+              <div className="bg-white px-10 py-14 text-center">
+                <h1 className="font-butler text-[40px] font-light leading-tight text-[#282828]">
+                  WELCOME TO THE FASHION SESSIONS.
+                </h1>
+                <p className="mt-5 font-poppins text-[16px] leading-[1.7] text-[#282828]">
+                  I believe fashion is whatever makes you feel and look like the
+                  best version of yourself. If you love it, wear it!
+                </p>
+                <Link
+                  href="/about"
+                  className="mt-8 inline-block bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[14px] text-[#282828] transition-opacity hover:opacity-80"
+                >
+                  Learn More
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -83,11 +85,11 @@ export default function HomePage() {
 
       {/* ===== Fashion Quote Section ===== */}
       <section className="bg-cream px-6 py-20">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-butler text-[26px] uppercase leading-tight text-heading-dark md:text-[32px]">
-            Fashion rules don&apos;t exist in my world.
+        <div className="mx-auto max-w-[1140px] text-center">
+          <h2 className="font-butler text-[40px] md:text-[64px] font-extralight leading-tight text-[#282828]">
+            FASHION RULES DON&apos;T EXIST IN MY WORLD.
           </h2>
-          <p className="mt-6 font-roboto text-[15px] leading-relaxed text-text-dark">
+          <p className="mt-6 font-poppins text-[16px] leading-[1.7] text-[#282828]">
             When I see fashion do&apos;s and don&apos;ts, I throw them out the
             window. While I believe we can all find fashions that flatter parts
             of our bodies that we love, I truly believe that fashion is what
@@ -228,21 +230,21 @@ export default function HomePage() {
           {/* Right text */}
           <div className="flex w-full items-center md:w-1/2">
             <div className="px-8 py-12 md:px-14 md:py-16">
-              <p className="font-poppins text-xs font-semibold uppercase tracking-widest text-text-dark">
-                Meet the Founder
+              <p className="font-poppins text-[16px] tracking-[2.3px] text-[#282828]">
+                MEET THE FOUNDER
               </p>
-              <h2 className="mt-3 font-butler text-[32px] leading-tight text-heading-dark">
+              <h2 className="mt-3 font-butler text-[42px] font-extralight leading-tight text-[#282828]">
                 Hey, I&apos;m Tracy!
               </h2>
-              <p className="mt-4 font-roboto text-[15px] leading-relaxed text-text-dark">
+              <p className="mt-4 font-poppins text-[16px] leading-[1.7] text-[#282828]">
                 I get asked a lot how I came to be in the world of fashion.
                 Click below, and I&apos;ll tell you a little more about me!
               </p>
               <Link
                 href="/about"
-                className="mt-8 inline-block bg-btn-cta px-8 py-3 font-poppins text-sm uppercase tracking-wider text-white transition-opacity hover:opacity-90"
+                className="mt-8 inline-block bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] tracking-[0.9px] text-black transition-opacity hover:opacity-80"
               >
-                Read My Story
+                READ MY STORY
               </Link>
             </div>
           </div>
