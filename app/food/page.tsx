@@ -1,131 +1,32 @@
-import Image from "next/image";
-import Link from "next/link";
+import CategoryArchivePage from "@/components/CategoryArchivePage";
+import { buildMetadata } from "@/lib/metadata";
 
-const posts = [
-  {
-    title: "Homemade Sweet & Smoky BBQ Sauce",
-    date: "June 27, 2021",
-    category: "Food",
-    image: "/images/blog/bbq-sauce.png",
-    excerpt:
-      "Cue the BBQ recipes this holiday week! For me, it\u2019s all about the sauce. THIS sauce! I love any and all BBQ sauces, so it\u2019s hard for me to pick a favorite.",
-  },
-  {
-    title: "Time for a Fall Bra Refresh with Soma",
-    date: "October 14, 2023",
-    category: "Food",
-    image: "/images/blog/fall-bra-refresh.png",
-    excerpt:
-      "This post was sponsored by Soma, but all opinions are my own. With all of the fun fall fashion, it's always a good time to refresh your top drawer too!",
-  },
-  {
-    title: "Five ADORABLE Summer Bags under $40",
-    date: "April 25, 2021",
-    category: "Food",
-    image: "/images/blog/summer-bags.png",
-    excerpt:
-      "Can you ever really have too many bags? I am such a sucker for a cute bag, especially in the summertime!",
-  },
-  {
-    title: "These straw hats are under $25 & will have you vacation ready!",
-    date: "April 7, 2021",
-    category: "Food",
-    image: "/images/blog/straw-hats.jpg",
-    excerpt:
-      "Straw hat season has arrived! And I'm excited to share with you my favorites that are all under $25!",
-  },
-];
+export const metadata = buildMetadata({
+  title: "Food",
+  description: "Recipes and food posts from The Fashion Sessions.",
+  path: "/food",
+});
 
-export default function FoodPage() {
+interface FoodPageProps {
+  searchParams?: {
+    page?: string;
+  };
+}
+
+export default function FoodPage({ searchParams }: FoodPageProps) {
+  const page = Number(searchParams?.page ?? "1");
+
   return (
-    <div className="bg-white">
-      {/* Archive Header */}
-      <div className="mx-auto max-w-[1240px] px-5">
-        <div className="py-[45px]">
-          <h1 className="font-butler text-[32px] font-semibold text-[#1e293b]">
-            Food
-          </h1>
-        </div>
-      </div>
-
-      {/* Posts */}
-      <div className="mx-auto max-w-[1240px] px-5">
-        {posts.map((post) => (
-          <article key={post.title} className="pb-[45px]">
-            <Link href="#" className="block">
-              <div className="relative aspect-[4/5] w-full max-w-[820px] overflow-hidden">
-                <Image
-                  src={post.image}
-                  alt={post.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 820px"
-                />
-              </div>
-            </Link>
-
-            <div className="mt-5">
-              <h2 className="font-butler text-[26px] font-extralight text-[#1e293b]">
-                <Link
-                  href="#"
-                  className="hover:text-[#BA9D95] transition-colors"
-                >
-                  {post.title}
-                </Link>
-              </h2>
-
-              <div className="mt-1 font-poppins text-[15px]">
-                <Link
-                  href="/food"
-                  className="text-[#046bd2] hover:text-[#BA9D95] transition-colors"
-                >
-                  {post.category}
-                </Link>
-                <span className="text-[#334155]"> / Tracy Cartwright</span>
-              </div>
-
-              <p className="mt-3 font-poppins text-[15px] leading-[1.65] text-[#334155]">
-                {post.excerpt}
-              </p>
-
-              <div className="mt-3">
-                <Link
-                  href="#"
-                  className="font-poppins text-[15px] text-[#BA9D95] hover:text-[#1e293b] transition-colors"
-                >
-                  Read More &raquo;
-                </Link>
-              </div>
-            </div>
-          </article>
-        ))}
-
-        <nav
-          className="flex items-center justify-center gap-1 py-8"
-          aria-label="Post pagination"
-        >
-          <span className="flex h-9 w-9 items-center justify-center bg-[#BA9D95] font-poppins text-sm text-white">
-            1
-          </span>
-          {[2, 3].map((n) => (
-            <span
-              key={n}
-              className="flex h-9 w-9 items-center justify-center font-poppins text-sm text-[#334155] hover:text-[#BA9D95] cursor-pointer"
-            >
-              {n}
-            </span>
-          ))}
-          <span className="flex h-9 w-9 items-center justify-center font-poppins text-sm text-[#334155]">
-            ...
-          </span>
-          <span className="flex h-9 w-9 items-center justify-center font-poppins text-sm text-[#334155] hover:text-[#BA9D95] cursor-pointer">
-            7
-          </span>
-          <span className="flex items-center justify-center px-2 font-poppins text-sm text-[#334155] hover:text-[#BA9D95] cursor-pointer">
-            Next
-          </span>
-        </nav>
-      </div>
-    </div>
+    <CategoryArchivePage
+      slug="food"
+      title="Food"
+      currentPage={Number.isFinite(page) ? page : 1}
+      heroImage="/images/wp-uploads/2023/04/Hero-3.jpg"
+      heroHeading={{ topSmall: "Tracy's", topLarge: "Food Blog" }}
+      heroOverlay={{
+        heading:
+          "We're passionate about helping brands and businesses blossom into their full potential.",
+      }}
+    />
   );
 }

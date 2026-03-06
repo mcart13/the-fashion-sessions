@@ -1,43 +1,50 @@
-const tiktokSections = [
-  "Stopped by the Target Men's Section - Gray Hoodie Sweater",
-  "Recreating Pinterest Looks as a Mom over 40 - Black & White",
-  "Amazon...What I Ordered vs How it Looked - The Half-Zip Sweater",
-  "What I Ordered vs How it Looked - Booty-covering Sweater",
-  "Outfit Formula When You Have Nothing to Wear - Part 1",
-  "Recreating Pinterest Looks on a Budget",
-  "Recreating Pinterest Looks as a Mom over 40 - Blazer & Sweater Edition",
-  "How it Looks on Mom & Daughter - Ugg Ultra Mini Boots",
-];
+import AnimateOnScroll from "@/components/AnimateOnScroll";
+import { ShopThePostWidget } from "@/components/ThirdPartyEmbeds";
+import { buildMetadata } from "@/lib/metadata";
+import { getShopTiktokSections } from "@/lib/siteContent";
+
+const tiktokSections = getShopTiktokSections(10);
+
+export const metadata = buildMetadata({
+  title: "Shop My Tiktok",
+  description: "Shop Tracy's latest TikTok looks and product picks.",
+  path: "/shop-my-tiktok",
+});
 
 export default function ShopMyTiktokPage() {
   return (
     <div className="bg-cream">
       {/* Header */}
-      <div className="pt-[30px] pb-4 text-center">
-        <h2 className="font-moontime text-[80px] leading-none text-[#282828]">
-          Tracy&apos;s
-        </h2>
-        <h1 className="font-butler text-[48px] font-thin text-[#282828]">
-          Shop My Tiktok
-        </h1>
-        <p className="mt-3 font-poppins text-[15px] text-[#282828]">
-          Click on any items below to shop my TikTok looks!
-        </p>
-        <div className="mx-auto mt-5 h-px w-24 bg-[#282828]" />
-      </div>
+      <AnimateOnScroll animation="fadeInUp">
+        <div className="pt-[30px] pb-4 text-center">
+          <h2 className="font-moontime text-[clamp(3.5rem,2.5rem+3vw,5rem)] font-extralight leading-none text-[#282828]">
+            Tracy&apos;s
+          </h2>
+          <h1 className="-mt-3 font-butler text-[clamp(2.6rem,1.7309rem+1.813vw,3rem)] font-thin text-[#282828]">
+            Shop My Tiktok
+          </h1>
+          <p className="mt-3 font-poppins text-[15px] text-[#282828]">
+            Click on any items below to shop my TikTok looks!
+          </p>
+          <div className="mx-auto mt-[5px] h-px w-[5%] bg-[#282828]" />
+        </div>
+      </AnimateOnScroll>
 
       {/* TikTok Sections */}
       <div className="mx-auto max-w-[1140px] px-5 py-10">
         <div className="space-y-12">
-          {tiktokSections.map((title) => (
-            <div key={title}>
-              <h2 className="mb-4 font-butler text-[32px] font-thin text-[#282828]">
-                {title}
+          {tiktokSections.map((section, index) => (
+            <div key={section.title}>
+              <h2 className="mb-4 font-butler text-[clamp(1.5rem,1rem+1.5vw,2rem)] font-extralight text-[#282828]">
+                {section.title}
               </h2>
-              <div className="flex min-h-[200px] items-center justify-center bg-white/60 p-6">
-                <p className="font-poppins text-sm text-[#282828]/40">
-                  RewardStyle embed placeholder
-                </p>
+              <div className="min-h-[220px] bg-white/60 p-6">
+                {section.widgetId ? (
+                  <ShopThePostWidget
+                    widgetId={section.widgetId}
+                    loading={index === 0 ? "eager" : undefined}
+                  />
+                ) : null}
               </div>
             </div>
           ))}

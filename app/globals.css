@@ -70,9 +70,10 @@
 }
 
 body {
-  color: #54595f;
-  background: #f5f3ed;
-  font-family: "Roboto", sans-serif;
+  color: #282828;
+  background: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
 }
 
 h1,
@@ -81,5 +82,108 @@ h3,
 h4,
 h5,
 h6 {
-  color: #333333;
+  color: #282828;
+}
+
+.shopthepost-widget,
+.ltkwidget-version-two {
+  width: 100%;
+}
+
+.rs-ltkwidget-container {
+  min-height: 320px;
+}
+
+.elfsight-app-afdfe1bf-5bcc-4341-93cd-979474d6e478 {
+  min-height: 0;
+}
+
+/* Elementor hover-float animation */
+.hover-float {
+  transition: transform 0.35s ease;
+}
+.hover-float:hover {
+  transform: translateY(-8px);
+}
+
+.wordpress-content {
+  color: #282828;
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.wordpress-content > * + * {
+  margin-top: 1.25rem;
+}
+
+.wordpress-content a {
+  color: #ba9d95;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.wordpress-content h1,
+.wordpress-content h2,
+.wordpress-content h3,
+.wordpress-content h4,
+.wordpress-content h5,
+.wordpress-content h6 {
+  color: #282828;
+  font-family: "Butler Font", serif;
+  font-weight: 200;
+  line-height: 1.4;
+  margin-top: 2rem;
+}
+
+.wordpress-content h1,
+.wordpress-content h2 {
+  font-size: clamp(1.8rem, 3.8vw, 2.5rem);
+}
+
+.wordpress-content h3,
+.wordpress-content h4 {
+  font-size: clamp(1.2rem, 2.8vw, 1.85rem);
+}
+
+.wordpress-content img,
+.wordpress-content iframe {
+  display: block;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
+
+.wordpress-content iframe {
+  min-height: 200px;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .wordpress-content iframe {
+    min-height: 240px;
+  }
+}
+
+.wordpress-content p {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
+
+.wordpress-content ul,
+.wordpress-content ol {
+  margin: 1.5rem auto;
+  max-width: 760px;
+  padding-left: 1.5rem;
+}
+
+.wordpress-content blockquote {
+  border-left: 3px solid #e6ddd9;
+  color: #475569;
+  font-style: italic;
+  margin: 2rem auto;
+  max-width: 760px;
+  padding-left: 1.25rem;
 }

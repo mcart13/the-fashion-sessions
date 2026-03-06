@@ -1,278 +1,322 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import SocialIcon from "@/components/SocialIcon";
+import { SOCIAL_LINKS } from "@/lib/siteConfig";
 
-const socialLinks = [
-  {
-    name: "Facebook",
-    href: "https://www.facebook.com/thefashionsessions/",
-    icon: (
-      <svg viewBox="0 0 320 512" fill="currentColor" className="w-4 h-4">
-        <path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z" />
-      </svg>
-    ),
-  },
-  {
-    name: "Pinterest",
-    href: "https://pin.it/7o6bmQb",
-    icon: (
-      <svg viewBox="0 0 384 512" fill="currentColor" className="w-4 h-4">
-        <path d="M204 6.5C101.4 6.5 0 74.9 0 185.6 0 256 39.6 296 63.6 296c9.9 0 15.6-27.6 15.6-35.4 0-9.3-23.7-29.1-23.7-67.8 0-80.4 61.2-137.4 140.4-137.4 68.1 0 118.5 38.7 118.5 109.8 0 53.1-21.3 152.7-90.3 152.7-24.9 0-46.2-18-46.2-43.8 0-37.8 26.4-74.4 26.4-113.4 0-66.2-93.9-54.2-93.9 25.8 0 16.8 2.1 35.4 9.6 50.7-13.8 59.4-42 147.9-42 209.1 0 18.9 2.7 37.5 4.5 56.4 3.4 3.8 1.7 3.4 6.9 1.5 50.4-69 48.6-82.5 71.4-172.8 12.3 23.4 44.1 36 69.3 36 106.2 0 153.9-103.5 153.9-196.8C384 71.3 298.2 6.5 204 6.5z" />
-      </svg>
-    ),
-  },
-  {
-    name: "Instagram",
-    href: "https://instagram.com/thefashionsessions",
-    icon: (
-      <svg viewBox="0 0 448 512" fill="currentColor" className="w-4 h-4">
-        <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.5 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" />
-      </svg>
-    ),
-  },
-  {
-    name: "TikTok",
-    href: "https://www.tiktok.com/@thefashionsessions",
-    icon: (
-      <svg viewBox="0 0 448 512" fill="currentColor" className="w-4 h-4">
-        <path d="M448 209.91a210.06 210.06 0 01-122.77-39.25v178.72A162.55 162.55 0 11185 188.31v89.89a74.62 74.62 0 1052.23 71.18V0h88a121.18 121.18 0 001.86 22.17A122.18 122.18 0 00381 102.39a121.43 121.43 0 0067 20.14z" />
-      </svg>
-    ),
-  },
-  {
-    name: "YouTube",
-    href: "https://youtube.com/@thefashionsessions",
-    icon: (
-      <svg
-        viewBox="0 0 576 512"
-        fill="currentColor"
-        className="w-[18px] h-[18px]"
-      >
-        <path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z" />
-      </svg>
-    ),
-  },
-];
+const headerSocialLinks = SOCIAL_LINKS.filter(
+  (social) => social.name !== "Amazon",
+);
 
-interface NavItem {
-  label: string;
+type NavLeaf = {
   href: string;
-  external?: boolean;
-  dropdown?: { label: string; href: string }[];
-}
+  id: string;
+  label: string;
+  type: "external" | "link";
+};
+
+type NavMenu = {
+  id: "blog" | "shop";
+  items: NavLeaf[];
+  label: string;
+  type: "menu";
+};
+
+type NavItem = NavLeaf | NavMenu;
+type NavMenuId = NavMenu["id"];
 
 const navItems: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
+  { id: "home", label: "Home", href: "/", type: "link" },
+  { id: "about", label: "About", href: "/about", type: "link" },
   {
+    id: "shop",
     label: "Shop",
-    href: "#",
-    dropdown: [
-      { label: "Shop My Instagram", href: "/shop-my-instagram" },
-      { label: "Shop My Tiktok", href: "/shop-my-tiktok" },
+    type: "menu",
+    items: [
+      {
+        id: "shop-instagram",
+        label: "Shop My Instagram",
+        href: "/shop-my-instagram",
+        type: "link",
+      },
+      {
+        id: "shop-tiktok",
+        label: "Shop My Tiktok",
+        href: "/shop-my-tiktok",
+        type: "link",
+      },
+      {
+        id: "shop-amazon",
+        label: "Amazon Store",
+        href: "https://www.amazon.com/shop/influencer-1f538e5c?ref=cm_sw_em_r_inf_own_influencer-1f538e5c_dp_augtGkKyrmRUF",
+        type: "external",
+      },
     ],
   },
   {
+    id: "label",
     label: "TFS | The Label",
     href: "https://tfsthelabel.com/",
-    external: true,
+    type: "external",
   },
   {
+    id: "blog",
     label: "Blog",
-    href: "#",
-    dropdown: [
-      { label: "Fashion", href: "/fashion" },
-      { label: "Beauty", href: "/beauty" },
-      { label: "Food", href: "/food" },
-      { label: "Travel", href: "/travel" },
+    type: "menu",
+    items: [
+      { id: "blog-fashion", label: "Fashion", href: "/fashion", type: "link" },
+      { id: "blog-beauty", label: "Beauty", href: "/beauty", type: "link" },
+      { id: "blog-food", label: "Food", href: "/food", type: "link" },
+      { id: "blog-travel", label: "Travel", href: "/travel", type: "link" },
     ],
   },
-  { label: "Contact", href: "/contact" },
+  { id: "contact", label: "Contact", href: "/contact", type: "link" },
 ];
+
+function isMenu(item: NavItem): item is NavMenu {
+  return item.type === "menu";
+}
+
+function isExternal(item: NavLeaf) {
+  return item.type === "external";
+}
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [mobileDropdown, setMobileDropdown] = useState<string | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [openDesktopMenu, setOpenDesktopMenu] = useState<NavMenuId | null>(
+    null,
+  );
+  const [openMobileMenu, setOpenMobileMenu] = useState<NavMenuId | null>(null);
+  const closeDelayRef = useRef<number | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
         setMobileMenuOpen(false);
-        setMobileDropdown(null);
+        setOpenMobileMenu(null);
       }
     };
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+
     return () => {
       document.body.style.overflow = "";
     };
   }, [mobileMenuOpen]);
 
-  const handleMouseEnter = (label: string) => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setOpenDropdown(label);
+  useEffect(() => {
+    return () => {
+      if (closeDelayRef.current !== null) {
+        window.clearTimeout(closeDelayRef.current);
+      }
+    };
+  }, []);
+
+  const clearCloseDelay = () => {
+    if (closeDelayRef.current !== null) {
+      window.clearTimeout(closeDelayRef.current);
+      closeDelayRef.current = null;
+    }
   };
 
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setOpenDropdown(null);
+  const handleDesktopMenuEnter = (menuId: NavMenuId) => {
+    clearCloseDelay();
+    setOpenDesktopMenu(menuId);
+  };
+
+  const handleDesktopMenuLeave = () => {
+    clearCloseDelay();
+    closeDelayRef.current = window.setTimeout(() => {
+      setOpenDesktopMenu(null);
+      closeDelayRef.current = null;
     }, 150);
   };
 
+  const handleDesktopMenuKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLButtonElement>, menuId: NavMenuId) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        setOpenDesktopMenu((current) => (current === menuId ? null : menuId));
+      } else if (event.key === "Escape") {
+        setOpenDesktopMenu(null);
+      }
+    },
+    [],
+  );
+
   const isActive = (item: NavItem) => {
-    if (item.href === "/" && pathname === "/") return true;
-    if (
-      item.href !== "/" &&
-      item.href !== "#" &&
-      pathname.startsWith(item.href)
-    )
-      return true;
-    if (item.dropdown) {
-      return item.dropdown.some((sub) => pathname.startsWith(sub.href));
+    if (isMenu(item)) {
+      return item.items.some(
+        (subItem) =>
+          subItem.type === "link" && pathname.startsWith(subItem.href),
+      );
     }
-    return false;
+
+    if (item.type !== "link") {
+      return false;
+    }
+
+    if (item.href === "/") {
+      return pathname === "/";
+    }
+
+    return pathname.startsWith(item.href);
   };
 
-  const navLinkClass = (item: NavItem) =>
-    `block px-5 py-2 font-poppins text-[15px] transition-colors duration-200 ${
-      isActive(item) ? "text-[#BA9D95]" : "text-[#282828] hover:text-[#BA9D95]"
+  const desktopLinkClass = (active: boolean) =>
+    `block px-[15px] py-2 font-poppins text-[11px] uppercase tracking-[1.2px] transition-colors duration-200 ${
+      active ? "text-[#BA9D95]" : "text-[#282828] hover:text-[#BA9D95]"
+    }`;
+
+  const desktopMenuButtonClass = (active: boolean) =>
+    `flex items-center gap-1 px-[15px] py-2 font-poppins text-[11px] uppercase tracking-[1.2px] transition-colors duration-200 ${
+      active ? "text-[#BA9D95]" : "text-[#282828] hover:text-[#BA9D95]"
     }`;
 
   return (
-    <header className="sticky top-0 z-50 bg-white">
-      {/* Social Bar */}
-      <div className="flex justify-center items-center gap-5 py-2 bg-tan">
-        {socialLinks.map((social) => (
+    <header className="bg-white">
+      <div className="flex items-center justify-center gap-1 bg-tan py-[5px] md:gap-4 md:py-[9px]">
+        {headerSocialLinks.map((social) => (
           <a
             key={social.name}
             href={social.href}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={social.name}
-            className="text-[#282828] hover:opacity-60 transition-opacity duration-200"
+            className="flex h-[44px] w-[44px] items-center justify-center text-[#282828] transition-colors duration-200 hover:text-[#BA9D95] md:h-auto md:w-auto"
           >
-            {social.icon}
+            <SocialIcon name={social.name} className="h-[15px] w-[15px]" />
           </a>
         ))}
       </div>
 
-      {/* Logo + Nav Row */}
-      <div className="mx-auto max-w-7xl flex items-center justify-between px-6 lg:px-10">
-        {/* Logo (left) */}
-        <Link href="/" className="shrink-0 py-2">
+      <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 lg:px-10">
+        <Link href="/" className="shrink-0 py-[14px]">
           <Image
             src="/images/logo.png"
             alt="The Fashion Sessions"
             width={350}
             height={100}
-            className="w-[200px] md:w-[300px] h-auto"
+            className="h-auto w-[205px] md:w-[285px] lg:w-[370px] xl:w-[504px]"
             priority
           />
         </Link>
 
-        {/* Desktop Navigation (right) */}
-        <nav className="hidden lg:flex items-center">
+        <nav className="hidden items-center lg:flex">
           <ul className="flex items-center">
-            {navItems.map((item) => (
-              <li
-                key={item.label}
-                className="relative"
-                onMouseEnter={() =>
-                  item.dropdown ? handleMouseEnter(item.label) : undefined
-                }
-                onMouseLeave={item.dropdown ? handleMouseLeave : undefined}
-              >
-                {item.external ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={navLinkClass(item)}
-                  >
-                    {item.label}
-                  </a>
-                ) : item.dropdown ? (
-                  <button
-                    className={`flex items-center gap-1 px-5 py-2 font-poppins text-[15px] transition-colors duration-200 ${
-                      isActive(item)
-                        ? "text-[#BA9D95]"
-                        : "text-[#282828] hover:text-[#BA9D95]"
-                    }`}
-                    aria-expanded={openDropdown === item.label}
-                    aria-haspopup="true"
-                  >
-                    {item.label}
-                    <svg
-                      className={`w-3 h-3 ml-0.5 transition-transform duration-200 ${
-                        openDropdown === item.label ? "rotate-180" : ""
-                      }`}
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                ) : (
-                  <Link href={item.href} className={navLinkClass(item)}>
-                    {item.label}
-                  </Link>
-                )}
+            {navItems.map((item) => {
+              const active = isActive(item);
 
-                {/* Dropdown */}
-                {item.dropdown && (
-                  <div
-                    className={`absolute left-0 top-full min-w-[200px] bg-white border border-gray-100 shadow-lg transition-all duration-200 z-50 ${
-                      openDropdown === item.label
-                        ? "opacity-100 visible translate-y-0"
-                        : "opacity-0 invisible -translate-y-1"
-                    }`}
-                  >
-                    <ul className="py-2">
-                      {item.dropdown.map((sub) => (
-                        <li key={sub.href}>
-                          <Link
-                            href={sub.href}
-                            className="block px-5 py-2 font-poppins text-[15px] text-[#282828] hover:text-[#BA9D95] transition-colors duration-150 whitespace-nowrap"
-                          >
-                            {sub.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </li>
-            ))}
+              return (
+                <li
+                  key={item.id}
+                  className="relative"
+                  onMouseEnter={
+                    isMenu(item)
+                      ? () => handleDesktopMenuEnter(item.id)
+                      : undefined
+                  }
+                  onMouseLeave={
+                    isMenu(item) ? handleDesktopMenuLeave : undefined
+                  }
+                >
+                  {isMenu(item) ? (
+                    <>
+                      <button
+                        type="button"
+                        className={desktopMenuButtonClass(active)}
+                        aria-expanded={openDesktopMenu === item.id}
+                        aria-haspopup="true"
+                        onKeyDown={(event) =>
+                          handleDesktopMenuKeyDown(event, item.id)
+                        }
+                      >
+                        {item.label}
+                        <svg
+                          className={`ml-0.5 h-3 w-3 transition-transform duration-200 ${
+                            openDesktopMenu === item.id ? "rotate-180" : ""
+                          }`}
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </button>
+
+                      <div
+                        className={`absolute left-0 top-full z-50 min-w-[200px] bg-cream shadow-[0_0_10px_rgba(0,0,0,0.18)] transition-all duration-200 ${
+                          openDesktopMenu === item.id
+                            ? "visible translate-y-0 opacity-100"
+                            : "invisible -translate-y-1 opacity-0"
+                        }`}
+                      >
+                        <ul className="py-2">
+                          {item.items.map((subItem) => (
+                            <li key={subItem.id}>
+                              {isExternal(subItem) ? (
+                                <a
+                                  href={subItem.href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block whitespace-nowrap px-4 py-2 font-poppins text-[11px] uppercase tracking-[1.2px] text-[#282828] transition-colors duration-150 hover:text-[#BA9D95]"
+                                >
+                                  {subItem.label}
+                                </a>
+                              ) : (
+                                <Link
+                                  href={subItem.href}
+                                  className="block whitespace-nowrap px-4 py-2 font-poppins text-[11px] uppercase tracking-[1.2px] text-[#282828] transition-colors duration-150 hover:text-[#BA9D95]"
+                                >
+                                  {subItem.label}
+                                </Link>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </>
+                  ) : isExternal(item) ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={desktopLinkClass(active)}
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link href={item.href} className={desktopLinkClass(active)}>
+                      {item.label}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
-        {/* Mobile Hamburger */}
         <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          type="button"
+          onClick={() => setMobileMenuOpen((current) => !current)}
           aria-label="Toggle menu"
           aria-expanded={mobileMenuOpen}
-          className="lg:hidden text-[#282828] p-2 hover:opacity-60 transition-opacity duration-200"
+          className="p-2 text-[#282828] transition-opacity duration-200 hover:opacity-60 lg:hidden"
         >
           <svg
-            className="w-6 h-6"
+            className="h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -287,30 +331,29 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile Menu Overlay */}
       <div
-        className={`lg:hidden fixed inset-0 top-0 bg-black/30 z-40 transition-opacity duration-300 ${
+        className={`fixed inset-0 top-0 z-40 bg-black/30 transition-opacity duration-300 lg:hidden ${
           mobileMenuOpen
-            ? "opacity-100 visible"
-            : "opacity-0 invisible pointer-events-none"
+            ? "visible opacity-100"
+            : "invisible pointer-events-none opacity-0"
         }`}
         onClick={() => setMobileMenuOpen(false)}
       />
 
-      {/* Mobile Slide-out Menu */}
       <div
-        className={`lg:hidden fixed top-0 right-0 h-full w-[280px] bg-white z-50 shadow-xl transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+        className={`fixed right-0 top-0 z-50 h-full w-[280px] overflow-y-auto bg-white shadow-xl transition-transform duration-300 ease-in-out lg:hidden ${
           mobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex justify-end p-4">
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(false)}
             aria-label="Close menu"
-            className="text-[#282828] p-1 hover:opacity-60 transition-opacity"
+            className="p-1 text-[#282828] transition-opacity hover:opacity-60"
           >
             <svg
-              className="w-6 h-6"
+              className="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -328,32 +371,23 @@ export default function Header() {
         <nav className="px-6 pb-8">
           <ul className="space-y-1">
             {navItems.map((item) => (
-              <li key={item.label}>
-                {item.external ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block py-3 font-poppins text-[15px] text-[#282828] hover:text-[#BA9D95] transition-colors border-b border-gray-100"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.label}
-                  </a>
-                ) : item.dropdown ? (
+              <li key={item.id}>
+                {isMenu(item) ? (
                   <div>
                     <button
+                      type="button"
                       onClick={() =>
-                        setMobileDropdown(
-                          mobileDropdown === item.label ? null : item.label,
+                        setOpenMobileMenu((current) =>
+                          current === item.id ? null : item.id,
                         )
                       }
-                      className="flex items-center justify-between w-full py-3 font-poppins text-[15px] text-[#282828] hover:text-[#BA9D95] transition-colors border-b border-gray-100"
-                      aria-expanded={mobileDropdown === item.label}
+                      className="flex w-full items-center justify-between border-b border-gray-100 py-3 font-poppins text-[15px] text-[#282828] transition-colors hover:text-[#BA9D95]"
+                      aria-expanded={openMobileMenu === item.id}
                     >
                       {item.label}
                       <svg
-                        className={`w-3 h-3 transition-transform duration-200 ${
-                          mobileDropdown === item.label ? "rotate-180" : ""
+                        className={`h-3 w-3 transition-transform duration-200 ${
+                          openMobileMenu === item.id ? "rotate-180" : ""
                         }`}
                         viewBox="0 0 20 20"
                         fill="currentColor"
@@ -365,30 +399,53 @@ export default function Header() {
                         />
                       </svg>
                     </button>
+
                     <ul
                       className={`overflow-hidden transition-all duration-200 ${
-                        mobileDropdown === item.label
+                        openMobileMenu === item.id
                           ? "max-h-60 opacity-100"
                           : "max-h-0 opacity-0"
                       }`}
                     >
-                      {item.dropdown.map((sub) => (
-                        <li key={sub.href}>
-                          <Link
-                            href={sub.href}
-                            className="block py-2.5 pl-4 font-poppins text-[15px] text-[#282828] hover:text-[#BA9D95] transition-colors"
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            {sub.label}
-                          </Link>
+                      {item.items.map((subItem) => (
+                        <li key={subItem.id}>
+                          {isExternal(subItem) ? (
+                            <a
+                              href={subItem.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block py-2.5 pl-4 font-poppins text-[15px] text-[#282828] transition-colors hover:text-[#BA9D95]"
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              {subItem.label}
+                            </a>
+                          ) : (
+                            <Link
+                              href={subItem.href}
+                              className="block py-2.5 pl-4 font-poppins text-[15px] text-[#282828] transition-colors hover:text-[#BA9D95]"
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              {subItem.label}
+                            </Link>
+                          )}
                         </li>
                       ))}
                     </ul>
                   </div>
+                ) : isExternal(item) ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block border-b border-gray-100 py-3 font-poppins text-[15px] text-[#282828] transition-colors hover:text-[#BA9D95]"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.label}
+                  </a>
                 ) : (
                   <Link
                     href={item.href}
-                    className="block py-3 font-poppins text-[15px] text-[#282828] hover:text-[#BA9D95] transition-colors border-b border-gray-100"
+                    className="block border-b border-gray-100 py-3 font-poppins text-[15px] text-[#282828] transition-colors hover:text-[#BA9D95]"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.label}
@@ -398,17 +455,17 @@ export default function Header() {
             ))}
           </ul>
 
-          <div className="flex justify-center items-center gap-5 pt-8">
-            {socialLinks.map((social) => (
+          <div className="flex items-center justify-center gap-1 pt-8">
+            {headerSocialLinks.map((social) => (
               <a
                 key={social.name}
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.name}
-                className="text-[#282828] hover:opacity-60 transition-opacity duration-200"
+                className="flex h-[44px] w-[44px] items-center justify-center text-[#282828] transition-colors duration-200 hover:text-[#BA9D95]"
               >
-                {social.icon}
+                <SocialIcon name={social.name} className="h-[15px] w-[15px]" />
               </a>
             ))}
           </div>

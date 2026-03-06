@@ -11,10 +11,10 @@ const config: Config = {
       colors: {
         cream: "#F5F3ED",
         tan: "#E6DDD9",
-        "text-dark": "#54595F",
-        "heading-dark": "#333333",
-        "accent-gold": "#B8977E",
-        "btn-cta": "#C4A68A",
+        "text-dark": "#282828",
+        "heading-dark": "#282828",
+        "accent-gold": "#BA9D95",
+        "btn-cta": "#EADFD2",
       },
       fontFamily: {
         butler: ['"Butler Font"', "serif"],
