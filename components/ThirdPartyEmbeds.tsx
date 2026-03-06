@@ -128,45 +128,54 @@ export function LtkWidget({
   widgetInstanceId,
 }: LtkWidgetProps) {
   const instanceId = widgetInstanceId ?? appId;
+  const containerId = `ltkwidget-version-two${instanceId}`;
   const { ref, shouldRender } = useLazyEmbed({ loading, rootMargin });
-  const scriptStrategy =
-    loading === "eager" ? "afterInteractive" : "lazyOnload";
+
+  useEffect(() => {
+    if (!shouldRender) return;
+
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    // The LTK script looks for a <script src="...ltkwidget.js"> INSIDE the
+    // widget container to derive its base URL. We must inject it there.
+    const scriptSrc =
+      "https://widgets-static.rewardstyle.com/widgets2_0/client/pub/ltkwidget/ltkwidget.js";
+
+    if (container.querySelector(`script[src="${scriptSrc}"]`)) return;
+
+    window.rsLTKLoadApp = "0";
+    window.rsLTKPassedAppID = appId;
+
+    const script = document.createElement("script");
+    script.src = scriptSrc;
+    container.appendChild(script);
+  }, [appId, containerId, shouldRender]);
 
   return (
     <div ref={ref} className="min-h-[240px]">
       {shouldRender ? (
-        <>
+        <div
+          id={containerId}
+          data-appid={appId}
+          className="ltkwidget-version-two"
+        >
           <div
-            id={`ltkwidget-version-two${instanceId}`}
+            widget-dashboard-settings=""
             data-appid={appId}
-            className="ltkwidget-version-two"
+            data-userid={userId}
+            data-rows={rows}
+            data-cols={cols}
+            data-showframe="false"
+            data-padding="4"
+            data-displayname=""
+            data-profileid="a8c390f8-dc82-11e8-9fed-0242ac110002"
           >
-            <div
-              widget-dashboard-settings=""
-              data-appid={appId}
-              data-userid={userId}
-              data-rows={rows}
-              data-cols={cols}
-              data-showframe="false"
-              data-padding="4"
-              data-displayname=""
-              data-profileid="a8c390f8-dc82-11e8-9fed-0242ac110002"
-            >
-              <div className="rs-ltkwidget-container">
-                <div ui-view="" />
-              </div>
+            <div className="rs-ltkwidget-container">
+              <div ui-view="" />
             </div>
           </div>
-          <Script
-            id={`ltkwidget-vars-${appId}`}
-            strategy={scriptStrategy}
-          >{`var rsLTKLoadApp="0",rsLTKPassedAppID="${appId}";`}</Script>
-          <Script
-            id={`ltkwidget-script-${appId}`}
-            src="https://widgets-static.rewardstyle.com/widgets2_0/client/pub/ltkwidget/ltkwidget.js"
-            strategy={scriptStrategy}
-          />
-        </>
+        </div>
       ) : (
         <div className="min-h-[240px] bg-white/50" />
       )}
