@@ -62,7 +62,7 @@ export default function Sidebar() {
         <div className="flex-1 h-px bg-[#282828]" />
       </div>
 
-      <div className="-mt-[10px] min-h-[320px]">
+      <div className="mt-2 min-h-[320px]">
         {sidebarLtk ? (
           <LtkWidget
             appId={sidebarLtk.appId}
