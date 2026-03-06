@@ -3,7 +3,8 @@ import { buildMetadata } from "@/lib/metadata";
 
 export const metadata = buildMetadata({
   title: "Fashion",
-  description: "Fashion posts from The Fashion Sessions.",
+  description:
+    "Discover Tracy's latest outfit ideas, styling tips, and fashion finds for every body type and budget. Casual looks to date night inspiration.",
   path: "/fashion",
 });
 

@@ -3,7 +3,8 @@ import { buildMetadata } from "@/lib/metadata";
 
 export const metadata = buildMetadata({
   title: "Food",
-  description: "Recipes and food posts from The Fashion Sessions.",
+  description:
+    "Easy, delicious recipes and food inspiration from Tracy. From homemade BBQ sauce to weeknight dinners, find your next favorite meal.",
   path: "/food",
 });
 
@@ -25,7 +26,7 @@ export default function FoodPage({ searchParams }: FoodPageProps) {
       heroHeading={{ topSmall: "Tracy's", topLarge: "Food Blog" }}
       heroOverlay={{
         heading:
-          "We're passionate about helping brands and businesses blossom into their full potential.",
+          "Good food brings people together. Here are my favorite recipes and foodie finds!",
       }}
     />
   );

@@ -1,6 +1,7 @@
 export const SITE_URL = "https://thefashionsessions.com";
 export const SITE_NAME = "The Fashion Sessions";
-export const SITE_DESCRIPTION = "A Fashion & Lifestyle Blog by Tracy";
+export const SITE_DESCRIPTION =
+  "Fashion, beauty, food & travel inspiration from Tracy. Outfit ideas, styling tips, and product picks for women who believe fashion should be fun and express who you really are.";
 
 export const SOCIAL_LINKS = [
   {

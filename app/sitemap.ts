@@ -22,8 +22,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/shop-my-tiktok",
   ];
 
+  const now = new Date();
   const pages = staticRoutes.map((route) => ({
     url: `${SITE_URL}${route || "/"}`,
+    lastModified: now,
     changeFrequency: route ? ("weekly" as const) : ("daily" as const),
     priority: route ? 0.7 : 1,
   }));

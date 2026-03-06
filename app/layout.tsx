@@ -5,7 +5,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import NewsletterPopup from "@/components/NewsletterPopup";
 import ScrollToTop from "@/components/ScrollToTop";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/siteConfig";
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+  SOCIAL_LINKS,
+} from "@/lib/siteConfig";
 import { getPopupNewsletterFormId } from "@/lib/siteContent";
 import { Agentation } from "agentation";
 
@@ -36,6 +41,9 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   alternates: {
     canonical: "/",
+    types: {
+      "application/rss+xml": [{ url: "/feed.xml", title: SITE_NAME }],
+    },
   },
   openGraph: {
     type: "website",
@@ -83,6 +91,34 @@ export default function RootLayout({
         <link rel="preconnect" href="https://assets.flodesk.com" />
         <link rel="preconnect" href="https://widgets-static.rewardstyle.com" />
         <link rel="preconnect" href="https://static.elfsight.com" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "WebSite",
+                  name: SITE_NAME,
+                  url: SITE_URL,
+                  description: SITE_DESCRIPTION,
+                  publisher: { "@id": `${SITE_URL}/#organization` },
+                },
+                {
+                  "@type": "Organization",
+                  "@id": `${SITE_URL}/#organization`,
+                  name: SITE_NAME,
+                  url: SITE_URL,
+                  logo: {
+                    "@type": "ImageObject",
+                    url: `${SITE_URL}/images/logo.png`,
+                  },
+                  sameAs: SOCIAL_LINKS.map((s) => s.href.split("?")[0]),
+                },
+              ],
+            }),
+          }}
+        />
       </head>
       <body
         className={`${roboto.variable} ${robotoSlab.variable} ${poppins.variable} font-poppins antialiased`}
