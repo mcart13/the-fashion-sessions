@@ -184,7 +184,7 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
 
       {/* Two-column content area */}
       <div className="bg-white px-6 py-4">
-        <div className="mx-auto grid max-w-[1240px] grid-cols-1 gap-12 lg:grid-cols-[67%_32.33%]">
+        <div className="mx-auto grid max-w-[1240px] grid-cols-1 items-start gap-12 lg:grid-cols-[67%_32.33%]">
           <article>
             <HtmlContent
               id={contentId}

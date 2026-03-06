@@ -116,7 +116,7 @@ export default function CategoryArchivePage({
 
       {/* Post Listing + Sidebar */}
       <section className="bg-white px-6 py-14 pb-24">
-        <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-0 lg:grid-cols-[73%_27%]">
+        <div className="mx-auto grid max-w-[1120px] grid-cols-1 items-start gap-0 lg:grid-cols-[73%_27%]">
           <AnimateOnScroll animation="fadeInLeft" className="space-y-10">
             {visiblePosts.map((post) => (
               <PostTeaser
