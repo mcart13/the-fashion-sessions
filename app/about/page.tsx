@@ -1,7 +1,8 @@
 import Image from "next/image";
 import NewsletterSection from "@/components/NewsletterSection";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
-import { buildMetadata } from "@/lib/metadata";
+import { buildBreadcrumbSchema, buildMetadata } from "@/lib/metadata";
+import { SITE_NAME, SITE_URL, SOCIAL_LINKS } from "@/lib/siteConfig";
 
 export const metadata = buildMetadata({
   title: "About",
@@ -10,8 +11,41 @@ export const metadata = buildMetadata({
 });
 
 export default function AboutPage() {
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Tracy Cartwright",
+    url: `${SITE_URL}/about`,
+    jobTitle: "Fashion & Lifestyle Blogger",
+    description:
+      "Fashion and lifestyle blogger helping women feel confident through personal style. Former CPA turned full-time content creator at The Fashion Sessions.",
+    image: `${SITE_URL}/images/wp-uploads/2023/06/Facetune_21-05-2023-20-10-03-scaled.jpg`,
+    sameAs: SOCIAL_LINKS.map((s) => s.href.split("?")[0]),
+    worksFor: {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: SITE_NAME,
+    },
+  };
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", url: SITE_URL },
+    { name: "About" },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(personSchema),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema),
+        }}
+      />
       {/* ===== Hero Section ===== */}
       <section className="hidden md:flex md:flex-row">
         {/* Left cream panel - bottom-aligned content */}

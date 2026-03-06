@@ -17,7 +17,7 @@ import {
 const homeShopWidgetIds = getHomeShopWidgetIds();
 
 export const metadata = {
-  title: "Home",
+  title: "Fashion & Lifestyle Blog by Tracy Cartwright",
   description: SITE_DESCRIPTION,
   alternates: {
     canonical: "/",

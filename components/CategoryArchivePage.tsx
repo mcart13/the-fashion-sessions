@@ -3,7 +3,13 @@ import PostTeaser from "@/components/PostTeaser";
 import Pagination from "@/components/Pagination";
 import Sidebar from "@/components/Sidebar";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
-import { getPostsForCategory } from "@/lib/siteContent";
+import {
+  buildBreadcrumbSchema,
+  buildItemListSchema,
+  getAbsoluteUrl,
+} from "@/lib/metadata";
+import { SITE_URL } from "@/lib/siteConfig";
+import { getPostPath, getPostsForCategory } from "@/lib/siteContent";
 
 const POSTS_PER_PAGE = 4;
 
@@ -49,8 +55,32 @@ export default function CategoryArchivePage({
 
   const hasHero = heroImage && heroHeading && heroOverlay;
 
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", url: SITE_URL },
+    { name: title },
+  ]);
+  const itemListSchema = buildItemListSchema(
+    `${title} Posts`,
+    posts.map((post) => ({
+      name: post.title,
+      url: getAbsoluteUrl(getPostPath(post)),
+    })),
+  );
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListSchema),
+        }}
+      />
       {/* Hero Section */}
       {hasHero && (
         <section className="bg-[#F5F3ED]">

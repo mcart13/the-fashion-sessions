@@ -7,14 +7,17 @@ import Sidebar from "@/components/Sidebar";
 import SocialIcon from "@/components/SocialIcon";
 import {
   buildArticleSchema,
+  buildBreadcrumbSchema,
   buildMetadata,
   getAbsoluteUrl,
 } from "@/lib/metadata";
+import { SITE_URL } from "@/lib/siteConfig";
 import {
   getAllPosts,
   getCategoryHref,
   formatDisplayDate,
   getPostByPathSegments,
+  getPostExcerpt,
   getPostPath,
   getPostPathSegments,
   getPrimaryCategory,
@@ -89,11 +92,24 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
     author: post.author,
     dateModified: post.modified,
     datePublished: post.date,
+    description: getPostExcerpt(post),
     image: post.featuredImage,
     section: primaryCategory?.name,
     title: post.title,
     url: articleUrl,
   });
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", url: SITE_URL },
+    ...(primaryCategory
+      ? [
+          {
+            name: primaryCategory.name,
+            url: getAbsoluteUrl(getCategoryHref(primaryCategory.slug)),
+          },
+        ]
+      : []),
+    { name: post.title },
+  ]);
   const contentId = `post-content-${post.id}`;
 
   return (
@@ -102,6 +118,12 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(articleSchema),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema),
         }}
       />
 
