@@ -27,9 +27,47 @@ export default function AccessoryTryOn() {
       return;
     }
     const img = new window.Image();
+    img.crossOrigin = "anonymous";
     img.src = selectedItem.overlayImage;
     img.onload = () => {
-      overlayImgRef.current = img;
+      // Remove white/near-white background to make it transparent
+      const offscreen = document.createElement("canvas");
+      offscreen.width = img.naturalWidth;
+      offscreen.height = img.naturalHeight;
+      const octx = offscreen.getContext("2d");
+      if (!octx) {
+        overlayImgRef.current = img;
+        return;
+      }
+      octx.drawImage(img, 0, 0);
+      const imageData = octx.getImageData(
+        0,
+        0,
+        offscreen.width,
+        offscreen.height,
+      );
+      const d = imageData.data;
+      for (let i = 0; i < d.length; i += 4) {
+        const r = d[i],
+          g = d[i + 1],
+          b = d[i + 2];
+        // If pixel is near-white, make it fully transparent
+        if (r > 230 && g > 230 && b > 230) {
+          d[i + 3] = 0;
+        }
+        // Feather near-white pixels for smoother edges
+        else if (r > 200 && g > 200 && b > 200) {
+          const brightness = (r + g + b) / 3;
+          d[i + 3] = Math.round(255 * (1 - (brightness - 200) / 55));
+        }
+      }
+      octx.putImageData(imageData, 0, 0);
+      // Store the processed canvas as a drawable image source
+      const processed = new window.Image();
+      processed.src = offscreen.toDataURL("image/png");
+      processed.onload = () => {
+        overlayImgRef.current = processed;
+      };
     };
   }, [selectedItem]);
 
