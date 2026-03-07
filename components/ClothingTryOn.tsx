@@ -88,13 +88,20 @@ export default function ClothingTryOn() {
     setResultImage(null);
 
     try {
-      const garmentUrl = `${window.location.origin}${selectedItem.garmentImage}`;
+      const garmentRes = await fetch(selectedItem.garmentImage);
+      const garmentBlob = await garmentRes.blob();
+      const garmentBase64 = await new Promise<string>((resolve) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result as string);
+        r.readAsDataURL(garmentBlob);
+      });
+
       const res = await fetch("/api/try-on", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           modelImage: userPhoto,
-          garmentImage: garmentUrl,
+          garmentImage: garmentBase64,
         }),
       });
 
