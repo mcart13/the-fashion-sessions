@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {},
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.fashn.ai",
+      },
+    ],
+  },
   async redirects() {
     return [
       {
