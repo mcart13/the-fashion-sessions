@@ -457,28 +457,35 @@ export default function TryOn() {
             <span className="h-px flex-1 bg-[#E6DDD9]" aria-hidden="true" />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="relative aspect-[3/4] overflow-hidden rounded-sm bg-[#F5F3ED] shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
-              <Image
-                src={userPhoto!}
-                alt="Original photo"
-                fill
-                className="object-cover"
-              />
-              <span className="absolute bottom-2 left-2 rounded-sm bg-white/80 px-2 py-1 font-poppins text-[10px] uppercase tracking-wider text-[#282828]/70 backdrop-blur-sm">
-                Before
-              </span>
+          <div className="flex gap-3">
+            {/* Selected items stacked */}
+            <div className="flex w-[90px] shrink-0 flex-col gap-2 sm:w-[110px]">
+              {selectedItems.map((item, i) => (
+                <div
+                  key={item.id}
+                  className="relative aspect-square w-full overflow-hidden rounded-sm bg-[#F5F3ED] shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
+                  style={{ zIndex: selectedItems.length - i }}
+                >
+                  <Image
+                    src={item.thumbnail}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+              <p className="font-poppins text-[10px] uppercase tracking-wider text-[#282828]/40">
+                {selectedItems.length} item{selectedItems.length > 1 ? "s" : ""}
+              </p>
             </div>
-            <div className="relative aspect-[3/4] overflow-hidden rounded-sm bg-[#F5F3ED] shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
+            {/* Result image */}
+            <div className="relative aspect-[3/4] flex-1 overflow-hidden rounded-sm bg-[#F5F3ED] shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={resultImage}
                 alt="Try-on result"
                 className="absolute inset-0 h-full w-full object-cover"
               />
-              <span className="absolute bottom-2 left-2 rounded-sm bg-[#282828]/70 px-2 py-1 font-poppins text-[10px] uppercase tracking-wider text-white backdrop-blur-sm">
-                After
-              </span>
             </div>
           </div>
 
