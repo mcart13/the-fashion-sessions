@@ -66,12 +66,7 @@ export default function AccessoryTryOn() {
         },
       });
       streamRef.current = stream;
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-        setCameraActive(true);
-      }
+      setCameraActive(true);
 
       // Load face detection in the background — camera works even if this fails
       initFaceLandmarker().catch((err) => {
@@ -108,14 +103,21 @@ export default function AccessoryTryOn() {
   useEffect(() => {
     if (!cameraActive) return;
 
+    // Attach stream to video element once it mounts
+    const video = videoRef.current;
+    if (video && streamRef.current && !video.srcObject) {
+      video.srcObject = streamRef.current;
+      video.play().catch(() => {});
+    }
+
     let lastTime = -1;
 
     const renderFrame = () => {
-      const video = videoRef.current;
+      const v = videoRef.current;
       const canvas = canvasRef.current;
       const faceLandmarker = faceLandmarkerRef.current;
 
-      if (!video || !canvas) {
+      if (!v || !canvas) {
         animationRef.current = requestAnimationFrame(renderFrame);
         return;
       }
@@ -126,23 +128,23 @@ export default function AccessoryTryOn() {
         return;
       }
 
-      if (video.videoWidth === 0 || video.videoHeight === 0) {
+      if (v.videoWidth === 0 || v.videoHeight === 0) {
         animationRef.current = requestAnimationFrame(renderFrame);
         return;
       }
 
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      canvas.width = v.videoWidth;
+      canvas.height = v.videoHeight;
 
       ctx.save();
       ctx.scale(-1, 1);
-      ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+      ctx.drawImage(v, -canvas.width, 0, canvas.width, canvas.height);
       ctx.restore();
 
-      if (faceLandmarker && video.currentTime !== lastTime) {
-        lastTime = video.currentTime;
+      if (faceLandmarker && v.currentTime !== lastTime) {
+        lastTime = v.currentTime;
 
-        const results = faceLandmarker.detectForVideo(video, performance.now());
+        const results = faceLandmarker.detectForVideo(v, performance.now());
 
         if (
           results.faceLandmarks &&
