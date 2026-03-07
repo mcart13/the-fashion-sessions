@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import HtmlContent from "@/components/HtmlContent";
@@ -160,6 +161,13 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
               </svg>
               <span>{formatDisplayDate(post.date)}</span>
             </div>
+            {post.modified &&
+              new Date(post.modified).toDateString() !==
+                new Date(post.date).toDateString() && (
+                <div className="flex items-center gap-[11px]">
+                  <span>Updated {formatDisplayDate(post.modified)}</span>
+                </div>
+              )}
             {primaryCategory ? (
               <div className="flex items-center gap-[11px]">
                 <svg
@@ -214,7 +222,34 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
               html={post.contentHtml}
             />
 
-            <div className="mt-12 border-t border-[#B98F67] pt-6">
+            <div className="mt-8 flex items-start gap-5 border-t border-b border-[#E6DDD9] py-6">
+              <Image
+                src="/images/sidebar-tracy.jpg"
+                alt="Tracy Cartwright"
+                width={80}
+                height={100}
+                className="shrink-0 rounded object-cover"
+              />
+              <div>
+                <p className="font-butler text-lg font-extralight text-[#282828]">
+                  Tracy Cartwright
+                </p>
+                <p className="mt-1 font-poppins text-[13px] leading-relaxed text-[#282828]">
+                  Tracy is a fashion and lifestyle blogger helping women feel
+                  confident through personal style. A former CPA turned
+                  full-time content creator, she has been styling and inspiring
+                  women for over 5 years at The Fashion Sessions.
+                </p>
+                <Link
+                  href="/about"
+                  className="mt-2 inline-block font-poppins text-[12px] uppercase tracking-[1px] text-[#BA9D95] transition-colors hover:text-[#282828]"
+                >
+                  More About Tracy
+                </Link>
+              </div>
+            </div>
+
+            <div className="mt-6">
               <Link
                 href={
                   primaryCategory ? getCategoryHref(primaryCategory.slug) : "/"
