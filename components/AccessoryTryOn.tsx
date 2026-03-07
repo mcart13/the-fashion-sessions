@@ -58,8 +58,6 @@ export default function AccessoryTryOn() {
   const startCamera = useCallback(async () => {
     setCameraError(null);
     try {
-      await initFaceLandmarker();
-
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: "user",
@@ -74,6 +72,11 @@ export default function AccessoryTryOn() {
         await videoRef.current.play();
         setCameraActive(true);
       }
+
+      // Load face detection in the background — camera works even if this fails
+      initFaceLandmarker().catch((err) => {
+        console.warn("Face detection unavailable:", err);
+      });
     } catch (err) {
       console.error("Camera error:", err);
       setCameraError(
@@ -112,13 +115,21 @@ export default function AccessoryTryOn() {
       const canvas = canvasRef.current;
       const faceLandmarker = faceLandmarkerRef.current;
 
-      if (!video || !canvas || !faceLandmarker) {
+      if (!video || !canvas) {
         animationRef.current = requestAnimationFrame(renderFrame);
         return;
       }
 
       const ctx = canvas.getContext("2d");
-      if (!ctx) return;
+      if (!ctx) {
+        animationRef.current = requestAnimationFrame(renderFrame);
+        return;
+      }
+
+      if (video.videoWidth === 0 || video.videoHeight === 0) {
+        animationRef.current = requestAnimationFrame(renderFrame);
+        return;
+      }
 
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -128,7 +139,7 @@ export default function AccessoryTryOn() {
       ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
       ctx.restore();
 
-      if (video.currentTime !== lastTime) {
+      if (faceLandmarker && video.currentTime !== lastTime) {
         lastTime = video.currentTime;
 
         const results = faceLandmarker.detectForVideo(video, performance.now());
