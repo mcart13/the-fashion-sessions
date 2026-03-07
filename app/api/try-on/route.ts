@@ -63,6 +63,7 @@ export async function POST(request: Request) {
       category: category || "auto",
       garment_photo_type: garmentPhotoType || "auto",
       mode: "quality",
+      moderation_level: "none",
     };
     const response = await client.predictions.subscribe({
       model_name: "tryon-v1.6",
