@@ -21,7 +21,7 @@ export interface TryOnItem {
 export const tryOnItems: TryOnItem[] = [
   {
     id: "acc-sunglasses-1",
-    name: "Classic Aviators",
+    name: "Oversized Black Sunnies",
     thumbnail: "/images/try-on/sunglasses-1-thumb.png",
     type: "accessory",
     category: "sunglasses",
@@ -30,7 +30,7 @@ export const tryOnItems: TryOnItem[] = [
   },
   {
     id: "acc-sunglasses-2",
-    name: "Oversized Frames",
+    name: "Tortoise Shell Frames",
     thumbnail: "/images/try-on/sunglasses-2-thumb.png",
     type: "accessory",
     category: "sunglasses",
@@ -39,7 +39,7 @@ export const tryOnItems: TryOnItem[] = [
   },
   {
     id: "acc-hat-1",
-    name: "Wide Brim Hat",
+    name: "Straw Wide Brim Hat",
     thumbnail: "/images/try-on/hat-1-thumb.png",
     type: "accessory",
     category: "hats",
