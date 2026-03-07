@@ -243,11 +243,11 @@ export default function ClothingTryOn() {
               </span>
             </div>
             <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[2px] bg-[#F5F3ED] sm:w-1/2">
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={resultImage}
                 alt="Try-on result"
-                fill
-                className="object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
               />
               <span className="absolute bottom-2 left-2 rounded bg-black/50 px-2 py-1 font-poppins text-[10px] text-white">
                 Try-On
