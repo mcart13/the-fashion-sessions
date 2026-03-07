@@ -1,11 +1,20 @@
+import dynamic from "next/dynamic";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
-import TryOnTabs from "@/components/TryOnTabs";
 import { buildMetadata } from "@/lib/metadata";
+
+const TryOn = dynamic(() => import("@/components/TryOn"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-40 items-center justify-center">
+      <p className="font-poppins text-[13px] text-[#282828]/50">Loading…</p>
+    </div>
+  ),
+});
 
 export const metadata = buildMetadata({
   title: "Virtual Try-On",
   description:
-    "Try on Tracy's curated accessories with your camera or see how clothing looks on you with AI-powered virtual try-on.",
+    "Try on Tracy's curated clothing and accessories with AI-powered virtual try-on. Upload your photo and see how a full look works on you.",
   path: "/try-on",
 });
 
@@ -24,15 +33,15 @@ export default function TryOnPage() {
             Virtual Try-On
           </h1>
           <p className="mx-auto mt-5 max-w-[480px] font-poppins text-[15px] leading-[1.8] text-[#282828]/70">
-            Try on accessories using your camera, or upload a photo to see how
-            an outfit looks on you.
+            Pick clothing and accessories, upload your photo, and see how the
+            look works on you — powered by AI.
           </p>
         </AnimateOnScroll>
       </section>
 
       <section className="bg-white px-6 py-14">
         <div className="mx-auto max-w-[780px]">
-          <TryOnTabs />
+          <TryOn />
         </div>
       </section>
     </>

@@ -24,6 +24,8 @@ export default function HomeHero() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const interval = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % heroSlides.length);
     }, AUTOPLAY_MS);
@@ -48,7 +50,7 @@ export default function HomeHero() {
                 {heroSlides.map((slide, index) => (
                   <div
                     key={slide.src}
-                    className={`absolute inset-0 transition-opacity duration-1000 ${
+                    className={`absolute inset-0 transition-opacity duration-700 ${
                       index === activeIndex ? "opacity-100" : "opacity-0"
                     }`}
                     aria-hidden={index !== activeIndex}
@@ -71,7 +73,7 @@ export default function HomeHero() {
               mobileAnimation="fadeInUp"
               className="relative z-[2] ml-auto mt-[-54px] w-[92%] max-w-[560px] px-5 py-8 text-center shadow-[0_8px_30px_rgba(0,0,0,0.02)] sm:w-[88%] sm:px-9 sm:py-10 md:absolute md:right-[3.8%] md:top-1/2 md:mt-0 md:w-[49%] md:-translate-y-1/2 md:px-12 md:py-[46px]"
             >
-              <div className="absolute inset-0 bg-white/95 opacity-70" />
+              <div className="absolute inset-0 bg-white/70" />
               <div className="relative">
                 <h1 className="font-butler text-[clamp(2.2rem,1.5482rem+1.3598vw,2.5rem)] font-extralight leading-[1.3] text-[#282828] md:leading-[1.3]">
                   WELCOME TO
@@ -84,7 +86,7 @@ export default function HomeHero() {
                 </p>
                 <Link
                   href="/about"
-                  className="mt-10 inline-flex min-w-[136px] items-center justify-center bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[14px] font-extralight leading-[1] text-[#282828] transition-colors hover:bg-tan"
+                  className="mt-10 inline-flex min-w-[136px] items-center justify-center bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[14px] font-extralight leading-[1] text-[#282828] transition-[background-color,transform] hover:bg-tan active:scale-[0.97]"
                 >
                   Learn More
                 </Link>

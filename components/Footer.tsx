@@ -82,7 +82,7 @@ export default function Footer() {
                         ? "noopener noreferrer"
                         : undefined
                     }
-                    className="font-poppins text-[15px] text-[#E6DDD9] transition-colors hover:text-[#BA9D95]"
+                    className="font-poppins text-[15px] text-[#E6DDD9] transition-colors hover:text-footer-hover"
                   >
                     {link.label}
                   </Link>
@@ -105,7 +105,8 @@ export default function Footer() {
         {/* Copyright */}
         <div className="mt-8 flex flex-col items-center justify-between gap-4 md:flex-row">
           <p className="font-poppins text-[9px] uppercase tracking-[2px] text-white">
-            Copyright &copy; 2026 &middot; The Fashion Sessions
+            Copyright &copy; {new Date().getFullYear()} &middot; The Fashion
+            Sessions
           </p>
           <div className="flex items-center gap-0 md:gap-[10px]">
             {SOCIAL_LINKS.map((social) => (
@@ -115,7 +116,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.name}
-                className="flex h-[44px] w-[44px] items-center justify-center text-[#E6DDD9] transition-colors hover:text-[#BA9D95] md:h-auto md:w-auto"
+                className="flex h-[44px] w-[44px] items-center justify-center text-[#E6DDD9] transition-colors hover:text-footer-hover md:h-auto md:w-auto"
               >
                 <SocialIcon name={social.name} className="w-[14px] h-[14px]" />
               </Link>

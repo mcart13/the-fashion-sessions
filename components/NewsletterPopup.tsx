@@ -10,6 +10,14 @@ interface NewsletterPopupProps {
 
 export default function NewsletterPopup({ formId }: NewsletterPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    setReducedMotion(
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    );
+  }, []);
 
   useEffect(() => {
     const alreadyShown = sessionStorage.getItem("newsletter-popup-shown");
@@ -18,30 +26,53 @@ export default function NewsletterPopup({ formId }: NewsletterPopupProps) {
     const timer = setTimeout(() => {
       setIsOpen(true);
       sessionStorage.setItem("newsletter-popup-shown", "true");
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsAnimating(true);
+        });
+      });
     }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
 
+  const handleClose = () => {
+    if (reducedMotion) {
+      setIsOpen(false);
+      setIsAnimating(false);
+      return;
+    }
+    setIsAnimating(false);
+    setTimeout(() => setIsOpen(false), 200);
+  };
+
   if (!isOpen) return null;
+
+  const showState = reducedMotion || isAnimating;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      onClick={() => setIsOpen(false)}
+      className="fixed inset-0 z-popup flex items-center justify-center p-4"
+      onClick={handleClose}
     >
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/50" />
+      <div
+        className={`absolute inset-0 bg-black/50 transition-opacity duration-200 ease-out ${
+          showState ? "opacity-100" : "opacity-0"
+        }`}
+      />
 
       {/* Modal */}
       <div
-        className="relative bg-white max-w-[800px] w-full flex flex-col overflow-hidden max-h-[90vh] md:flex-row"
+        className={`relative bg-white max-w-[800px] w-full flex flex-col overflow-hidden max-h-[90vh] md:flex-row transition-[opacity,transform] duration-200 ease-out ${
+          showState ? "opacity-100 scale-100" : "opacity-0 scale-95"
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
-          onClick={() => setIsOpen(false)}
-          className="absolute top-2 right-2 z-10 w-11 h-11 flex items-center justify-center text-gray-500 hover:text-gray-800 transition-colors"
+          onClick={handleClose}
+          className="absolute top-2 right-2 z-10 w-11 h-11 flex items-center justify-center rounded-full text-gray-500 transition-colors hover:text-gray-800 hover:bg-gray-100"
           aria-label="Close"
         >
           <svg

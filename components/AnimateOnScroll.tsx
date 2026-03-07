@@ -26,22 +26,37 @@ const animationStyles: Record<Animation, { from: string; to: string }> = {
     to: "opacity-100",
   },
   fadeInUp: {
-    from: "opacity-0 translate-y-[50px]",
+    from: "opacity-0 translate-y-6",
     to: "opacity-100 translate-y-0",
   },
   fadeInDown: {
-    from: "opacity-0 -translate-y-[50px]",
+    from: "opacity-0 -translate-y-6",
     to: "opacity-100 translate-y-0",
   },
   fadeInLeft: {
-    from: "opacity-0 -translate-x-[50px]",
+    from: "opacity-0 -translate-x-6",
     to: "opacity-100 translate-x-0",
   },
   fadeInRight: {
-    from: "opacity-0 translate-x-[50px]",
+    from: "opacity-0 translate-x-6",
     to: "opacity-100 translate-x-0",
   },
 };
+
+function useReducedMotion() {
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mql.matches);
+
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  return reducedMotion;
+}
 
 export default function AnimateOnScroll({
   animation,
@@ -51,12 +66,12 @@ export default function AnimateOnScroll({
   delay = 0,
 }: AnimateOnScrollProps) {
   const timeoutRef = useRef<number | null>(null);
-  const { isVisible: isInView, ref } = useIntersectionVisibility<HTMLDivElement>(
-    {
+  const reducedMotion = useReducedMotion();
+  const { isVisible: isInView, ref } =
+    useIntersectionVisibility<HTMLDivElement>({
       once: true,
       threshold: 0.15,
-    },
-  );
+    });
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -66,6 +81,11 @@ export default function AnimateOnScroll({
 
   useEffect(() => {
     if (!isInView) return;
+
+    if (reducedMotion) {
+      setIsVisible(true);
+      return;
+    }
 
     if (delay > 0) {
       timeoutRef.current = window.setTimeout(() => {
@@ -81,16 +101,24 @@ export default function AnimateOnScroll({
         window.clearTimeout(timeoutRef.current);
       }
     };
-  }, [delay, isInView]);
+  }, [delay, isInView, reducedMotion]);
 
   const activeAnimation =
     isMobile && mobileAnimation ? mobileAnimation : animation;
   const styles = animationStyles[activeAnimation];
 
+  if (reducedMotion) {
+    return (
+      <div ref={ref} className={`${styles.to} ${className}`}>
+        {children}
+      </div>
+    );
+  }
+
   return (
     <div
       ref={ref}
-      className={`transition-[opacity,transform] duration-1000 ease-out ${
+      className={`transition-[opacity,transform] duration-500 ease-out ${
         isVisible ? styles.to : styles.from
       } ${className}`}
     >

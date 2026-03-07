@@ -15,7 +15,7 @@ export default function Pagination({
 
   return (
     <nav
-      className="flex items-center justify-center gap-1 py-8"
+      className="flex items-center justify-center gap-2 py-8 sm:gap-3"
       aria-label="Pagination"
     >
       {Array.from({ length: pageCount }).map((_, index) => {

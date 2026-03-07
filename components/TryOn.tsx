@@ -2,15 +2,15 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { getClothingItems, type TryOnItem } from "@/data/try-on-items";
+import { tryOnItems, type TryOnItem } from "@/data/try-on-items";
 
 const MAX_IMAGE_DIMENSION = 1024;
 
 const LOADING_MESSAGES = [
-  "Analyzing your photo…",
-  "Preparing the garment…",
-  "Generating your look…",
-  "Almost there…",
+  "Analyzing your photo\u2026",
+  "Styling your look\u2026",
+  "Generating your image\u2026",
+  "Almost there\u2026",
 ];
 
 function resizeImage(dataUrl: string): Promise<string> {
@@ -75,9 +75,11 @@ function DownloadIcon() {
   );
 }
 
-export default function ClothingTryOn() {
-  const clothingItems = getClothingItems();
-  const [selectedItem, setSelectedItem] = useState<TryOnItem | null>(null);
+const clothingItems = tryOnItems.filter((i) => i.type === "clothing");
+const accessoryItems = tryOnItems.filter((i) => i.type === "accessory");
+
+export default function TryOn() {
+  const [selectedItems, setSelectedItems] = useState<TryOnItem[]>([]);
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -86,7 +88,6 @@ export default function ClothingTryOn() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
-  // Cycle through loading messages
   useEffect(() => {
     if (!loading) {
       setLoadingMsgIndex(0);
@@ -100,12 +101,20 @@ export default function ClothingTryOn() {
     return () => clearInterval(interval);
   }, [loading]);
 
-  // Scroll to result when it appears
   useEffect(() => {
     if (resultImage && resultRef.current) {
       resultRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [resultImage]);
+
+  const toggleItem = useCallback((item: TryOnItem) => {
+    setResultImage(null);
+    setSelectedItems((prev) => {
+      const exists = prev.find((i) => i.id === item.id);
+      if (exists) return prev.filter((i) => i.id !== item.id);
+      return [...prev, item];
+    });
+  }, []);
 
   const handlePhotoUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,28 +143,30 @@ export default function ClothingTryOn() {
   );
 
   const handleTryOn = useCallback(async () => {
-    if (!userPhoto || !selectedItem?.garmentImage) return;
+    if (!userPhoto || selectedItems.length === 0) return;
 
     setLoading(true);
     setError(null);
     setResultImage(null);
 
     try {
-      const garmentRes = await fetch(selectedItem.garmentImage);
-      const garmentBlob = await garmentRes.blob();
-      const garmentBase64 = await new Promise<string>((resolve) => {
-        const r = new FileReader();
-        r.onload = () => resolve(r.result as string);
-        r.readAsDataURL(garmentBlob);
-      });
+      // Fetch each selected item's image and convert to base64
+      const itemImages: string[] = [];
+      for (const item of selectedItems) {
+        const res = await fetch(item.image);
+        const blob = await res.blob();
+        const base64 = await new Promise<string>((resolve) => {
+          const r = new FileReader();
+          r.onload = () => resolve(r.result as string);
+          r.readAsDataURL(blob);
+        });
+        itemImages.push(base64);
+      }
 
       const res = await fetch("/api/try-on", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          modelImage: userPhoto,
-          garmentImage: garmentBase64,
-        }),
+        body: JSON.stringify({ modelImage: userPhoto, itemImages }),
       });
 
       const data = await res.json();
@@ -170,43 +181,47 @@ export default function ClothingTryOn() {
     } finally {
       setLoading(false);
     }
-  }, [userPhoto, selectedItem]);
+  }, [userPhoto, selectedItems]);
 
   const handleDownload = useCallback(() => {
     if (!resultImage) return;
     const link = document.createElement("a");
     link.href = resultImage;
-    link.download = `tryon-${selectedItem?.id || "result"}.png`;
+    link.download = "tryon-result.png";
     link.click();
-  }, [resultImage, selectedItem]);
+  }, [resultImage]);
+
+  const isSelected = (id: string) => selectedItems.some((i) => i.id === id);
 
   return (
     <div className="space-y-10">
-      {/* Step 1: Garment picker */}
+      {/* Step 1: Pick items */}
       <div>
         <div className="mb-4 flex items-center gap-3">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#BA9D95] font-poppins text-[11px] font-medium text-white">
             1
           </span>
           <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-[#282828]">
-            Pick a garment
+            Build your look
           </p>
         </div>
-        <div className="grid grid-cols-3 gap-3">
+
+        {/* Clothing */}
+        <p className="mb-2 font-poppins text-[11px] uppercase tracking-[1px] text-[#282828]/50">
+          Clothing
+        </p>
+        <div className="mb-6 grid grid-cols-3 gap-3">
           {clothingItems.map((item) => (
             <button
               key={item.id}
               type="button"
-              onClick={() => {
-                setSelectedItem(item);
-                setResultImage(null);
-              }}
+              onClick={() => toggleItem(item)}
               className="group overflow-hidden rounded-sm [touch-action:manipulation]"
               style={{ minHeight: 44 }}
             >
               <div
                 className={`relative aspect-[3/4] w-full overflow-hidden bg-[#F5F3ED] transition-shadow duration-200 ease-out ${
-                  selectedItem?.id === item.id
+                  isSelected(item.id)
                     ? "shadow-[0_0_0_2px_#BA9D95]"
                     : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
                 }`}
@@ -217,8 +232,7 @@ export default function ClothingTryOn() {
                   fill
                   className="object-cover"
                 />
-                {/* Selected checkmark */}
-                {selectedItem?.id === item.id && (
+                {isSelected(item.id) && (
                   <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#BA9D95] text-white">
                     <svg
                       width="12"
@@ -238,9 +252,7 @@ export default function ClothingTryOn() {
               </div>
               <p
                 className={`px-1 py-2 font-poppins text-[11px] leading-tight transition-color duration-150 ${
-                  selectedItem?.id === item.id
-                    ? "text-[#282828]"
-                    : "text-[#282828]/60"
+                  isSelected(item.id) ? "text-[#282828]" : "text-[#282828]/60"
                 }`}
               >
                 {item.name}
@@ -248,6 +260,68 @@ export default function ClothingTryOn() {
             </button>
           ))}
         </div>
+
+        {/* Accessories */}
+        <p className="mb-2 font-poppins text-[11px] uppercase tracking-[1px] text-[#282828]/50">
+          Accessories
+        </p>
+        <div className="flex gap-3 overflow-x-auto pb-2">
+          {accessoryItems.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => toggleItem(item)}
+              className="group shrink-0 [touch-action:manipulation]"
+              style={{ minHeight: 44 }}
+            >
+              <div
+                className={`relative h-[80px] w-[80px] overflow-hidden bg-[#F5F3ED] transition-shadow duration-200 ease-out sm:h-[100px] sm:w-[100px] ${
+                  isSelected(item.id)
+                    ? "shadow-[0_0_0_2px_#BA9D95]"
+                    : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
+                }`}
+              >
+                <Image
+                  src={item.thumbnail}
+                  alt={item.name}
+                  fill
+                  className="object-cover"
+                />
+                {isSelected(item.id) && (
+                  <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#BA9D95] text-white">
+                    <svg
+                      width="10"
+                      height="10"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                )}
+              </div>
+              <p
+                className={`px-1 py-1.5 font-poppins text-[11px] transition-color duration-150 ${
+                  isSelected(item.id) ? "text-[#282828]" : "text-[#282828]/60"
+                }`}
+              >
+                {item.name}
+              </p>
+            </button>
+          ))}
+        </div>
+
+        {selectedItems.length > 0 && (
+          <p className="mt-3 font-poppins text-[12px] text-[#BA9D95]">
+            {selectedItems.length} item{selectedItems.length > 1 ? "s" : ""}{" "}
+            selected
+          </p>
+        )}
       </div>
 
       {/* Step 2: Photo upload */}
@@ -314,11 +388,11 @@ export default function ClothingTryOn() {
         <button
           type="button"
           onClick={handleTryOn}
-          disabled={!userPhoto || !selectedItem || loading}
+          disabled={!userPhoto || selectedItems.length === 0 || loading}
           className="inline-flex items-center gap-2 bg-[#282828] px-8 py-4 font-poppins text-[12px] uppercase tracking-[1.2px] text-white transition-[opacity,transform] duration-150 ease-out [touch-action:manipulation] hover:opacity-90 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30"
           style={{ minHeight: 48 }}
         >
-          {loading ? "Generating…" : "Try It On"}
+          {loading ? "Generating\u2026" : "Try It On"}
         </button>
       </div>
 

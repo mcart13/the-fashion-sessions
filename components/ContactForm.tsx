@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, KeyboardEvent, useState } from "react";
 
 export default function ContactForm() {
   const [error, setError] = useState<string | null>(null);
@@ -81,6 +81,17 @@ export default function ContactForm() {
     }
   };
 
+  const handleTextareaKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+      e.preventDefault();
+      const form = e.currentTarget.closest("form");
+      if (form) form.requestSubmit();
+    }
+  };
+
+  const inputClass =
+    "w-full border border-[#ddd] bg-[#fafafa] px-4 py-3 font-poppins text-base text-text-dark outline-none transition-colors focus:border-accent-gold focus:outline-2 focus:outline-[#282828]";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <input
@@ -99,7 +110,8 @@ export default function ContactForm() {
           type="text"
           name="name"
           required
-          className="w-full border border-[#ddd] bg-[#fafafa] px-4 py-3 font-poppins text-sm text-text-dark outline-none focus:border-accent-gold"
+          aria-invalid={error !== null ? true : undefined}
+          className={inputClass}
         />
       </div>
       <div>
@@ -110,18 +122,15 @@ export default function ContactForm() {
           type="email"
           name="email"
           required
-          className="w-full border border-[#ddd] bg-[#fafafa] px-4 py-3 font-poppins text-sm text-text-dark outline-none focus:border-accent-gold"
+          aria-invalid={error !== null ? true : undefined}
+          className={inputClass}
         />
       </div>
       <div>
         <label className="mb-2 block font-poppins text-[11px] uppercase tracking-[1px] text-black">
           What are you inquiring about?
         </label>
-        <input
-          type="text"
-          name="subject"
-          className="w-full border border-[#ddd] bg-[#fafafa] px-4 py-3 font-poppins text-sm text-text-dark outline-none focus:border-accent-gold"
-        />
+        <input type="text" name="subject" className={inputClass} />
       </div>
       <div>
         <label className="mb-2 block font-poppins text-[11px] uppercase tracking-[1px] text-black">
@@ -130,25 +139,28 @@ export default function ContactForm() {
         <textarea
           name="message"
           rows={6}
-          className="w-full resize-vertical border border-[#ddd] bg-[#fafafa] px-4 py-3 font-poppins text-sm text-text-dark outline-none focus:border-accent-gold"
+          onKeyDown={handleTextareaKeyDown}
+          className={`${inputClass} resize-vertical`}
         />
       </div>
       <button
         type="submit"
         disabled={isSubmitting}
-        className="bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] tracking-[0.9px] text-[#282828] transition-colors hover:bg-tan"
+        className="bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] tracking-[0.9px] text-[#282828] transition-[background-color,transform] hover:bg-tan active:scale-[0.97]"
       >
         {isSubmitting ? "Sending..." : "Submit"}
       </button>
 
       <div aria-live="polite" className="min-h-[24px]">
         {submitted ? (
-          <p className="font-poppins text-sm text-[#2d6a4f]">
+          <p className="font-poppins text-sm text-[#2d6a4f] transition-opacity duration-200 ease-out">
             Thanks. Your message is on its way.
           </p>
         ) : null}
         {error ? (
-          <p className="font-poppins text-sm text-[#b91c1c]">{error}</p>
+          <p className="font-poppins text-sm text-[#b91c1c] transition-opacity duration-200 ease-out">
+            {error}
+          </p>
         ) : null}
       </div>
     </form>

@@ -83,6 +83,13 @@ h4,
 h5,
 h6 {
   color: #282828;
+  text-wrap: balance;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px;
 }
 
 .shopthepost-widget,
@@ -100,10 +107,17 @@ h6 {
 
 /* Elementor hover-float animation */
 .hover-float {
-  transition: transform 0.35s ease;
+  transition: transform 300ms ease-out;
 }
-.hover-float:hover {
-  transform: translateY(-8px);
+@media (hover: hover) and (pointer: fine) {
+  .hover-float:hover {
+    transform: translateY(-8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hover-float {
+    transition: none;
+  }
 }
 
 .wordpress-content {

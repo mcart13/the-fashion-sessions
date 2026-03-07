@@ -52,14 +52,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const { modelImage, garmentImage } = body as {
+  const { modelImage, itemImages } = body as {
     modelImage?: string;
-    garmentImage?: string;
+    itemImages?: string[];
   };
 
-  if (!modelImage || !garmentImage) {
+  if (!modelImage || !itemImages || itemImages.length === 0) {
     return NextResponse.json(
-      { error: "Both a photo and a garment selection are required." },
+      { error: "A photo and at least one item are required." },
       { status: 400 },
     );
   }
@@ -68,22 +68,36 @@ export async function POST(request: Request) {
     const ai = new GoogleGenAI({ apiKey });
 
     const person = stripDataUrlPrefix(modelImage);
-    const garment = stripDataUrlPrefix(garmentImage);
+
+    // Build image parts: person photo first, then each selected item
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const imageParts: any[] = [
+      { inlineData: { data: person.data, mimeType: person.mimeType } },
+    ];
+
+    for (const img of itemImages) {
+      const item = stripDataUrlPrefix(img);
+      imageParts.push({
+        inlineData: { data: item.data, mimeType: item.mimeType },
+      });
+    }
+
+    // Build a prompt that references each item image by number
+    const itemCount = itemImages.length;
+    let itemRef: string;
+    if (itemCount === 1) {
+      itemRef = "the item shown in image 2";
+    } else {
+      const refs = itemImages.map((_, i) => `image ${i + 2}`);
+      itemRef = `the items shown in ${refs.join(" and ")}`;
+    }
+
+    const prompt = `Generate a photorealistic image of the person in image 1 wearing ${itemRef}. Preserve the person's face, body shape, skin tone, and hair exactly as they are. Each item should fit naturally with realistic draping, shadows, and lighting that matches the original photo. Keep the same pose and background from image 1. Do not add any text or watermarks.`;
 
     const contents = [
       {
         role: "user" as const,
-        parts: [
-          {
-            inlineData: { data: person.data, mimeType: person.mimeType },
-          },
-          {
-            inlineData: { data: garment.data, mimeType: garment.mimeType },
-          },
-          {
-            text: "Generate a photorealistic image of the person in the first image wearing the clothing from the second image. Preserve the person's face, body shape, skin tone, and hair exactly as they are. The clothing should fit naturally on the person's body with realistic draping, shadows, and lighting that matches the original photo. Keep the same pose and background from the first image. Do not add any text or watermarks.",
-          },
-        ],
+        parts: [...imageParts, { text: prompt }],
       },
     ];
 
@@ -122,7 +136,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-      { error: "No image was generated. Try a different photo or garment." },
+      { error: "No image was generated. Try a different photo or item." },
       { status: 500 },
     );
   } catch (error) {

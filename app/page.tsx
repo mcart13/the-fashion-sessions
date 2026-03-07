@@ -162,7 +162,7 @@ export default function HomePage({ searchParams }: HomePageProps) {
               </p>
               <Link
                 href="/about"
-                className="mt-8 inline-block bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] tracking-[0.9px] text-[#282828] transition-colors hover:bg-tan"
+                className="mt-8 inline-block bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] tracking-[0.9px] text-[#282828] transition-[background-color,transform] hover:bg-tan active:scale-[0.97]"
               >
                 READ MY STORY
               </Link>

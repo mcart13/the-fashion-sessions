@@ -65,7 +65,7 @@ export default function PostTeaser({
 
         <Link
           href={getPostHref(post)}
-          className="mt-[15px] inline-flex w-fit items-center gap-3 bg-tan px-[30px] py-[10px] font-poppins text-[12px] font-light text-[#282828] transition-colors hover:bg-[#d4cbc7]"
+          className="mt-[15px] inline-flex w-fit items-center gap-3 bg-tan px-[30px] py-[10px] font-poppins text-[12px] font-light text-[#282828] transition-[background-color,transform] hover:bg-[#d4cbc7] active:scale-[0.97]"
         >
           Continue Reading
           <svg
