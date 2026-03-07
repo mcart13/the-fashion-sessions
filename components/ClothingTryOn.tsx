@@ -4,8 +4,6 @@ import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import { getClothingItems, type TryOnItem } from "@/data/try-on-items";
 
-const SESSION_KEY = "tryon-clothing-count";
-const SESSION_LIMIT = 5;
 const MAX_IMAGE_DIMENSION = 1024;
 
 function resizeImage(dataUrl: string): Promise<string> {
@@ -27,15 +25,6 @@ function resizeImage(dataUrl: string): Promise<string> {
     };
     img.src = dataUrl;
   });
-}
-
-function getSessionCount(): number {
-  if (typeof window === "undefined") return 0;
-  return Number(sessionStorage.getItem(SESSION_KEY) || "0");
-}
-
-function incrementSessionCount(): void {
-  sessionStorage.setItem(SESSION_KEY, String(getSessionCount() + 1));
 }
 
 export default function ClothingTryOn() {
@@ -76,13 +65,6 @@ export default function ClothingTryOn() {
   const handleTryOn = useCallback(async () => {
     if (!userPhoto || !selectedItem?.garmentImage) return;
 
-    if (getSessionCount() >= SESSION_LIMIT) {
-      setError(
-        "You've used all your try-ons for this session. Refresh the page to continue browsing!",
-      );
-      return;
-    }
-
     setLoading(true);
     setError(null);
     setResultImage(null);
@@ -113,7 +95,6 @@ export default function ClothingTryOn() {
         return;
       }
 
-      incrementSessionCount();
       setResultImage(data.output);
     } catch {
       setError("Network error. Please try again.");
