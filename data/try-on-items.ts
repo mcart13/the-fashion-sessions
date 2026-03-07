@@ -5,6 +5,8 @@ export interface TryOnItem {
   thumbnail: string;
   image: string;
   type: "clothing" | "accessory";
+  /** LTK affiliate link. When provided, item becomes shoppable in results. */
+  url?: string;
 }
 
 export const tryOnItems: TryOnItem[] = [

@@ -489,15 +489,69 @@ export default function TryOn() {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleDownload}
-            className="inline-flex items-center gap-2 bg-[#EADFD2] px-6 py-3 font-poppins text-[12px] uppercase tracking-[0.9px] text-[#282828] transition-[background-color,transform] duration-150 ease-out [touch-action:manipulation] hover:bg-[#E6DDD9] active:scale-[0.97]"
-            style={{ minHeight: 44 }}
-          >
-            <DownloadIcon />
-            Save Image
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleDownload}
+              className="inline-flex items-center gap-2 bg-[#EADFD2] px-6 py-3 font-poppins text-[12px] uppercase tracking-[0.9px] text-[#282828] transition-[background-color,transform] duration-150 ease-out [touch-action:manipulation] hover:bg-[#E6DDD9] active:scale-[0.97]"
+              style={{ minHeight: 44 }}
+            >
+              <DownloadIcon />
+              Save Image
+            </button>
+          </div>
+
+          {/* Shop This Look */}
+          <div>
+            <p className="mb-3 font-poppins text-[11px] uppercase tracking-[1px] text-[#282828]/50">
+              Shop this look
+            </p>
+            <div className="flex flex-col gap-2">
+              {selectedItems.map((item) => {
+                const hasLink = !!item.url;
+                const Wrapper = hasLink ? "a" : "div";
+                const linkProps = hasLink
+                  ? {
+                      href: item.url!,
+                      target: "_blank" as const,
+                      rel: "noopener noreferrer",
+                    }
+                  : {};
+                return (
+                  <Wrapper
+                    key={item.id}
+                    {...linkProps}
+                    className={`flex items-center gap-3 rounded-sm border border-[#E6DDD9] px-3 py-2.5 transition-[border-color,background-color] duration-150 ${
+                      hasLink
+                        ? "cursor-pointer hover:border-[#BA9D95] hover:bg-[#FAFAF7]"
+                        : ""
+                    }`}
+                  >
+                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-[#F5F3ED]">
+                      <Image
+                        src={item.thumbnail}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <span className="flex-1 font-poppins text-[12px] text-[#282828]">
+                      {item.name}
+                    </span>
+                    {hasLink ? (
+                      <span className="font-poppins text-[11px] uppercase tracking-[0.8px] text-[#BA9D95]">
+                        Shop
+                      </span>
+                    ) : (
+                      <span className="font-poppins text-[10px] uppercase tracking-[0.8px] text-[#282828]/30">
+                        Coming soon
+                      </span>
+                    )}
+                  </Wrapper>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
     </div>
