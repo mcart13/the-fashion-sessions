@@ -16,6 +16,7 @@ export default function AccessoryTryOn() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayImgRef = useRef<HTMLImageElement | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const faceLandmarkerRef = useRef<any>(null);
   const animationRef = useRef<number>(0);
   const streamRef = useRef<MediaStream | null>(null);
