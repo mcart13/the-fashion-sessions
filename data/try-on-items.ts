@@ -14,6 +14,8 @@ export interface TryOnItem {
   overlayImage?: string;
   anchor?: TryOnAccessoryAnchor;
   garmentImage?: string;
+  fashnCategory?: "tops" | "bottoms" | "one-pieces";
+  fashnPhotoType?: "flat-lay" | "model";
 }
 
 export const tryOnItems: TryOnItem[] = [
@@ -51,6 +53,8 @@ export const tryOnItems: TryOnItem[] = [
     type: "clothing",
     category: "tops",
     garmentImage: "/images/try-on/sweatshirt-garment.jpg",
+    fashnCategory: "tops",
+    fashnPhotoType: "flat-lay",
   },
   {
     id: "cloth-shirt-1",
@@ -59,6 +63,8 @@ export const tryOnItems: TryOnItem[] = [
     type: "clothing",
     category: "tops",
     garmentImage: "/images/try-on/chambray-shirt-garment.jpg",
+    fashnCategory: "tops",
+    fashnPhotoType: "flat-lay",
   },
   {
     id: "cloth-dress-1",
@@ -67,6 +73,8 @@ export const tryOnItems: TryOnItem[] = [
     type: "clothing",
     category: "dresses",
     garmentImage: "/images/try-on/red-dress-garment.jpg",
+    fashnCategory: "one-pieces",
+    fashnPhotoType: "model",
   },
 ];
 

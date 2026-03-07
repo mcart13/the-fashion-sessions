@@ -41,9 +41,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const { modelImage, garmentImage } = body as {
+  const { modelImage, garmentImage, category, garmentPhotoType } = body as {
     modelImage?: string;
     garmentImage?: string;
+    category?: string;
+    garmentPhotoType?: string;
   };
 
   if (!modelImage || !garmentImage) {
@@ -55,12 +57,17 @@ export async function POST(request: Request) {
 
   try {
     const client = new Fashn({ apiKey });
+    const inputs: Record<string, unknown> = {
+      model_image: modelImage,
+      garment_image: garmentImage,
+      category: category || "auto",
+      garment_photo_type: garmentPhotoType || "auto",
+      mode: "quality",
+    };
     const response = await client.predictions.subscribe({
       model_name: "tryon-v1.6",
-      inputs: {
-        model_image: modelImage,
-        garment_image: garmentImage,
-      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      inputs: inputs as any,
     });
 
     if (response.status !== "completed") {

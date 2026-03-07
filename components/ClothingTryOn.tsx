@@ -102,6 +102,8 @@ export default function ClothingTryOn() {
         body: JSON.stringify({
           modelImage: userPhoto,
           garmentImage: garmentBase64,
+          category: selectedItem.fashnCategory,
+          garmentPhotoType: selectedItem.fashnPhotoType,
         }),
       });
 
