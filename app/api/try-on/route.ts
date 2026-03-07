@@ -52,12 +52,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const { modelImage, itemImages } = body as {
+  interface ItemPayload {
+    image: string;
+    name: string;
+    description: string;
+    type: "clothing" | "accessory";
+  }
+
+  const { modelImage, items } = body as {
     modelImage?: string;
-    itemImages?: string[];
+    items?: ItemPayload[];
   };
 
-  if (!modelImage || !itemImages || itemImages.length === 0) {
+  if (!modelImage || !items || items.length === 0) {
     return NextResponse.json(
       { error: "A photo and at least one item are required." },
       { status: 400 },
@@ -69,36 +76,55 @@ export async function POST(request: Request) {
 
     const person = stripDataUrlPrefix(modelImage);
 
-    // Build image parts: person photo first, then each selected item
+    // Turn 1: Establish the customer's identity with their photo ONLY.
+    // This anchors the person before any garment images with other models appear.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const imageParts: any[] = [
-      { inlineData: { data: person.data, mimeType: person.mimeType } },
+    const turn1Parts: any[] = [
+      {
+        text: "This is my photo. I am the customer. Memorize my face, skin tone, hair color, hair style, body shape, and proportions exactly. In the next message I will ask you to dress me in specific items.",
+      },
+      {
+        inlineData: { data: person.data, mimeType: person.mimeType },
+      },
     ];
 
-    for (const img of itemImages) {
-      const item = stripDataUrlPrefix(img);
-      imageParts.push({
-        inlineData: { data: item.data, mimeType: item.mimeType },
+    // Turn 2 (prefilled model response): Confirms identity lock before garments enter context.
+    const turn2Parts = [
+      {
+        text: "I've carefully studied your photo and locked in your exact appearance: your face, skin tone, hair, and body shape. Send me the items and I'll generate you wearing them.",
+      },
+    ];
+
+    // Turn 3: Each item image is individually labeled inline with its description.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const turn3Parts: any[] = [];
+    for (const item of items) {
+      const parsed = stripDataUrlPrefix(item.image);
+      const typeLabel =
+        item.type === "clothing" ? "CLOTHING ITEM" : "ACCESSORY";
+      turn3Parts.push({
+        text: `[${typeLabel}: "${item.name}" — ${item.description}. IGNORE any person/model in this image, extract ONLY the garment/accessory.]`,
+      });
+      turn3Parts.push({
+        inlineData: { data: parsed.data, mimeType: parsed.mimeType },
       });
     }
 
-    // Build a prompt that references each item image by number
-    const itemCount = itemImages.length;
-    let itemRef: string;
-    if (itemCount === 1) {
-      itemRef = "the item shown in image 2";
-    } else {
-      const refs = itemImages.map((_, i) => `image ${i + 2}`);
-      itemRef = `the items shown in ${refs.join(" and ")}`;
-    }
+    turn3Parts.push({
+      text: `Now generate a single photorealistic image of ME (the customer from my first photo) wearing ALL of the items above.
 
-    const prompt = `Generate a photorealistic image of the person in image 1 wearing ${itemRef}. Preserve the person's face, body shape, skin tone, and hair exactly as they are. Each item should fit naturally with realistic draping, shadows, and lighting that matches the original photo. Keep the same pose and background from image 1. Do not add any text or watermarks.`;
+RULES:
+1. IDENTITY: Use MY face, skin tone, hair, and body EXACTLY as shown in my photo. The person in the output MUST be me. Any other person visible in the item reference images is just a mannequin — ignore them completely.
+2. GARMENT FIDELITY: Reproduce each item's exact color, material, texture, and style as described. Do not substitute or reinterpret any garment.
+3. POSE & SETTING: Keep my same pose, camera angle, and background from my original photo.
+4. REALISM: Natural fit, draping, shadows, and lighting consistent with my photo.
+5. OUTPUT: One single image. No text, watermarks, borders, or split views.`,
+    });
 
     const contents = [
-      {
-        role: "user" as const,
-        parts: [...imageParts, { text: prompt }],
-      },
+      { role: "user" as const, parts: turn1Parts },
+      { role: "model" as const, parts: turn2Parts },
+      { role: "user" as const, parts: turn3Parts },
     ];
 
     const response = await ai.models.generateContent({
@@ -106,6 +132,7 @@ export async function POST(request: Request) {
       contents,
       config: {
         responseModalities: ["IMAGE", "TEXT"],
+        temperature: 0.2,
       },
     });
 

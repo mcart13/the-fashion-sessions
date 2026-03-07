@@ -151,7 +151,12 @@ export default function TryOn() {
 
     try {
       // Fetch each selected item's image and convert to base64
-      const itemImages: string[] = [];
+      const items: {
+        image: string;
+        name: string;
+        description: string;
+        type: string;
+      }[] = [];
       for (const item of selectedItems) {
         const res = await fetch(item.image);
         const blob = await res.blob();
@@ -160,13 +165,18 @@ export default function TryOn() {
           r.onload = () => resolve(r.result as string);
           r.readAsDataURL(blob);
         });
-        itemImages.push(base64);
+        items.push({
+          image: base64,
+          name: item.name,
+          description: item.description,
+          type: item.type,
+        });
       }
 
       const res = await fetch("/api/try-on", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modelImage: userPhoto, itemImages }),
+        body: JSON.stringify({ modelImage: userPhoto, items }),
       });
 
       const data = await res.json();
