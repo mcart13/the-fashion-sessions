@@ -214,32 +214,64 @@ export default function AccessoryTryOn() {
   }, [selectedItem]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Accessory picker */}
       <div>
-        <p className="mb-3 font-poppins text-[14px] uppercase tracking-[1.3px] text-[#282828]">
-          Pick an accessory
-        </p>
+        <div className="mb-4 flex items-center gap-3">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#BA9D95] font-poppins text-[11px] font-medium text-white">
+            1
+          </span>
+          <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-[#282828]">
+            Pick an accessory
+          </p>
+        </div>
         <div className="flex gap-3 overflow-x-auto pb-2">
           {accessories.map((item) => (
             <button
               key={item.id}
               type="button"
               onClick={() => setSelectedItem(item)}
-              className={`shrink-0 overflow-hidden rounded-[2px] border-2 transition-all ${
-                selectedItem?.id === item.id
-                  ? "border-[#BA9D95] shadow-md"
-                  : "border-transparent hover:border-[#E6DDD9]"
-              }`}
+              className="group shrink-0 [touch-action:manipulation]"
+              style={{ minHeight: 44 }}
             >
-              <div className="relative h-[80px] w-[80px] bg-[#F5F3ED] sm:h-[100px] sm:w-[100px]">
+              <div
+                className={`relative h-[80px] w-[80px] overflow-hidden bg-[#F5F3ED] transition-shadow duration-200 ease-out sm:h-[100px] sm:w-[100px] ${
+                  selectedItem?.id === item.id
+                    ? "shadow-[0_0_0_2px_#BA9D95]"
+                    : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
+                }`}
+              >
                 <Image
                   src={item.thumbnail}
                   alt={item.name}
                   fill
                   className="object-cover"
                 />
+                {selectedItem?.id === item.id && (
+                  <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#BA9D95] text-white">
+                    <svg
+                      width="10"
+                      height="10"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                )}
               </div>
-              <p className="px-1 py-1 font-poppins text-[11px] text-[#282828]">
+              <p
+                className={`px-1 py-1.5 font-poppins text-[11px] transition-color duration-150 ${
+                  selectedItem?.id === item.id
+                    ? "text-[#282828]"
+                    : "text-[#282828]/60"
+                }`}
+              >
                 {item.name}
               </p>
             </button>
@@ -247,25 +279,54 @@ export default function AccessoryTryOn() {
         </div>
       </div>
 
+      {/* Camera section */}
       <div>
+        <div className="mb-4 flex items-center gap-3">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#BA9D95] font-poppins text-[11px] font-medium text-white">
+            2
+          </span>
+          <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-[#282828]">
+            Try it on
+          </p>
+        </div>
+
         {!cameraActive ? (
           <div className="flex flex-col items-center gap-4">
             <button
               type="button"
               onClick={startCamera}
-              className="inline-block bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] uppercase tracking-[0.9px] text-[#282828] transition-[background-color,transform] hover:bg-tan active:scale-[0.97]"
+              className="inline-flex items-center gap-2 bg-[#282828] px-8 py-4 font-poppins text-[12px] uppercase tracking-[1.2px] text-white transition-[opacity,transform] duration-150 ease-out [touch-action:manipulation] hover:opacity-90 active:scale-[0.97]"
+              style={{ minHeight: 48 }}
             >
               Start Camera
             </button>
             {cameraError && (
-              <p className="font-poppins text-[13px] text-red-600">
-                {cameraError}
-              </p>
+              <div className="flex items-start gap-2 rounded-sm border border-red-200 bg-red-50 px-4 py-3">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="mt-0.5 shrink-0 text-red-500"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                <p className="font-poppins text-[13px] leading-relaxed text-red-700">
+                  {cameraError}
+                </p>
+              </div>
             )}
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="relative mx-auto w-full max-w-[640px] overflow-hidden rounded-[2px] bg-black">
+            <div className="relative mx-auto w-full max-w-[640px] overflow-hidden rounded-sm bg-black shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
               <video
                 ref={videoRef}
                 playsInline
@@ -274,8 +335,8 @@ export default function AccessoryTryOn() {
               />
               <canvas ref={canvasRef} className="block w-full" />
               {!selectedItem && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                  <p className="rounded bg-black/50 px-4 py-2 font-poppins text-[13px] text-white">
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                  <p className="rounded-sm bg-black/60 px-4 py-2 font-poppins text-[13px] text-white backdrop-blur-sm">
                     Select an accessory above
                   </p>
                 </div>
@@ -287,14 +348,17 @@ export default function AccessoryTryOn() {
                 type="button"
                 onClick={handleCapture}
                 disabled={!selectedItem}
-                className="inline-block bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] uppercase tracking-[0.9px] text-[#282828] transition-[background-color,transform] hover:bg-tan active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50"
+                aria-label="Capture photo"
+                className="inline-flex items-center gap-2 bg-[#EADFD2] px-6 py-3 font-poppins text-[12px] uppercase tracking-[0.9px] text-[#282828] transition-[background-color,transform] duration-150 ease-out [touch-action:manipulation] hover:bg-[#E6DDD9] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40"
+                style={{ minHeight: 44 }}
               >
                 Capture Photo
               </button>
               <button
                 type="button"
                 onClick={stopCamera}
-                className="font-poppins text-[12px] text-[#BA9D95] underline"
+                className="font-poppins text-[12px] text-[#BA9D95] underline underline-offset-2 [touch-action:manipulation]"
+                style={{ minHeight: 44 }}
               >
                 Stop Camera
               </button>

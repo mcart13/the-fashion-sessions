@@ -15,6 +15,10 @@ const config: Config = {
         "heading-dark": "#282828",
         "accent-gold": "#BA9D95",
         "btn-cta": "#EADFD2",
+        "script-brown": "#936740",
+        divider: "#B98F67",
+        "footer-text": "#E6DDD9",
+        "footer-hover": "#D4C5BA",
       },
       fontFamily: {
         butler: ['"Butler Font"', "serif"],
@@ -22,6 +26,18 @@ const config: Config = {
         roboto: ["Roboto", "sans-serif"],
         "roboto-slab": ['"Roboto Slab"', "serif"],
         poppins: ["Poppins", "sans-serif"],
+      },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: "0", transform: "translateY(4px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+      },
+      zIndex: {
+        header: "40",
+        overlay: "45",
+        popup: "50",
+        toast: "60",
       },
     },
   },

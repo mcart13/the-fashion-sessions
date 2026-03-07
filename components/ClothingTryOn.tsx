@@ -1,10 +1,17 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { getClothingItems, type TryOnItem } from "@/data/try-on-items";
 
 const MAX_IMAGE_DIMENSION = 1024;
+
+const LOADING_MESSAGES = [
+  "Analyzing your photo…",
+  "Preparing the garment…",
+  "Generating your look…",
+  "Almost there…",
+];
 
 function resizeImage(dataUrl: string): Promise<string> {
   return new Promise((resolve) => {
@@ -27,6 +34,47 @@ function resizeImage(dataUrl: string): Promise<string> {
   });
 }
 
+function UploadIcon() {
+  return (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="inline-block"
+    >
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  );
+}
+
 export default function ClothingTryOn() {
   const clothingItems = getClothingItems();
   const [selectedItem, setSelectedItem] = useState<TryOnItem | null>(null);
@@ -34,7 +82,30 @@ export default function ClothingTryOn() {
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  // Cycle through loading messages
+  useEffect(() => {
+    if (!loading) {
+      setLoadingMsgIndex(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setLoadingMsgIndex((prev) =>
+        prev < LOADING_MESSAGES.length - 1 ? prev + 1 : prev,
+      );
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [loading]);
+
+  // Scroll to result when it appears
+  useEffect(() => {
+    if (resultImage && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [resultImage]);
 
   const handlePhotoUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +117,7 @@ export default function ClothingTryOn() {
         return;
       }
       if (file.size > 10 * 1024 * 1024) {
-        setError("Image must be under 10MB.");
+        setError("Image must be under 10 MB.");
         return;
       }
 
@@ -84,8 +155,6 @@ export default function ClothingTryOn() {
         body: JSON.stringify({
           modelImage: userPhoto,
           garmentImage: garmentBase64,
-          category: selectedItem.fashnCategory,
-          garmentPhotoType: selectedItem.fashnPhotoType,
         }),
       });
 
@@ -107,18 +176,23 @@ export default function ClothingTryOn() {
     if (!resultImage) return;
     const link = document.createElement("a");
     link.href = resultImage;
-    link.download = `tryon-${selectedItem?.id || "result"}.jpg`;
+    link.download = `tryon-${selectedItem?.id || "result"}.png`;
     link.click();
   }, [resultImage, selectedItem]);
 
   return (
-    <div className="space-y-8">
-      {/* Garment picker */}
+    <div className="space-y-10">
+      {/* Step 1: Garment picker */}
       <div>
-        <p className="mb-3 font-poppins text-[14px] uppercase tracking-[1.3px] text-[#282828]">
-          Pick a garment
-        </p>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+        <div className="mb-4 flex items-center gap-3">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#BA9D95] font-poppins text-[11px] font-medium text-white">
+            1
+          </span>
+          <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-[#282828]">
+            Pick a garment
+          </p>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
           {clothingItems.map((item) => (
             <button
               key={item.id}
@@ -127,21 +201,48 @@ export default function ClothingTryOn() {
                 setSelectedItem(item);
                 setResultImage(null);
               }}
-              className={`overflow-hidden rounded-[2px] border-2 transition-all ${
-                selectedItem?.id === item.id
-                  ? "border-[#BA9D95] shadow-md"
-                  : "border-transparent hover:border-[#E6DDD9]"
-              }`}
+              className="group overflow-hidden rounded-sm [touch-action:manipulation]"
+              style={{ minHeight: 44 }}
             >
-              <div className="relative aspect-[3/4] w-full bg-[#F5F3ED]">
+              <div
+                className={`relative aspect-[3/4] w-full overflow-hidden bg-[#F5F3ED] transition-shadow duration-200 ease-out ${
+                  selectedItem?.id === item.id
+                    ? "shadow-[0_0_0_2px_#BA9D95]"
+                    : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
+                }`}
+              >
                 <Image
                   src={item.thumbnail}
                   alt={item.name}
                   fill
                   className="object-cover"
                 />
+                {/* Selected checkmark */}
+                {selectedItem?.id === item.id && (
+                  <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#BA9D95] text-white">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                )}
               </div>
-              <p className="px-2 py-2 font-poppins text-[12px] text-[#282828]">
+              <p
+                className={`px-1 py-2 font-poppins text-[11px] leading-tight transition-color duration-150 ${
+                  selectedItem?.id === item.id
+                    ? "text-[#282828]"
+                    : "text-[#282828]/60"
+                }`}
+              >
                 {item.name}
               </p>
             </button>
@@ -149,11 +250,16 @@ export default function ClothingTryOn() {
         </div>
       </div>
 
-      {/* Photo upload */}
+      {/* Step 2: Photo upload */}
       <div>
-        <p className="mb-3 font-poppins text-[14px] uppercase tracking-[1.3px] text-[#282828]">
-          Upload your photo
-        </p>
+        <div className="mb-4 flex items-center gap-3">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#BA9D95] font-poppins text-[11px] font-medium text-white">
+            2
+          </span>
+          <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-[#282828]">
+            Upload your photo
+          </p>
+        </div>
         <input
           ref={fileInputRef}
           type="file"
@@ -163,10 +269,10 @@ export default function ClothingTryOn() {
         />
         {userPhoto ? (
           <div className="flex items-start gap-4">
-            <div className="relative h-[200px] w-[150px] shrink-0 overflow-hidden rounded-[2px] bg-[#F5F3ED]">
+            <div className="relative h-[200px] w-[150px] shrink-0 overflow-hidden rounded-sm bg-[#F5F3ED] shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
               <Image
                 src={userPhoto}
-                alt="Your photo"
+                alt="Your uploaded photo"
                 fill
                 className="object-cover"
               />
@@ -178,7 +284,8 @@ export default function ClothingTryOn() {
                 setResultImage(null);
                 if (fileInputRef.current) fileInputRef.current.value = "";
               }}
-              className="font-poppins text-[12px] text-[#BA9D95] underline"
+              className="mt-1 font-poppins text-[12px] text-[#BA9D95] underline underline-offset-2 [touch-action:manipulation]"
+              style={{ minHeight: 44 }}
             >
               Remove
             </button>
@@ -187,79 +294,118 @@ export default function ClothingTryOn() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="flex h-[200px] w-full items-center justify-center rounded-[2px] border-2 border-dashed border-[#E6DDD9] bg-[#F5F3ED] transition-colors hover:border-[#BA9D95]"
+            className="flex h-[200px] w-full flex-col items-center justify-center gap-3 rounded-sm border border-dashed border-[#E6DDD9] bg-[#FAFAF7] transition-[border-color,background-color] duration-150 ease-out [touch-action:manipulation] hover:border-[#BA9D95] hover:bg-[#F5F3ED]"
           >
-            <span className="font-poppins text-[14px] text-[#282828]/60">
+            <span className="text-[#BA9D95]">
+              <UploadIcon />
+            </span>
+            <span className="font-poppins text-[13px] text-[#282828]/50">
               Tap to upload a full-body photo
             </span>
           </button>
         )}
-        <p className="mt-2 font-poppins text-[11px] text-[#282828]/50">
-          Your photo is processed securely and not saved.
+        <p className="mt-2 font-poppins text-[11px] text-[#282828]/40">
+          Your photo is processed securely and never saved.
         </p>
       </div>
 
       {/* Try it on button */}
-      <button
-        type="button"
-        onClick={handleTryOn}
-        disabled={!userPhoto || !selectedItem || loading}
-        className="inline-block bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] uppercase tracking-[0.9px] text-[#282828] transition-[background-color,transform] hover:bg-tan active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        {loading ? "Generating..." : "Try It On"}
-      </button>
+      <div>
+        <button
+          type="button"
+          onClick={handleTryOn}
+          disabled={!userPhoto || !selectedItem || loading}
+          className="inline-flex items-center gap-2 bg-[#282828] px-8 py-4 font-poppins text-[12px] uppercase tracking-[1.2px] text-white transition-[opacity,transform] duration-150 ease-out [touch-action:manipulation] hover:opacity-90 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30"
+          style={{ minHeight: 48 }}
+        >
+          {loading ? "Generating…" : "Try It On"}
+        </button>
+      </div>
 
       {/* Error message */}
       {error && (
-        <p className="font-poppins text-[13px] text-red-600">{error}</p>
+        <div className="flex items-start gap-2 rounded-sm border border-red-200 bg-red-50 px-4 py-3">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="mt-0.5 shrink-0 text-red-500"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <p className="font-poppins text-[13px] leading-relaxed text-red-700">
+            {error}
+          </p>
+        </div>
       )}
 
       {/* Loading indicator */}
       {loading && (
-        <div className="flex items-center gap-3">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#E6DDD9] border-t-[#BA9D95]" />
-          <p className="font-poppins text-[13px] text-[#282828]/60">
-            Creating your look... this takes about 10-15 seconds
+        <div className="flex items-center gap-4 py-2">
+          <div className="relative h-6 w-6 shrink-0">
+            <div className="absolute inset-0 animate-spin rounded-full border-2 border-[#E6DDD9] border-t-[#BA9D95]" />
+          </div>
+          <p
+            key={loadingMsgIndex}
+            className="animate-[fadeIn_300ms_ease-out] font-poppins text-[13px] text-[#282828]/60"
+          >
+            {LOADING_MESSAGES[loadingMsgIndex]}
           </p>
         </div>
       )}
 
       {/* Result */}
       {resultImage && (
-        <div className="space-y-4">
-          <p className="font-poppins text-[14px] uppercase tracking-[1.3px] text-[#282828]">
-            Your look
-          </p>
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[2px] bg-[#F5F3ED] sm:w-1/2">
+        <div ref={resultRef} className="space-y-6 scroll-mt-24">
+          <div className="flex items-center gap-3">
+            <span className="h-px flex-1 bg-[#E6DDD9]" aria-hidden="true" />
+            <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-[#BA9D95]">
+              Your Look
+            </p>
+            <span className="h-px flex-1 bg-[#E6DDD9]" aria-hidden="true" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-sm bg-[#F5F3ED] shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
               <Image
                 src={userPhoto!}
                 alt="Original photo"
                 fill
                 className="object-cover"
               />
-              <span className="absolute bottom-2 left-2 rounded bg-black/50 px-2 py-1 font-poppins text-[10px] text-white">
-                Original
+              <span className="absolute bottom-2 left-2 rounded-sm bg-white/80 px-2 py-1 font-poppins text-[10px] uppercase tracking-wider text-[#282828]/70 backdrop-blur-sm">
+                Before
               </span>
             </div>
-            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[2px] bg-[#F5F3ED] sm:w-1/2">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-sm bg-[#F5F3ED] shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={resultImage}
                 alt="Try-on result"
                 className="absolute inset-0 h-full w-full object-cover"
               />
-              <span className="absolute bottom-2 left-2 rounded bg-black/50 px-2 py-1 font-poppins text-[10px] text-white">
-                Try-On
+              <span className="absolute bottom-2 left-2 rounded-sm bg-[#282828]/70 px-2 py-1 font-poppins text-[10px] uppercase tracking-wider text-white backdrop-blur-sm">
+                After
               </span>
             </div>
           </div>
+
           <button
             type="button"
             onClick={handleDownload}
-            className="inline-block bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] uppercase tracking-[0.9px] text-[#282828] transition-[background-color,transform] hover:bg-tan active:scale-[0.97]"
+            className="inline-flex items-center gap-2 bg-[#EADFD2] px-6 py-3 font-poppins text-[12px] uppercase tracking-[0.9px] text-[#282828] transition-[background-color,transform] duration-150 ease-out [touch-action:manipulation] hover:bg-[#E6DDD9] active:scale-[0.97]"
+            style={{ minHeight: 44 }}
           >
-            Download
+            <DownloadIcon />
+            Save Image
           </button>
         </div>
       )}
