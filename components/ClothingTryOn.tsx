@@ -6,6 +6,28 @@ import { getClothingItems, type TryOnItem } from "@/data/try-on-items";
 
 const SESSION_KEY = "tryon-clothing-count";
 const SESSION_LIMIT = 5;
+const MAX_IMAGE_DIMENSION = 1024;
+
+function resizeImage(dataUrl: string): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    img.onload = () => {
+      const { width, height } = img;
+      if (width <= MAX_IMAGE_DIMENSION && height <= MAX_IMAGE_DIMENSION) {
+        resolve(dataUrl);
+        return;
+      }
+      const scale = MAX_IMAGE_DIMENSION / Math.max(width, height);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(width * scale);
+      canvas.height = Math.round(height * scale);
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL("image/jpeg", 0.85));
+    };
+    img.src = dataUrl;
+  });
+}
 
 function getSessionCount(): number {
   if (typeof window === "undefined") return 0;
@@ -42,7 +64,10 @@ export default function ClothingTryOn() {
       setError(null);
       setResultImage(null);
       const reader = new FileReader();
-      reader.onload = () => setUserPhoto(reader.result as string);
+      reader.onload = async () => {
+        const resized = await resizeImage(reader.result as string);
+        setUserPhoto(resized);
+      };
       reader.readAsDataURL(file);
     },
     [],
