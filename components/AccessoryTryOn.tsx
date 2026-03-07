@@ -8,6 +8,17 @@ const LEFT_EYE_OUTER = 33;
 const RIGHT_EYE_OUTER = 263;
 const FOREHEAD_TOP = 10;
 
+// Smoothing factor: 0 = no smoothing (raw), 1 = frozen. 0.5-0.7 is typical for AR.
+const SMOOTH = 0.6;
+
+interface SmoothedValues {
+  cx: number;
+  cy: number;
+  width: number;
+  height: number;
+  angle: number;
+}
+
 export default function AccessoryTryOn() {
   const accessories = getAccessories();
   const [selectedItem, setSelectedItem] = useState<TryOnItem | null>(null);
@@ -20,12 +31,15 @@ export default function AccessoryTryOn() {
   const faceLandmarkerRef = useRef<any>(null);
   const animationRef = useRef<number>(0);
   const streamRef = useRef<MediaStream | null>(null);
+  const smoothRef = useRef<SmoothedValues | null>(null);
 
   useEffect(() => {
     if (!selectedItem?.overlayImage) {
       overlayImgRef.current = null;
+      smoothRef.current = null;
       return;
     }
+    smoothRef.current = null;
     const img = new window.Image();
     img.crossOrigin = "anonymous";
     img.src = selectedItem.overlayImage;
@@ -209,33 +223,56 @@ export default function AccessoryTryOn() {
           );
           const eyeCenterX = (leftEyeX + rightEyeX) / 2;
           const eyeCenterY = (leftEyeY + rightEyeY) / 2;
-          const angle = Math.atan2(rightEyeY - leftEyeY, rightEyeX - leftEyeX);
+          const rawAngle = Math.atan2(
+            rightEyeY - leftEyeY,
+            rightEyeX - leftEyeX,
+          );
 
           const overlayWidth = eyeDistance * anchor.scale;
           const aspectRatio = overlay.naturalHeight / overlay.naturalWidth;
           const overlayHeight = overlayWidth * aspectRatio;
 
-          let cx: number;
-          let cy: number;
+          let rawCx: number;
+          let rawCy: number;
 
           if (anchor.landmarks === "eyes") {
-            cx = eyeCenterX + anchor.offsetX * eyeDistance;
-            cy = eyeCenterY + anchor.offsetY * eyeDistance;
+            rawCx = eyeCenterX + anchor.offsetX * eyeDistance;
+            rawCy = eyeCenterY + anchor.offsetY * eyeDistance;
           } else {
             const forehead = landmarks[FOREHEAD_TOP];
-            cx = (1 - forehead.x) * w + anchor.offsetX * eyeDistance;
-            cy = forehead.y * h + anchor.offsetY * eyeDistance;
+            rawCx = (1 - forehead.x) * w + anchor.offsetX * eyeDistance;
+            rawCy = forehead.y * h + anchor.offsetY * eyeDistance;
           }
 
+          // Apply EMA smoothing to reduce jitter
+          const prev = smoothRef.current;
+          const s = SMOOTH;
+          const smoothed: SmoothedValues = prev
+            ? {
+                cx: prev.cx * s + rawCx * (1 - s),
+                cy: prev.cy * s + rawCy * (1 - s),
+                width: prev.width * s + overlayWidth * (1 - s),
+                height: prev.height * s + overlayHeight * (1 - s),
+                angle: prev.angle * s + rawAngle * (1 - s),
+              }
+            : {
+                cx: rawCx,
+                cy: rawCy,
+                width: overlayWidth,
+                height: overlayHeight,
+                angle: rawAngle,
+              };
+          smoothRef.current = smoothed;
+
           ctx.save();
-          ctx.translate(cx, cy);
-          ctx.rotate(angle);
+          ctx.translate(smoothed.cx, smoothed.cy);
+          ctx.rotate(smoothed.angle);
           ctx.drawImage(
             overlay,
-            -overlayWidth / 2,
-            -overlayHeight / 2,
-            overlayWidth,
-            overlayHeight,
+            -smoothed.width / 2,
+            -smoothed.height / 2,
+            smoothed.width,
+            smoothed.height,
           );
           ctx.restore();
         }
