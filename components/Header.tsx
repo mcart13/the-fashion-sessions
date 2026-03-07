@@ -73,6 +73,7 @@ const navItems: NavItem[] = [
       { id: "blog-travel", label: "Travel", href: "/travel", type: "link" },
     ],
   },
+  { id: "try-on", label: "Try On", href: "/try-on", type: "link" },
   { id: "contact", label: "Contact", href: "/contact", type: "link" },
 ];
 
@@ -257,10 +258,10 @@ export default function Header() {
                       </button>
 
                       <div
-                        className={`absolute left-0 top-full z-50 min-w-[200px] bg-cream shadow-[0_0_10px_rgba(0,0,0,0.18)] transition-all duration-200 ${
+                        className={`absolute left-0 top-full z-popup min-w-[200px] bg-cream shadow-[0_0_10px_rgba(0,0,0,0.18)] transition-[opacity,transform] duration-200 ease-out ${
                           openDesktopMenu === item.id
-                            ? "visible translate-y-0 opacity-100"
-                            : "invisible -translate-y-1 opacity-0"
+                            ? "opacity-100 translate-y-0 pointer-events-auto"
+                            : "opacity-0 -translate-y-1 pointer-events-none"
                         }`}
                       >
                         <ul className="py-2">
@@ -332,7 +333,7 @@ export default function Header() {
       </div>
 
       <div
-        className={`fixed inset-0 top-0 z-40 bg-black/30 transition-opacity duration-300 lg:hidden ${
+        className={`fixed inset-0 top-0 z-overlay bg-black/30 transition-opacity duration-300 lg:hidden ${
           mobileMenuOpen
             ? "visible opacity-100"
             : "invisible pointer-events-none opacity-0"
@@ -341,7 +342,7 @@ export default function Header() {
       />
 
       <div
-        className={`fixed right-0 top-0 z-50 h-full w-[280px] overflow-y-auto bg-white shadow-xl transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed right-0 top-0 z-popup h-full w-[280px] overflow-y-auto bg-white shadow-xl transition-transform duration-300 ease-out lg:hidden ${
           mobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -401,7 +402,7 @@ export default function Header() {
                     </button>
 
                     <ul
-                      className={`overflow-hidden transition-all duration-200 ${
+                      className={`overflow-hidden transition-[max-height,opacity] duration-200 ease-out ${
                         openMobileMenu === item.id
                           ? "max-h-60 opacity-100"
                           : "max-h-0 opacity-0"
