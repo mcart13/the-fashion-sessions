@@ -101,7 +101,6 @@ export default function TryOn() {
   }, [loading]);
 
   const toggleItem = useCallback((item: TryOnItem) => {
-    setResultImage(null);
     setSelectedItems((prev) => {
       const exists = prev.find((i) => i.id === item.id);
       if (exists) return prev.filter((i) => i.id !== item.id);
