@@ -86,19 +86,12 @@ export default function TryOn() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
+  const [uploadOpen, setUploadOpen] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const shopRef = useRef<HTMLDivElement>(null);
 
+  // Auto-collapse upload section when result arrives
   useEffect(() => {
-    if (resultImage && shopRef.current) {
-      // Small delay so the shop section renders before scrolling
-      setTimeout(() => {
-        shopRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-        });
-      }, 100);
-    }
+    if (resultImage) setUploadOpen(false);
   }, [resultImage]);
 
   useEffect(() => {
@@ -271,132 +264,156 @@ export default function TryOn() {
 
       {/* Right column: Controls */}
       <div className="order-1 space-y-6 lg:order-2 lg:w-[45%]">
-        {/* Step 1: Pick items */}
-        <CollapsibleSection
-          step={1}
-          title="Build your look"
-          indicator={
-            selectedItems.length > 0
-              ? `${selectedItems.length} item${selectedItems.length > 1 ? "s" : ""}`
-              : undefined
-          }
-        >
-          {/* Clothing */}
-          <p className="mb-2 font-poppins text-[11px] uppercase tracking-[1px] text-[#282828]/50">
-            Clothing
-          </p>
-          <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {clothingItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => toggleItem(item)}
-                className="group overflow-hidden rounded-sm [touch-action:manipulation]"
-                style={{ minHeight: 44 }}
-              >
-                <div
-                  className={`relative aspect-[3/4] w-full overflow-hidden bg-[#F5F3ED] transition-shadow duration-200 ease-out ${
-                    isSelected(item.id)
-                      ? "shadow-[0_0_0_2px_#BA9D95]"
-                      : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
-                  }`}
-                >
-                  <Image
-                    src={item.thumbnail}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                  />
-                  {isSelected(item.id) && (
-                    <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#BA9D95] text-white">
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </span>
-                  )}
-                </div>
-                <p
-                  className={`px-1 py-2 font-poppins text-[11px] leading-tight transition-color duration-150 ${
-                    isSelected(item.id) ? "text-[#282828]" : "text-[#282828]/60"
-                  }`}
-                >
-                  {item.name}
-                </p>
-              </button>
-            ))}
+        {/* Step 1: Build your look */}
+        <div>
+          <div className="mb-3 flex items-center gap-3">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#BA9D95] font-poppins text-[11px] font-medium text-white">
+              1
+            </span>
+            <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-[#282828]">
+              Build your look
+            </p>
+            {selectedItems.length > 0 && (
+              <span className="font-poppins text-[12px] text-[#BA9D95]">
+                {selectedItems.length} item{selectedItems.length > 1 ? "s" : ""}
+              </span>
+            )}
           </div>
 
-          {/* Accessories */}
-          <p className="mb-2 font-poppins text-[11px] uppercase tracking-[1px] text-[#282828]/50">
-            Accessories
-          </p>
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {accessoryItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => toggleItem(item)}
-                className="group shrink-0 [touch-action:manipulation]"
-                style={{ minHeight: 44 }}
-              >
-                <div
-                  className={`relative h-[80px] w-[80px] overflow-hidden bg-[#F5F3ED] transition-shadow duration-200 ease-out ${
-                    isSelected(item.id)
-                      ? "shadow-[0_0_0_2px_#BA9D95]"
-                      : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
-                  }`}
-                >
-                  <Image
-                    src={item.thumbnail}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                  />
-                  {isSelected(item.id) && (
-                    <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#BA9D95] text-white">
-                      <svg
-                        width="10"
-                        height="10"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </span>
-                  )}
-                </div>
-                <p
-                  className={`px-1 py-1.5 font-poppins text-[11px] transition-color duration-150 ${
-                    isSelected(item.id) ? "text-[#282828]" : "text-[#282828]/60"
-                  }`}
-                >
-                  {item.name}
-                </p>
-              </button>
-            ))}
+          <div className="space-y-3">
+            <CollapsibleSection
+              title="Clothing"
+              indicator={
+                selectedItems.filter((i) => i.type === "clothing").length > 0
+                  ? `${selectedItems.filter((i) => i.type === "clothing").length}`
+                  : undefined
+              }
+            >
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {clothingItems.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => toggleItem(item)}
+                    className="group overflow-hidden rounded-sm [touch-action:manipulation]"
+                    style={{ minHeight: 44 }}
+                  >
+                    <div
+                      className={`relative aspect-[3/4] w-full overflow-hidden bg-[#F5F3ED] transition-shadow duration-200 ease-out ${
+                        isSelected(item.id)
+                          ? "shadow-[0_0_0_2px_#BA9D95]"
+                          : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
+                      }`}
+                    >
+                      <Image
+                        src={item.thumbnail}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                      />
+                      {isSelected(item.id) && (
+                        <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#BA9D95] text-white">
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </span>
+                      )}
+                    </div>
+                    <p
+                      className={`px-1 py-2 font-poppins text-[11px] leading-tight transition-color duration-150 ${
+                        isSelected(item.id)
+                          ? "text-[#282828]"
+                          : "text-[#282828]/60"
+                      }`}
+                    >
+                      {item.name}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </CollapsibleSection>
+
+            <CollapsibleSection
+              title="Accessories"
+              indicator={
+                selectedItems.filter((i) => i.type === "accessory").length > 0
+                  ? `${selectedItems.filter((i) => i.type === "accessory").length}`
+                  : undefined
+              }
+            >
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                {accessoryItems.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => toggleItem(item)}
+                    className="group shrink-0 [touch-action:manipulation]"
+                    style={{ minHeight: 44 }}
+                  >
+                    <div
+                      className={`relative h-[80px] w-[80px] overflow-hidden bg-[#F5F3ED] transition-shadow duration-200 ease-out ${
+                        isSelected(item.id)
+                          ? "shadow-[0_0_0_2px_#BA9D95]"
+                          : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
+                      }`}
+                    >
+                      <Image
+                        src={item.thumbnail}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                      />
+                      {isSelected(item.id) && (
+                        <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#BA9D95] text-white">
+                          <svg
+                            width="10"
+                            height="10"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </span>
+                      )}
+                    </div>
+                    <p
+                      className={`px-1 py-1.5 font-poppins text-[11px] transition-color duration-150 ${
+                        isSelected(item.id)
+                          ? "text-[#282828]"
+                          : "text-[#282828]/60"
+                      }`}
+                    >
+                      {item.name}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </CollapsibleSection>
           </div>
-        </CollapsibleSection>
+        </div>
 
         {/* Step 2: Photo upload */}
         <CollapsibleSection
           step={2}
           title="Upload your photo"
           indicator={userPhoto ? "\u2713" : undefined}
+          open={uploadOpen}
+          onToggle={setUploadOpen}
         >
           <input
             ref={fileInputRef}
@@ -486,7 +503,7 @@ export default function TryOn() {
 
         {/* Shop This Look */}
         {resultImage && (
-          <div ref={shopRef}>
+          <div>
             <div className="mb-3 flex items-center gap-3">
               <span className="h-px flex-1 bg-[#E6DDD9]" aria-hidden="true" />
               <p className="font-poppins text-[11px] uppercase tracking-[1px] text-[#BA9D95]">

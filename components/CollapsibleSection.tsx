@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 interface CollapsibleSectionProps {
   step?: number;
   title: string;
   indicator?: ReactNode;
   defaultOpen?: boolean;
+  /** Controlled open state. When provided, overrides internal state. */
+  open?: boolean;
+  onToggle?: (open: boolean) => void;
   children: ReactNode;
 }
 
@@ -15,15 +18,30 @@ export default function CollapsibleSection({
   title,
   indicator,
   defaultOpen = true,
+  open: controlledOpen,
+  onToggle,
   children,
 }: CollapsibleSectionProps) {
-  const [open, setOpen] = useState(defaultOpen);
+  const [internalOpen, setInternalOpen] = useState(defaultOpen);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+
+  // Sync internal state when controlled prop changes
+  useEffect(() => {
+    if (isControlled) setInternalOpen(controlledOpen);
+  }, [isControlled, controlledOpen]);
+
+  const toggle = () => {
+    const next = !open;
+    if (!isControlled) setInternalOpen(next);
+    onToggle?.(next);
+  };
 
   return (
     <div>
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggle}
         className="group flex w-full items-center gap-3 py-1 [touch-action:manipulation]"
         aria-expanded={open}
       >
