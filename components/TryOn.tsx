@@ -256,7 +256,7 @@ export default function TryOn() {
       </div>
 
       {/* Right column: Controls */}
-      <div className="order-1 space-y-8 lg:order-2 lg:w-[45%]">
+      <div className="order-1 space-y-6 lg:order-2 lg:w-[45%]">
         {/* Step 1: Pick items */}
         <div>
           <div className="mb-4 flex items-center gap-3">
@@ -405,7 +405,7 @@ export default function TryOn() {
           />
           {userPhoto ? (
             <div className="flex items-start gap-4">
-              <div className="relative h-[160px] w-[120px] shrink-0 overflow-hidden rounded-sm bg-[#F5F3ED] shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
+              <div className="relative h-[100px] w-[75px] shrink-0 overflow-hidden rounded-sm bg-[#F5F3ED] shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
                 <Image
                   src={userPhoto}
                   alt="Your uploaded photo"
@@ -430,7 +430,7 @@ export default function TryOn() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex h-[160px] w-full flex-col items-center justify-center gap-3 rounded-sm border border-dashed border-[#E6DDD9] bg-[#FAFAF7] transition-[border-color,background-color] duration-150 ease-out [touch-action:manipulation] hover:border-[#BA9D95] hover:bg-[#F5F3ED]"
+              className="flex h-[100px] w-full flex-col items-center justify-center gap-3 rounded-sm border border-dashed border-[#E6DDD9] bg-[#FAFAF7] transition-[border-color,background-color] duration-150 ease-out [touch-action:manipulation] hover:border-[#BA9D95] hover:bg-[#F5F3ED]"
             >
               <span className="text-[#BA9D95]">
                 <UploadIcon />
