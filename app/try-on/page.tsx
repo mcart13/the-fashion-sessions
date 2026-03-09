@@ -40,7 +40,7 @@ export default function TryOnPage() {
       </section>
 
       <section className="bg-white px-6 py-14">
-        <div className="mx-auto max-w-[780px]">
+        <div className="mx-auto max-w-[1100px]">
           <TryOn />
         </div>
       </section>
