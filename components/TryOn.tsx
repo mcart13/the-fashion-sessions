@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { tryOnItems, type TryOnItem } from "@/data/try-on-items";
+import CollapsibleSection from "@/components/CollapsibleSection";
 
 const MAX_IMAGE_DIMENSION = 1024;
 
@@ -271,16 +272,15 @@ export default function TryOn() {
       {/* Right column: Controls */}
       <div className="order-1 space-y-6 lg:order-2 lg:w-[45%]">
         {/* Step 1: Pick items */}
-        <div>
-          <div className="mb-4 flex items-center gap-3">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#BA9D95] font-poppins text-[11px] font-medium text-white">
-              1
-            </span>
-            <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-[#282828]">
-              Build your look
-            </p>
-          </div>
-
+        <CollapsibleSection
+          step={1}
+          title="Build your look"
+          indicator={
+            selectedItems.length > 0
+              ? `${selectedItems.length} item${selectedItems.length > 1 ? "s" : ""}`
+              : undefined
+          }
+        >
           {/* Clothing */}
           <p className="mb-2 font-poppins text-[11px] uppercase tracking-[1px] text-[#282828]/50">
             Clothing
@@ -390,25 +390,14 @@ export default function TryOn() {
               </button>
             ))}
           </div>
-
-          {selectedItems.length > 0 && (
-            <p className="mt-3 font-poppins text-[12px] text-[#BA9D95]">
-              {selectedItems.length} item{selectedItems.length > 1 ? "s" : ""}{" "}
-              selected
-            </p>
-          )}
-        </div>
+        </CollapsibleSection>
 
         {/* Step 2: Photo upload */}
-        <div>
-          <div className="mb-4 flex items-center gap-3">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#BA9D95] font-poppins text-[11px] font-medium text-white">
-              2
-            </span>
-            <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-[#282828]">
-              Upload your photo
-            </p>
-          </div>
+        <CollapsibleSection
+          step={2}
+          title="Upload your photo"
+          indicator={userPhoto ? "\u2713" : undefined}
+        >
           <input
             ref={fileInputRef}
             type="file"
@@ -456,7 +445,7 @@ export default function TryOn() {
           <p className="mt-2 font-poppins text-[11px] text-[#282828]/40">
             Your photo is processed securely and never saved.
           </p>
-        </div>
+        </CollapsibleSection>
 
         {/* Try it on button + error */}
         <div className="space-y-4">
