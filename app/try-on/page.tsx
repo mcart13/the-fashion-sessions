@@ -34,7 +34,7 @@ export default function TryOnPage() {
           </h1>
           <p className="mx-auto mt-5 max-w-[480px] font-poppins text-[15px] leading-[1.8] text-[#282828]/70">
             Pick clothing and accessories, upload your photo, and see how the
-            look works on you — powered by AI.
+            look works on you.
           </p>
         </AnimateOnScroll>
       </section>
