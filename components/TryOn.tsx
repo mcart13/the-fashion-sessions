@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { tryOnItems, type TryOnItem } from "@/data/try-on-items";
+import {
+  tryOnItems,
+  type TryOnItem,
+  type ClothingCategory,
+} from "@/data/try-on-items";
+import { tryOnLooks, type TryOnLook } from "@/data/try-on-looks";
+import { trackEvent } from "@/lib/analytics";
 import CollapsibleSection from "@/components/CollapsibleSection";
 
 const MAX_IMAGE_DIMENSION = 1024;
@@ -13,6 +19,20 @@ const LOADING_MESSAGES = [
   "Generating your image\u2026",
   "Almost there\u2026",
 ];
+
+const SUBCATEGORY_ORDER: ClothingCategory[] = [
+  "tops",
+  "bottoms",
+  "outerwear",
+  "dresses",
+];
+
+const SUBCATEGORY_LABELS: Record<ClothingCategory, string> = {
+  tops: "Tops",
+  bottoms: "Bottoms",
+  outerwear: "Outerwear",
+  dresses: "Dresses",
+};
 
 function resizeImage(dataUrl: string): Promise<string> {
   return new Promise((resolve) => {
@@ -76,17 +96,47 @@ function DownloadIcon() {
   );
 }
 
-const clothingItems = tryOnItems.filter((i) => i.type === "clothing");
+function ShareIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="inline-block"
+    >
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+    </svg>
+  );
+}
+
+const clothingByCategory = SUBCATEGORY_ORDER.map((cat) => ({
+  category: cat,
+  label: SUBCATEGORY_LABELS[cat],
+  items: tryOnItems.filter((i) => i.type === "clothing" && i.category === cat),
+})).filter((g) => g.items.length > 0);
+
 const accessoryItems = tryOnItems.filter((i) => i.type === "accessory");
 
 export default function TryOn() {
   const [selectedItems, setSelectedItems] = useState<TryOnItem[]>([]);
+  const [activeLook, setActiveLook] = useState<string | null>(null);
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
   const [uploadOpen, setUploadOpen] = useState(true);
+  const [shareToast, setShareToast] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-collapse upload section when result arrives
@@ -107,12 +157,33 @@ export default function TryOn() {
     return () => clearInterval(interval);
   }, [loading]);
 
+  // Auto-dismiss share toast
+  useEffect(() => {
+    if (!shareToast) return;
+    const timer = setTimeout(() => setShareToast(false), 2000);
+    return () => clearTimeout(timer);
+  }, [shareToast]);
+
   const toggleItem = useCallback((item: TryOnItem) => {
+    setActiveLook(null);
     setSelectedItems((prev) => {
       const exists = prev.find((i) => i.id === item.id);
-      if (exists) return prev.filter((i) => i.id !== item.id);
+      if (exists) {
+        trackEvent("item_deselect", { item_id: item.id });
+        return prev.filter((i) => i.id !== item.id);
+      }
+      trackEvent("item_select", { item_id: item.id });
       return [...prev, item];
     });
+  }, []);
+
+  const handleSelectLook = useCallback((look: TryOnLook) => {
+    setActiveLook(look.id);
+    const items = look.itemIds
+      .map((id) => tryOnItems.find((i) => i.id === id))
+      .filter((i): i is TryOnItem => !!i);
+    setSelectedItems(items);
+    trackEvent("look_select", { look_id: look.id });
   }, []);
 
   const handlePhotoUpload = useCallback(
@@ -147,6 +218,7 @@ export default function TryOn() {
     setLoading(true);
     setError(null);
     setResultImage(null);
+    trackEvent("tryon_attempt", { item_count: selectedItems.length });
 
     try {
       const items: {
@@ -184,6 +256,7 @@ export default function TryOn() {
       }
 
       setResultImage(data.output);
+      trackEvent("tryon_success", { item_count: selectedItems.length });
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -197,6 +270,42 @@ export default function TryOn() {
     link.href = resultImage;
     link.download = "tryon-result.png";
     link.click();
+    trackEvent("download");
+  }, [resultImage]);
+
+  const handleShare = useCallback(async () => {
+    if (!resultImage) return;
+
+    trackEvent("share");
+
+    try {
+      // Convert base64 to blob/file
+      const res = await fetch(resultImage);
+      const blob = await res.blob();
+      const file = new File([blob], "tryon-result.png", { type: "image/png" });
+
+      // Try native share
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          text: "Check out my virtual try-on from The Fashion Sessions!",
+          url: window.location.href,
+        });
+        return;
+      }
+    } catch {
+      // Share cancelled or failed, fall through to clipboard
+    }
+
+    // Fallback: copy link + text to clipboard
+    try {
+      await navigator.clipboard.writeText(
+        `Check out my virtual try-on from The Fashion Sessions! ${window.location.href}`,
+      );
+      setShareToast(true);
+    } catch {
+      // Clipboard not available
+    }
   }, [resultImage]);
 
   const isSelected = (id: string) => selectedItems.some((i) => i.id === id);
@@ -204,7 +313,7 @@ export default function TryOn() {
   return (
     <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
       {/* Left column: Result preview (sticky on desktop) */}
-      <div className="order-2 lg:order-1 lg:w-[55%] lg:sticky lg:top-28">
+      <div className="order-2 lg:order-1 lg:sticky lg:top-28 lg:w-[55%]">
         <div className="relative aspect-[3/4] w-full overflow-hidden rounded-sm bg-[#F5F3ED] shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
           {resultImage ? (
             /* eslint-disable-next-line @next/next/no-img-element */
@@ -248,7 +357,7 @@ export default function TryOn() {
         </div>
 
         {resultImage && (
-          <div className="mt-4">
+          <div className="mt-4 flex gap-3">
             <button
               type="button"
               onClick={handleDownload}
@@ -258,12 +367,51 @@ export default function TryOn() {
               <DownloadIcon />
               Save Image
             </button>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={handleShare}
+                className="inline-flex items-center gap-2 border border-[#E6DDD9] bg-white px-6 py-3 font-poppins text-[12px] uppercase tracking-[0.9px] text-[#282828] transition-[border-color,background-color,transform] duration-150 ease-out [touch-action:manipulation] hover:border-[#BA9D95] hover:bg-[#FAFAF7] active:scale-[0.97]"
+                style={{ minHeight: 44 }}
+              >
+                <ShareIcon />
+                Share
+              </button>
+              {shareToast && (
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-[#282828] px-3 py-1 font-poppins text-[11px] text-white">
+                  Copied!
+                </span>
+              )}
+            </div>
           </div>
         )}
       </div>
 
       {/* Right column: Controls */}
       <div className="order-1 space-y-6 lg:order-2 lg:w-[45%]">
+        {/* Quick Looks */}
+        <div className="mb-6">
+          <p className="mb-3 font-poppins text-[11px] uppercase tracking-[1px] text-[#BA9D95]">
+            Quick Looks
+          </p>
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {tryOnLooks.map((look) => (
+              <button
+                key={look.id}
+                type="button"
+                onClick={() => handleSelectLook(look)}
+                className={`shrink-0 rounded-sm border px-4 py-2.5 font-poppins text-[12px] tracking-[0.5px] transition-[border-color,background-color] duration-150 ease-out [touch-action:manipulation] ${
+                  activeLook === look.id
+                    ? "border-[#BA9D95] bg-[#EADFD2] text-[#282828]"
+                    : "border-[#E6DDD9] bg-white text-[#282828]/70 hover:border-[#BA9D95] hover:bg-[#FAFAF7]"
+                }`}
+              >
+                {look.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Step 1: Build your look */}
         <div>
           <div className="mb-3 flex items-center gap-3">
@@ -275,73 +423,79 @@ export default function TryOn() {
             </p>
             {selectedItems.length > 0 && (
               <span className="font-poppins text-[12px] text-[#BA9D95]">
-                {selectedItems.length} item{selectedItems.length > 1 ? "s" : ""}
+                {selectedItems.length} item
+                {selectedItems.length > 1 ? "s" : ""}
               </span>
             )}
           </div>
 
           <div className="space-y-3">
-            <CollapsibleSection
-              title="Clothing"
-              indicator={
-                selectedItems.filter((i) => i.type === "clothing").length > 0
-                  ? `${selectedItems.filter((i) => i.type === "clothing").length}`
-                  : undefined
-              }
-            >
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {clothingItems.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => toggleItem(item)}
-                    className="group overflow-hidden rounded-sm [touch-action:manipulation]"
-                    style={{ minHeight: 44 }}
-                  >
-                    <div
-                      className={`relative aspect-[3/4] w-full overflow-hidden bg-[#F5F3ED] transition-shadow duration-200 ease-out ${
-                        isSelected(item.id)
-                          ? "shadow-[0_0_0_2px_#BA9D95]"
-                          : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
-                      }`}
+            {clothingByCategory.map(({ category, label, items }) => (
+              <CollapsibleSection
+                key={category}
+                title={label}
+                indicator={
+                  selectedItems.filter(
+                    (i) => i.type === "clothing" && i.category === category,
+                  ).length > 0
+                    ? `${selectedItems.filter((i) => i.type === "clothing" && i.category === category).length}`
+                    : undefined
+                }
+              >
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {items.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => toggleItem(item)}
+                      className="group overflow-hidden rounded-sm [touch-action:manipulation]"
+                      style={{ minHeight: 44 }}
                     >
-                      <Image
-                        src={item.thumbnail}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                      />
-                      {isSelected(item.id) && (
-                        <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#BA9D95] text-white">
-                          <svg
-                            width="12"
-                            height="12"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            aria-hidden="true"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        </span>
-                      )}
-                    </div>
-                    <p
-                      className={`px-1 py-2 font-poppins text-[11px] leading-tight transition-color duration-150 ${
-                        isSelected(item.id)
-                          ? "text-[#282828]"
-                          : "text-[#282828]/60"
-                      }`}
-                    >
-                      {item.name}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </CollapsibleSection>
+                      <div
+                        className={`relative aspect-[3/4] w-full overflow-hidden bg-[#F5F3ED] transition-shadow duration-200 ease-out ${
+                          isSelected(item.id)
+                            ? "shadow-[0_0_0_2px_#BA9D95]"
+                            : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
+                        }`}
+                      >
+                        <Image
+                          src={item.thumbnail}
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                        />
+                        {isSelected(item.id) && (
+                          <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#BA9D95] text-white">
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              aria-hidden="true"
+                            >
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          </span>
+                        )}
+                      </div>
+                      <p
+                        className={`px-1 py-2 font-poppins text-[11px] leading-tight transition-color duration-150 ${
+                          isSelected(item.id)
+                            ? "text-[#282828]"
+                            : "text-[#282828]/60"
+                        }`}
+                      >
+                        {item.name}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </CollapsibleSection>
+            ))}
 
             <CollapsibleSection
               title="Accessories"
@@ -520,6 +674,8 @@ export default function TryOn() {
                       href: item.url!,
                       target: "_blank" as const,
                       rel: "noopener noreferrer",
+                      onClick: () =>
+                        trackEvent("ltk_click", { item_id: item.id }),
                     }
                   : {};
                 return (
