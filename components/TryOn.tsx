@@ -86,6 +86,19 @@ export default function TryOn() {
   const [error, setError] = useState<string | null>(null);
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const shopRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (resultImage && shopRef.current) {
+      // Small delay so the shop section renders before scrolling
+      setTimeout(() => {
+        shopRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }, 100);
+    }
+  }, [resultImage]);
 
   useEffect(() => {
     if (!loading) {
@@ -484,7 +497,7 @@ export default function TryOn() {
 
         {/* Shop This Look */}
         {resultImage && (
-          <div>
+          <div ref={shopRef}>
             <div className="mb-3 flex items-center gap-3">
               <span className="h-px flex-1 bg-[#E6DDD9]" aria-hidden="true" />
               <p className="font-poppins text-[11px] uppercase tracking-[1px] text-[#BA9D95]">
