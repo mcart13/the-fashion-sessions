@@ -9,16 +9,15 @@ import AnimateOnScroll from "@/components/AnimateOnScroll";
 function SquigglyArrow({ show }: { show: boolean }) {
   return (
     <svg
-      width="70"
-      height="14"
-      viewBox="0 0 70 14"
+      className="h-2 w-16 shrink-0 md:h-2.5 md:w-20"
+      viewBox="0 0 80 10"
       fill="none"
       aria-hidden="true"
     >
       <path
-        d="M 3 7 Q 9 2, 15 7 Q 21 12, 27 7 Q 33 2, 39 7 Q 45 12, 51 7 Q 57 2, 60 7"
+        d="M 2 5 Q 8 2.5, 14 5 Q 20 7.5, 26 5 Q 32 2.5, 38 5 Q 44 7.5, 50 5 Q 56 2.5, 62 5"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="1.2"
         strokeLinecap="round"
         style={{
           strokeDasharray: 80,
@@ -27,9 +26,9 @@ function SquigglyArrow({ show }: { show: boolean }) {
         }}
       />
       <path
-        d="M 56 3 L 64 7 L 56 11"
+        d="M 60 2.5 L 66 5 L 60 7.5"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="1.2"
         strokeLinecap="round"
         strokeLinejoin="round"
         style={{
