@@ -21,18 +21,18 @@ export const metadata = buildMetadata({
 export default function TryOnPage() {
   return (
     <>
-      <section className="bg-cream px-6 py-20 text-center">
+      <section className="bg-cream px-6 py-10 text-center">
         <AnimateOnScroll animation="fadeInUp">
           <p
-            className="font-moontime text-[clamp(2rem,1.5rem+1.5vw,2.8rem)] leading-none text-script-brown"
+            className="font-moontime text-[clamp(1.6rem,1.2rem+1.2vw,2.2rem)] leading-none text-script-brown"
             aria-hidden="true"
           >
             something fun
           </p>
-          <h1 className="mt-1 font-butler text-[clamp(2.5rem,1.5rem+2vw,3.5rem)] font-extralight leading-[1.1] text-text-dark [text-wrap:balance]">
+          <h1 className="mt-1 font-butler text-[clamp(2rem,1.2rem+1.6vw,2.8rem)] font-extralight leading-[1.1] text-text-dark [text-wrap:balance]">
             Virtual Try-On
           </h1>
-          <p className="mx-auto mt-5 max-w-[480px] font-poppins text-[15px] leading-[1.8] text-text-dark/70">
+          <p className="mx-auto mt-3 max-w-[480px] font-poppins text-[14px] leading-[1.7] text-text-dark/70">
             Pick clothing and accessories, upload your photo, and see how the
             look works on you.
           </p>

@@ -385,24 +385,83 @@ export default function TryOn() {
 
       {/* Right column: Controls */}
       <div className="order-1 space-y-6 lg:order-2 lg:w-[45%]">
-        {/* Quick Looks */}
+        {/* Instagram Looks */}
         <div className="mb-6">
-          <p className="mb-3 font-poppins text-[11px] uppercase tracking-[1px] text-accent-gold">
-            Quick Looks
-          </p>
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="mb-3 flex items-center gap-2">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-accent-gold"
+              aria-hidden="true"
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5" />
+              <circle cx="12" cy="12" r="5" />
+              <circle
+                cx="17.5"
+                cy="6.5"
+                r="1.5"
+                fill="currentColor"
+                stroke="none"
+              />
+            </svg>
+            <p className="font-poppins text-[11px] uppercase tracking-[1px] text-accent-gold">
+              Shop Her Posts
+            </p>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-2">
             {tryOnLooks.map((look) => (
               <button
                 key={look.id}
                 type="button"
                 onClick={() => handleSelectLook(look)}
-                className={`shrink-0 rounded-sm border px-4 py-2.5 font-poppins text-[12px] tracking-[0.5px] transition-[border-color,background-color] duration-150 ease-out [touch-action:manipulation] ${
-                  activeLook === look.id
-                    ? "border-accent-gold bg-btn-cta text-text-dark"
-                    : "border-tan bg-white text-text-dark/70 hover:border-accent-gold hover:bg-[#FAFAF7]"
-                }`}
+                className="group shrink-0 [touch-action:manipulation]"
               >
-                {look.name}
+                <div
+                  className={`relative h-[120px] w-[120px] overflow-hidden rounded-sm transition-shadow duration-200 ease-out ${
+                    activeLook === look.id
+                      ? "shadow-[0_0_0_2px_#BA9D95]"
+                      : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)] group-hover:shadow-[0_0_0_2px_#BA9D95]"
+                  }`}
+                >
+                  <Image
+                    src={look.image}
+                    alt={look.name}
+                    fill
+                    className="object-cover"
+                  />
+                  {activeLook === look.id && (
+                    <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent-gold text-white">
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </span>
+                  )}
+                </div>
+                <p
+                  className={`mt-1.5 max-w-[120px] truncate px-0.5 font-poppins text-[11px] leading-tight transition-colors duration-150 ${
+                    activeLook === look.id
+                      ? "text-text-dark"
+                      : "text-text-dark/50 group-hover:text-text-dark/70"
+                  }`}
+                >
+                  {look.name}
+                </p>
               </button>
             ))}
           </div>
