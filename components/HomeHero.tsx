@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 
-/** Hand-drawn squiggly arrow that draws itself in. */
+/** Hand-drawn squiggly arrow that draws itself in. Uses currentColor. */
 function SquigglyArrow({ show }: { show: boolean }) {
   return (
     <svg
@@ -13,12 +13,11 @@ function SquigglyArrow({ show }: { show: boolean }) {
       height="14"
       viewBox="0 0 70 14"
       fill="none"
-      className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]"
       aria-hidden="true"
     >
       <path
         d="M 3 7 Q 9 2, 15 7 Q 21 12, 27 7 Q 33 2, 39 7 Q 45 12, 51 7 Q 57 2, 60 7"
-        stroke="white"
+        stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
         style={{
@@ -29,7 +28,7 @@ function SquigglyArrow({ show }: { show: boolean }) {
       />
       <path
         d="M 56 3 L 64 7 L 56 11"
-        stroke="white"
+        stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -119,23 +118,23 @@ export default function HomeHero() {
                     />
                   </div>
                 ))}
-
-                {/* "Try this look" annotation */}
-                <Link
-                  href="/try-on?look=date-night"
-                  className={`absolute right-4 top-4 z-10 flex flex-col items-end gap-0.5 transition-all duration-700 ease-out md:right-6 md:top-5 ${
-                    showAnnotation
-                      ? "translate-y-0 opacity-100"
-                      : "-translate-y-2 opacity-0"
-                  }`}
-                  aria-label="Try on this outfit virtually"
-                >
-                  <span className="font-moontime text-[1.3rem] leading-none text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.35)] md:text-[1.5rem]">
-                    Try this look
-                  </span>
-                  <SquigglyArrow show={showAnnotation} />
-                </Link>
               </div>
+
+              {/* "Try this look" annotation — on image (mobile), right of image (desktop) */}
+              <Link
+                href="/try-on?look=date-night"
+                className={`absolute right-4 top-4 z-10 flex flex-col items-end gap-0.5 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)] transition-all duration-700 ease-out md:left-[calc(100%+14px)] md:right-auto md:top-5 md:items-start md:text-script-brown md:drop-shadow-none ${
+                  showAnnotation
+                    ? "translate-y-0 opacity-100"
+                    : "-translate-y-2 opacity-0"
+                }`}
+                aria-label="Try on this outfit virtually"
+              >
+                <span className="font-moontime text-[1.3rem] leading-none md:text-[1.5rem]">
+                  Try this look
+                </span>
+                <SquigglyArrow show={showAnnotation} />
+              </Link>
             </AnimateOnScroll>
 
             <AnimateOnScroll
