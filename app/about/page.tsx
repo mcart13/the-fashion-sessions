@@ -54,10 +54,10 @@ export default function AboutPage() {
           className="flex w-1/2 items-end bg-cream pb-[30px] pl-[50px] pr-[70px]"
         >
           <div>
-            <h1 className="font-moontime text-[clamp(4rem,3rem+2vw,5rem)] font-extralight leading-none text-[#282828]">
+            <h1 className="font-moontime text-[clamp(4rem,3rem+2vw,5rem)] font-extralight leading-none text-text-dark">
               About
             </h1>
-            <p className="-mt-3 font-butler text-[clamp(2.6rem,1.7309rem+1.813vw,3rem)] font-thin leading-snug text-[#282828]">
+            <p className="-mt-3 font-butler text-[clamp(2.6rem,1.7309rem+1.813vw,3rem)] font-thin leading-snug text-text-dark">
               FASHION SHOULD EXPRESS WHO YOU ARE &amp; MAKE YOU FEEL LIKE THE
               BEST VERSION OF YOURSELF.
             </p>
@@ -95,24 +95,24 @@ export default function AboutPage() {
         <AnimateOnScroll animation="fadeInUp">
           <div className="mx-auto max-w-[800px]">
             {/* Subheading label */}
-            <p className="mb-[10px] text-center font-poppins uppercase tracking-[1.2px] text-[#282828]">
+            <p className="mb-[10px] text-center font-poppins uppercase tracking-[1.2px] text-text-dark">
               Hi, loves! It&apos;s Tracy!
             </p>
 
             {/* Story title */}
-            <h2 className="text-center font-butler text-[clamp(3rem,1.7309rem+1.813vw,4rem)] font-thin text-[#282828]">
+            <h2 className="text-center font-butler text-[clamp(3rem,1.7309rem+1.813vw,4rem)] font-thin text-text-dark">
               HOW MY STORY BEGAN
             </h2>
 
             {/* Divider below heading */}
-            <hr className="mx-auto mt-2 mb-10 w-[8%] border-t border-[#282828]" />
+            <hr className="mx-auto mt-2 mb-10 w-[8%] border-t border-text-dark" />
           </div>
         </AnimateOnScroll>
 
         <AnimateOnScroll animation="fadeInUp">
           <div className="mx-auto max-w-[800px]">
             {/* Bio paragraphs */}
-            <div className="space-y-6 text-justify font-poppins text-[14px] leading-relaxed text-[#282828]">
+            <div className="space-y-6 text-justify font-poppins text-[14px] leading-relaxed text-text-dark">
               <p>
                 From the bottom of my heart, THANK YOU for clicking the
                 &quot;About Me&quot; tab. The fact that you landed here means

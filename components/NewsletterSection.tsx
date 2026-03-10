@@ -28,7 +28,7 @@ export default function NewsletterSection() {
           </div>
 
           {/* Main heading in Moontime */}
-          <h2 className="font-moontime text-[clamp(2.2rem,1rem+3.5vw,3rem)] leading-tight text-[#282828] mb-3">
+          <h2 className="font-moontime text-[clamp(2.2rem,1rem+3.5vw,3rem)] leading-tight text-text-dark mb-3">
             Sign up to receive my newsletter, and be the first to receive
             subscriber-only offers!
           </h2>

@@ -75,9 +75,31 @@ const HOME_POSTS_PER_PAGE = 5;
 
 const postMap = new Map(siteContent.posts.map((post) => [post.id, post]));
 
+const postPathCache = new Map(
+  siteContent.posts.map((post) => [
+    post.id,
+    new URL(post.link).pathname.replace(/\/$/, "") || "/",
+  ]),
+);
+
+const postByPath = new Map(
+  siteContent.posts.map((post) => [postPathCache.get(post.id)!, post]),
+);
+
+const postsByCategory = new Map<string, SitePost[]>();
+for (const post of siteContent.posts) {
+  for (const cat of post.categories) {
+    const existing = postsByCategory.get(cat.slug);
+    if (existing) {
+      existing.push(post);
+    } else {
+      postsByCategory.set(cat.slug, [post]);
+    }
+  }
+}
+
 export function getPostPath(post: SitePost) {
-  const url = new URL(post.link);
-  return url.pathname.replace(/\/$/, "") || "/";
+  return postPathCache.get(post.id) ?? "/";
 }
 
 function normalizeExcerpt(excerpt: string) {
@@ -139,14 +161,11 @@ export function getTrendingPosts() {
 }
 
 export function getPostByPathSegments(segments: string[]) {
-  const joined = `/${segments.join("/")}`;
-  return siteContent.posts.find((post) => getPostPath(post) === joined) ?? null;
+  return postByPath.get(`/${segments.join("/")}`) ?? null;
 }
 
 export function getPostsForCategory(categorySlug: string) {
-  return siteContent.posts.filter((post) =>
-    post.categories.some((category) => category.slug === categorySlug),
-  );
+  return postsByCategory.get(categorySlug) ?? [];
 }
 
 export function getCategoryBySlug(categorySlug: string) {

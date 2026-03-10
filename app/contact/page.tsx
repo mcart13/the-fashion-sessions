@@ -51,10 +51,10 @@ export default function ContactPage() {
 
           {/* Left Column - Info */}
           <div className="order-2 md:order-1">
-            <h2 className="font-poppins text-[14px] font-semibold uppercase tracking-[2px] text-[#282828]">
+            <h2 className="font-poppins text-[14px] font-semibold uppercase tracking-[2px] text-text-dark">
               Email
             </h2>
-            <p className="mt-[5px] font-poppins text-[14px] tracking-[2.1px] text-[#282828] break-all sm:break-normal">
+            <p className="mt-[5px] font-poppins text-[14px] tracking-[2.1px] text-text-dark break-all sm:break-normal">
               <Link
                 href="mailto:tracy@thefashionsessions.com"
                 className="hover:text-accent-gold"
@@ -62,17 +62,17 @@ export default function ContactPage() {
                 tracy@thefashionsessions.com
               </Link>
             </p>
-            <hr className="my-[10px] w-[8%] border-t border-[#282828]" />
-            <p className="mt-[5px] font-poppins text-[14px] tracking-[0.8px] text-[#282828]">
+            <hr className="my-[10px] w-[8%] border-t border-text-dark" />
+            <p className="mt-[5px] font-poppins text-[14px] tracking-[0.8px] text-text-dark">
               Have a question or comment? I would love to hear from you! Email
               me with your questions, thoughts, or just to say hello!
             </p>
-            <p className="my-[10px] font-poppins text-[14px] tracking-[0.8px] text-[#282828]">
+            <p className="my-[10px] font-poppins text-[14px] tracking-[0.8px] text-text-dark">
               Looking to advertise or collaborate? I would love to work with
               you!
             </p>
 
-            <h2 className="mt-[10px] font-poppins text-[14px] font-semibold uppercase tracking-[2px] text-[#282828]">
+            <h2 className="mt-[10px] font-poppins text-[14px] font-semibold uppercase tracking-[2px] text-text-dark">
               Social
             </h2>
             <div className="-ml-3 mt-2 flex items-center gap-0">

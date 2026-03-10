@@ -75,18 +75,18 @@ export default function HomeHero() {
             >
               <div className="absolute inset-0 bg-white/70" />
               <div className="relative">
-                <h1 className="font-butler text-[clamp(2.2rem,1.5482rem+1.3598vw,2.5rem)] font-extralight leading-[1.3] text-[#282828] md:leading-[1.3]">
+                <h1 className="font-butler text-[clamp(2.2rem,1.5482rem+1.3598vw,2.5rem)] font-extralight leading-[1.3] text-text-dark md:leading-[1.3]">
                   WELCOME TO
                   <br />
                   THE FASHION SESSIONS.
                 </h1>
-                <p className="mx-auto mt-8 max-w-[470px] font-poppins text-[1rem] font-light leading-[1.7] text-[#282828]">
+                <p className="mx-auto mt-8 max-w-[470px] font-poppins text-[1rem] font-light leading-[1.7] text-text-dark">
                   I believe fashion is whatever makes you feel and look like the
                   best version of yourself. If you love it, wear it!
                 </p>
                 <Link
                   href="/about"
-                  className="mt-10 inline-flex min-w-[136px] items-center justify-center bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[14px] font-extralight leading-[1] text-[#282828] transition-[background-color,transform] hover:bg-tan active:scale-[0.97]"
+                  className="mt-10 inline-flex min-w-[136px] items-center justify-center bg-btn-cta px-[30px] py-[15px] font-poppins text-[14px] font-extralight leading-[1] text-text-dark transition-[background-color,transform] hover:bg-tan active:scale-[0.97]"
                 >
                   Learn More
                 </Link>

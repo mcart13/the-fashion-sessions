@@ -17,16 +17,16 @@ export default function ShopMyTiktokPage() {
       {/* Header */}
       <AnimateOnScroll animation="fadeInUp">
         <div className="pt-[30px] pb-4 text-center">
-          <h2 className="font-moontime text-[clamp(3.5rem,2.5rem+3vw,5rem)] font-extralight leading-none text-[#282828]">
+          <h2 className="font-moontime text-[clamp(3.5rem,2.5rem+3vw,5rem)] font-extralight leading-none text-text-dark">
             Tracy&apos;s
           </h2>
-          <h1 className="-mt-3 font-butler text-[clamp(2.6rem,1.7309rem+1.813vw,3rem)] font-thin text-[#282828]">
+          <h1 className="-mt-3 font-butler text-[clamp(2.6rem,1.7309rem+1.813vw,3rem)] font-thin text-text-dark">
             Shop My Tiktok
           </h1>
-          <p className="mt-3 font-poppins text-[15px] text-[#282828]">
+          <p className="mt-3 font-poppins text-[15px] text-text-dark">
             Click on any items below to shop my TikTok looks!
           </p>
-          <div className="mx-auto mt-[5px] h-px w-[5%] bg-[#282828]" />
+          <div className="mx-auto mt-[5px] h-px w-[5%] bg-text-dark" />
         </div>
       </AnimateOnScroll>
 
@@ -35,7 +35,7 @@ export default function ShopMyTiktokPage() {
         <div className="space-y-12">
           {tiktokSections.map((section, index) => (
             <div key={section.title}>
-              <h2 className="mb-4 font-butler text-[clamp(1.5rem,1rem+1.5vw,2rem)] font-extralight text-[#282828]">
+              <h2 className="mb-4 font-butler text-[clamp(1.5rem,1rem+1.5vw,2rem)] font-extralight text-text-dark">
                 {section.title}
               </h2>
               <div className="min-h-[220px] bg-white/60 p-6">

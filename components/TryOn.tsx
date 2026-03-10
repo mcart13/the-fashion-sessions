@@ -221,27 +221,23 @@ export default function TryOn() {
     trackEvent("tryon_attempt", { item_count: selectedItems.length });
 
     try {
-      const items: {
-        image: string;
-        name: string;
-        description: string;
-        type: string;
-      }[] = [];
-      for (const item of selectedItems) {
-        const res = await fetch(item.image);
-        const blob = await res.blob();
-        const base64 = await new Promise<string>((resolve) => {
-          const r = new FileReader();
-          r.onload = () => resolve(r.result as string);
-          r.readAsDataURL(blob);
-        });
-        items.push({
-          image: base64,
-          name: item.name,
-          description: item.description,
-          type: item.type,
-        });
-      }
+      const items = await Promise.all(
+        selectedItems.map(async (item) => {
+          const res = await fetch(item.image);
+          const blob = await res.blob();
+          const base64 = await new Promise<string>((resolve) => {
+            const r = new FileReader();
+            r.onload = () => resolve(r.result as string);
+            r.readAsDataURL(blob);
+          });
+          return {
+            image: base64,
+            name: item.name,
+            description: item.description,
+            type: item.type,
+          };
+        }),
+      );
 
       const res = await fetch("/api/try-on", {
         method: "POST",
@@ -314,7 +310,7 @@ export default function TryOn() {
     <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
       {/* Left column: Result preview (sticky on desktop) */}
       <div className="order-2 lg:order-1 lg:sticky lg:top-28 lg:w-[55%]">
-        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-sm bg-[#F5F3ED] shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
+        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-sm bg-cream shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
           {resultImage ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
@@ -325,11 +321,11 @@ export default function TryOn() {
           ) : loading ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
               <div className="relative h-8 w-8">
-                <div className="absolute inset-0 animate-spin rounded-full border-2 border-[#E6DDD9] border-t-[#BA9D95]" />
+                <div className="absolute inset-0 animate-spin rounded-full border-2 border-tan border-t-accent-gold" />
               </div>
               <p
                 key={loadingMsgIndex}
-                className="animate-[fadeIn_300ms_ease-out] font-poppins text-[13px] text-[#282828]/50"
+                className="animate-[fadeIn_300ms_ease-out] font-poppins text-[13px] text-text-dark/50"
               >
                 {LOADING_MESSAGES[loadingMsgIndex]}
               </p>
@@ -343,13 +339,13 @@ export default function TryOn() {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1"
-                className="text-[#BA9D95]/25"
+                className="text-accent-gold/25"
                 aria-hidden="true"
               >
                 <path d="M12 3L13.5 8.5L19 10L13.5 11.5L12 17L10.5 11.5L5 10L10.5 8.5L12 3Z" />
                 <path d="M19 14L19.75 16.25L22 17L19.75 17.75L19 20L18.25 17.75L16 17L18.25 16.25L19 14Z" />
               </svg>
-              <p className="text-center font-poppins text-[13px] leading-relaxed text-[#282828]/25">
+              <p className="text-center font-poppins text-[13px] leading-relaxed text-text-dark/25">
                 Your styled look will appear here
               </p>
             </div>
@@ -361,7 +357,7 @@ export default function TryOn() {
             <button
               type="button"
               onClick={handleDownload}
-              className="inline-flex items-center gap-2 bg-[#EADFD2] px-6 py-3 font-poppins text-[12px] uppercase tracking-[0.9px] text-[#282828] transition-[background-color,transform] duration-150 ease-out [touch-action:manipulation] hover:bg-[#E6DDD9] active:scale-[0.97]"
+              className="inline-flex items-center gap-2 bg-btn-cta px-6 py-3 font-poppins text-[12px] uppercase tracking-[0.9px] text-text-dark transition-[background-color,transform] duration-150 ease-out [touch-action:manipulation] hover:bg-tan active:scale-[0.97]"
               style={{ minHeight: 44 }}
             >
               <DownloadIcon />
@@ -371,14 +367,14 @@ export default function TryOn() {
               <button
                 type="button"
                 onClick={handleShare}
-                className="inline-flex items-center gap-2 border border-[#E6DDD9] bg-white px-6 py-3 font-poppins text-[12px] uppercase tracking-[0.9px] text-[#282828] transition-[border-color,background-color,transform] duration-150 ease-out [touch-action:manipulation] hover:border-[#BA9D95] hover:bg-[#FAFAF7] active:scale-[0.97]"
+                className="inline-flex items-center gap-2 border border-tan bg-white px-6 py-3 font-poppins text-[12px] uppercase tracking-[0.9px] text-text-dark transition-[border-color,background-color,transform] duration-150 ease-out [touch-action:manipulation] hover:border-accent-gold hover:bg-[#FAFAF7] active:scale-[0.97]"
                 style={{ minHeight: 44 }}
               >
                 <ShareIcon />
                 Share
               </button>
               {shareToast && (
-                <span className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-[#282828] px-3 py-1 font-poppins text-[11px] text-white">
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-text-dark px-3 py-1 font-poppins text-[11px] text-white">
                   Copied!
                 </span>
               )}
@@ -391,7 +387,7 @@ export default function TryOn() {
       <div className="order-1 space-y-6 lg:order-2 lg:w-[45%]">
         {/* Quick Looks */}
         <div className="mb-6">
-          <p className="mb-3 font-poppins text-[11px] uppercase tracking-[1px] text-[#BA9D95]">
+          <p className="mb-3 font-poppins text-[11px] uppercase tracking-[1px] text-accent-gold">
             Quick Looks
           </p>
           <div className="flex gap-2 overflow-x-auto pb-2">
@@ -402,8 +398,8 @@ export default function TryOn() {
                 onClick={() => handleSelectLook(look)}
                 className={`shrink-0 rounded-sm border px-4 py-2.5 font-poppins text-[12px] tracking-[0.5px] transition-[border-color,background-color] duration-150 ease-out [touch-action:manipulation] ${
                   activeLook === look.id
-                    ? "border-[#BA9D95] bg-[#EADFD2] text-[#282828]"
-                    : "border-[#E6DDD9] bg-white text-[#282828]/70 hover:border-[#BA9D95] hover:bg-[#FAFAF7]"
+                    ? "border-accent-gold bg-btn-cta text-text-dark"
+                    : "border-tan bg-white text-text-dark/70 hover:border-accent-gold hover:bg-[#FAFAF7]"
                 }`}
               >
                 {look.name}
@@ -415,14 +411,14 @@ export default function TryOn() {
         {/* Step 1: Build your look */}
         <div>
           <div className="mb-3 flex items-center gap-3">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#BA9D95] font-poppins text-[11px] font-medium text-white">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-gold font-poppins text-[11px] font-medium text-white">
               1
             </span>
-            <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-[#282828]">
+            <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-text-dark">
               Build your look
             </p>
             {selectedItems.length > 0 && (
-              <span className="font-poppins text-[12px] text-[#BA9D95]">
+              <span className="font-poppins text-[12px] text-accent-gold">
                 {selectedItems.length} item
                 {selectedItems.length > 1 ? "s" : ""}
               </span>
@@ -430,72 +426,71 @@ export default function TryOn() {
           </div>
 
           <div className="space-y-3">
-            {clothingByCategory.map(({ category, label, items }) => (
-              <CollapsibleSection
-                key={category}
-                title={label}
-                indicator={
-                  selectedItems.filter(
-                    (i) => i.type === "clothing" && i.category === category,
-                  ).length > 0
-                    ? `${selectedItems.filter((i) => i.type === "clothing" && i.category === category).length}`
-                    : undefined
-                }
-              >
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {items.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => toggleItem(item)}
-                      className="group overflow-hidden rounded-sm [touch-action:manipulation]"
-                      style={{ minHeight: 44 }}
-                    >
-                      <div
-                        className={`relative aspect-[3/4] w-full overflow-hidden bg-[#F5F3ED] transition-shadow duration-200 ease-out ${
-                          isSelected(item.id)
-                            ? "shadow-[0_0_0_2px_#BA9D95]"
-                            : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
-                        }`}
+            {clothingByCategory.map(({ category, label, items }) => {
+              const catCount = selectedItems.filter(
+                (i) => i.type === "clothing" && i.category === category,
+              ).length;
+              return (
+                <CollapsibleSection
+                  key={category}
+                  title={label}
+                  indicator={catCount > 0 ? `${catCount}` : undefined}
+                >
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {items.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => toggleItem(item)}
+                        className="group overflow-hidden rounded-sm [touch-action:manipulation]"
+                        style={{ minHeight: 44 }}
                       >
-                        <Image
-                          src={item.thumbnail}
-                          alt={item.name}
-                          fill
-                          className="object-cover"
-                        />
-                        {isSelected(item.id) && (
-                          <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#BA9D95] text-white">
-                            <svg
-                              width="12"
-                              height="12"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              aria-hidden="true"
-                            >
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          </span>
-                        )}
-                      </div>
-                      <p
-                        className={`px-1 py-2 font-poppins text-[11px] leading-tight transition-color duration-150 ${
-                          isSelected(item.id)
-                            ? "text-[#282828]"
-                            : "text-[#282828]/60"
-                        }`}
-                      >
-                        {item.name}
-                      </p>
-                    </button>
-                  ))}
-                </div>
-              </CollapsibleSection>
-            ))}
+                        <div
+                          className={`relative aspect-[3/4] w-full overflow-hidden bg-cream transition-shadow duration-200 ease-out ${
+                            isSelected(item.id)
+                              ? "shadow-[0_0_0_2px_#BA9D95]"
+                              : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
+                          }`}
+                        >
+                          <Image
+                            src={item.thumbnail}
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                          />
+                          {isSelected(item.id) && (
+                            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-accent-gold text-white">
+                              <svg
+                                width="12"
+                                height="12"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                aria-hidden="true"
+                              >
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                            </span>
+                          )}
+                        </div>
+                        <p
+                          className={`px-1 py-2 font-poppins text-[11px] leading-tight transition-color duration-150 ${
+                            isSelected(item.id)
+                              ? "text-text-dark"
+                              : "text-text-dark/60"
+                          }`}
+                        >
+                          {item.name}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </CollapsibleSection>
+              );
+            })}
 
             <CollapsibleSection
               title="Accessories"
@@ -515,7 +510,7 @@ export default function TryOn() {
                     style={{ minHeight: 44 }}
                   >
                     <div
-                      className={`relative h-[80px] w-[80px] overflow-hidden bg-[#F5F3ED] transition-shadow duration-200 ease-out ${
+                      className={`relative h-[80px] w-[80px] overflow-hidden bg-cream transition-shadow duration-200 ease-out ${
                         isSelected(item.id)
                           ? "shadow-[0_0_0_2px_#BA9D95]"
                           : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
@@ -528,7 +523,7 @@ export default function TryOn() {
                         className="object-cover"
                       />
                       {isSelected(item.id) && (
-                        <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#BA9D95] text-white">
+                        <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent-gold text-white">
                           <svg
                             width="10"
                             height="10"
@@ -548,8 +543,8 @@ export default function TryOn() {
                     <p
                       className={`px-1 py-1.5 font-poppins text-[11px] transition-color duration-150 ${
                         isSelected(item.id)
-                          ? "text-[#282828]"
-                          : "text-[#282828]/60"
+                          ? "text-text-dark"
+                          : "text-text-dark/60"
                       }`}
                     >
                       {item.name}
@@ -578,7 +573,7 @@ export default function TryOn() {
           />
           {userPhoto ? (
             <div className="flex items-start gap-4">
-              <div className="relative h-[100px] w-[75px] shrink-0 overflow-hidden rounded-sm bg-[#F5F3ED] shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
+              <div className="relative h-[100px] w-[75px] shrink-0 overflow-hidden rounded-sm bg-cream shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
                 <Image
                   src={userPhoto}
                   alt="Your uploaded photo"
@@ -593,7 +588,7 @@ export default function TryOn() {
                   setResultImage(null);
                   if (fileInputRef.current) fileInputRef.current.value = "";
                 }}
-                className="mt-1 font-poppins text-[12px] text-[#BA9D95] underline underline-offset-2 [touch-action:manipulation]"
+                className="mt-1 font-poppins text-[12px] text-accent-gold underline underline-offset-2 [touch-action:manipulation]"
                 style={{ minHeight: 44 }}
               >
                 Remove
@@ -603,17 +598,17 @@ export default function TryOn() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex h-[100px] w-full flex-col items-center justify-center gap-3 rounded-sm border border-dashed border-[#E6DDD9] bg-[#FAFAF7] transition-[border-color,background-color] duration-150 ease-out [touch-action:manipulation] hover:border-[#BA9D95] hover:bg-[#F5F3ED]"
+              className="flex h-[100px] w-full flex-col items-center justify-center gap-3 rounded-sm border border-dashed border-tan bg-[#FAFAF7] transition-[border-color,background-color] duration-150 ease-out [touch-action:manipulation] hover:border-accent-gold hover:bg-cream"
             >
-              <span className="text-[#BA9D95]">
+              <span className="text-accent-gold">
                 <UploadIcon />
               </span>
-              <span className="font-poppins text-[13px] text-[#282828]/50">
+              <span className="font-poppins text-[13px] text-text-dark/50">
                 Tap to upload a full-body photo
               </span>
             </button>
           )}
-          <p className="mt-2 font-poppins text-[11px] text-[#282828]/40">
+          <p className="mt-2 font-poppins text-[11px] text-text-dark/40">
             Your photo is processed securely and never saved.
           </p>
         </CollapsibleSection>
@@ -624,7 +619,7 @@ export default function TryOn() {
             type="button"
             onClick={handleTryOn}
             disabled={!userPhoto || selectedItems.length === 0 || loading}
-            className="inline-flex items-center gap-2 bg-[#282828] px-8 py-4 font-poppins text-[12px] uppercase tracking-[1.2px] text-white transition-[opacity,transform] duration-150 ease-out [touch-action:manipulation] hover:opacity-90 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30"
+            className="inline-flex items-center gap-2 bg-text-dark px-8 py-4 font-poppins text-[12px] uppercase tracking-[1.2px] text-white transition-[opacity,transform] duration-150 ease-out [touch-action:manipulation] hover:opacity-90 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30"
             style={{ minHeight: 48 }}
           >
             {loading ? "Generating\u2026" : "Try It On"}
@@ -659,11 +654,11 @@ export default function TryOn() {
         {resultImage && (
           <div>
             <div className="mb-3 flex items-center gap-3">
-              <span className="h-px flex-1 bg-[#E6DDD9]" aria-hidden="true" />
-              <p className="font-poppins text-[11px] uppercase tracking-[1px] text-[#BA9D95]">
+              <span className="h-px flex-1 bg-tan" aria-hidden="true" />
+              <p className="font-poppins text-[11px] uppercase tracking-[1px] text-accent-gold">
                 Shop this look
               </p>
-              <span className="h-px flex-1 bg-[#E6DDD9]" aria-hidden="true" />
+              <span className="h-px flex-1 bg-tan" aria-hidden="true" />
             </div>
             <div className="flex flex-col gap-2">
               {selectedItems.map((item) => {
@@ -682,13 +677,13 @@ export default function TryOn() {
                   <Wrapper
                     key={item.id}
                     {...linkProps}
-                    className={`flex items-center gap-3 rounded-sm border border-[#E6DDD9] px-3 py-2.5 transition-[border-color,background-color] duration-150 ${
+                    className={`flex items-center gap-3 rounded-sm border border-tan px-3 py-2.5 transition-[border-color,background-color] duration-150 ${
                       hasLink
-                        ? "cursor-pointer hover:border-[#BA9D95] hover:bg-[#FAFAF7]"
+                        ? "cursor-pointer hover:border-accent-gold hover:bg-[#FAFAF7]"
                         : ""
                     }`}
                   >
-                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-[#F5F3ED]">
+                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-cream">
                       <Image
                         src={item.thumbnail}
                         alt={item.name}
@@ -696,15 +691,15 @@ export default function TryOn() {
                         className="object-cover"
                       />
                     </div>
-                    <span className="flex-1 font-poppins text-[12px] text-[#282828]">
+                    <span className="flex-1 font-poppins text-[12px] text-text-dark">
                       {item.name}
                     </span>
                     {hasLink ? (
-                      <span className="font-poppins text-[11px] uppercase tracking-[0.8px] text-[#BA9D95]">
+                      <span className="font-poppins text-[11px] uppercase tracking-[0.8px] text-accent-gold">
                         Shop
                       </span>
                     ) : (
-                      <span className="font-poppins text-[10px] uppercase tracking-[0.8px] text-[#282828]/30">
+                      <span className="font-poppins text-[10px] uppercase tracking-[0.8px] text-text-dark/30">
                         Coming soon
                       </span>
                     )}

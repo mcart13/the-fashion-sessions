@@ -41,7 +41,7 @@ export default function PostTeaser({
       </Link>
 
       <div className="flex flex-col justify-center">
-        <h3 className="font-butler text-[clamp(1.8rem,1.3654rem+0.9065vw,2rem)] font-extralight leading-snug text-[#282828]">
+        <h3 className="font-butler text-[clamp(1.8rem,1.3654rem+0.9065vw,2rem)] font-extralight leading-snug text-text-dark">
           <Link
             href={getPostHref(post)}
             className="transition-colors hover:text-accent-gold"
@@ -50,22 +50,22 @@ export default function PostTeaser({
           </Link>
         </h3>
 
-        <p className="mt-[10px] font-poppins text-[11px] tracking-[0.8px] text-[#282828]">
+        <p className="mt-[10px] font-poppins text-[11px] tracking-[0.8px] text-text-dark">
           {formatDisplayDate(post.date)}
           {showCategories && post.categories.length > 0 ? (
-            <span className="ml-3 text-[#BA9D95]">
+            <span className="ml-3 text-accent-gold">
               {post.categories.map((category) => category.name).join(", ")}
             </span>
           ) : null}
         </p>
 
-        <p className="mt-3 font-poppins text-[15px] leading-relaxed text-[#282828]">
+        <p className="mt-3 font-poppins text-[15px] leading-relaxed text-text-dark">
           {getPostExcerpt(post)}
         </p>
 
         <Link
           href={getPostHref(post)}
-          className="mt-[15px] inline-flex w-fit items-center gap-3 bg-tan px-[30px] py-[10px] font-poppins text-[12px] font-light text-[#282828] transition-[background-color,transform] hover:bg-[#d4cbc7] active:scale-[0.97]"
+          className="mt-[15px] inline-flex w-fit items-center gap-3 bg-tan px-[30px] py-[10px] font-poppins text-[12px] font-light text-text-dark transition-[background-color,transform] hover:bg-[#d4cbc7] active:scale-[0.97]"
         >
           Continue Reading
           <svg

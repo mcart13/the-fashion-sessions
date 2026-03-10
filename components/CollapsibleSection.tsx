@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 interface CollapsibleSectionProps {
   step?: number;
@@ -26,11 +26,6 @@ export default function CollapsibleSection({
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
 
-  // Sync internal state when controlled prop changes
-  useEffect(() => {
-    if (isControlled) setInternalOpen(controlledOpen);
-  }, [isControlled, controlledOpen]);
-
   const toggle = () => {
     const next = !open;
     if (!isControlled) setInternalOpen(next);
@@ -46,15 +41,15 @@ export default function CollapsibleSection({
         aria-expanded={open}
       >
         {step != null && (
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#BA9D95] font-poppins text-[11px] font-medium text-white">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-gold font-poppins text-[11px] font-medium text-white">
             {step}
           </span>
         )}
-        <span className="font-poppins text-[13px] uppercase tracking-[1.3px] text-[#282828]">
+        <span className="font-poppins text-[13px] uppercase tracking-[1.3px] text-text-dark">
           {title}
         </span>
         {indicator && (
-          <span className="font-poppins text-[12px] text-[#BA9D95]">
+          <span className="font-poppins text-[12px] text-accent-gold">
             {indicator}
           </span>
         )}
@@ -67,7 +62,7 @@ export default function CollapsibleSection({
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className={`ml-auto shrink-0 text-[#282828]/20 transition-transform duration-300 ease-out group-hover:text-[#282828]/40 ${
+          className={`ml-auto shrink-0 text-text-dark/20 transition-transform duration-300 ease-out group-hover:text-text-dark/40 ${
             open ? "" : "-rotate-90"
           }`}
           aria-hidden="true"

@@ -6,6 +6,15 @@ function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function buildEmailHtml({
   email,
   message,
@@ -19,11 +28,11 @@ function buildEmailHtml({
 }) {
   return `
     <h1>New website contact form submission</h1>
-    <p><strong>Name:</strong> ${name}</p>
-    <p><strong>Email:</strong> ${email}</p>
-    <p><strong>Inquiry:</strong> ${subject || "General inquiry"}</p>
+    <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+    <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+    <p><strong>Inquiry:</strong> ${escapeHtml(subject) || "General inquiry"}</p>
     <p><strong>Message:</strong></p>
-    <p>${message.replace(/\n/g, "<br />")}</p>
+    <p>${escapeHtml(message).replace(/\n/g, "<br />")}</p>
   `.trim();
 }
 
@@ -31,7 +40,10 @@ export async function POST(request: Request) {
   const payload = await request.json().catch(() => null);
 
   if (!payload || typeof payload !== "object") {
-    return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid request body." },
+      { status: 400 },
+    );
   }
 
   const name = String(payload.name ?? "").trim();
@@ -52,7 +64,10 @@ export async function POST(request: Request) {
   }
 
   if (!isValidEmail(email)) {
-    return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Enter a valid email address." },
+      { status: 400 },
+    );
   }
 
   const resendApiKey = process.env.RESEND_API_KEY;

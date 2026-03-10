@@ -6,7 +6,7 @@ const TryOn = dynamic(() => import("@/components/TryOn"), {
   ssr: false,
   loading: () => (
     <div className="flex h-40 items-center justify-center">
-      <p className="font-poppins text-[13px] text-[#282828]/50">Loading…</p>
+      <p className="font-poppins text-[13px] text-text-dark/50">Loading…</p>
     </div>
   ),
 });
@@ -24,15 +24,15 @@ export default function TryOnPage() {
       <section className="bg-cream px-6 py-20 text-center">
         <AnimateOnScroll animation="fadeInUp">
           <p
-            className="font-moontime text-[clamp(2rem,1.5rem+1.5vw,2.8rem)] leading-none text-[#936740]"
+            className="font-moontime text-[clamp(2rem,1.5rem+1.5vw,2.8rem)] leading-none text-script-brown"
             aria-hidden="true"
           >
             something fun
           </p>
-          <h1 className="mt-1 font-butler text-[clamp(2.5rem,1.5rem+2vw,3.5rem)] font-extralight leading-[1.1] text-[#282828] [text-wrap:balance]">
+          <h1 className="mt-1 font-butler text-[clamp(2.5rem,1.5rem+2vw,3.5rem)] font-extralight leading-[1.1] text-text-dark [text-wrap:balance]">
             Virtual Try-On
           </h1>
-          <p className="mx-auto mt-5 max-w-[480px] font-poppins text-[15px] leading-[1.8] text-[#282828]/70">
+          <p className="mx-auto mt-5 max-w-[480px] font-poppins text-[15px] leading-[1.8] text-text-dark/70">
             Pick clothing and accessories, upload your photo, and see how the
             look works on you.
           </p>

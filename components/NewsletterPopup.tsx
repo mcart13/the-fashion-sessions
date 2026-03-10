@@ -103,15 +103,15 @@ export default function NewsletterPopup({ formId }: NewsletterPopupProps) {
 
         {/* Right content */}
         <div className="w-full md:w-1/2 overflow-y-auto p-5 sm:p-8 flex flex-col justify-center">
-          <h2 className="font-moontime text-[clamp(2rem,1rem+3.5vw,2.7rem)] leading-tight text-[#282828] mb-3">
+          <h2 className="font-moontime text-[clamp(2rem,1rem+3.5vw,2.7rem)] leading-tight text-text-dark mb-3">
             Subscribe to my Newsletter
           </h2>
           <div className="mb-6 space-y-3 text-center md:text-left">
-            <p className="font-butler text-[18px] font-light leading-relaxed text-[#B98F67]">
+            <p className="font-butler text-[18px] font-light leading-relaxed text-divider">
               Be the first to know about new blog posts, sales, gift guides and
               giveaways.
             </p>
-            <p className="font-butler text-[18px] font-light leading-relaxed text-[#B98F67]">
+            <p className="font-butler text-[18px] font-light leading-relaxed text-divider">
               Enter your name (first line) &amp; email address (second line).
             </p>
           </div>

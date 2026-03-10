@@ -6,9 +6,6 @@ const MAIN_CATEGORY_SLUGS = ["fashion", "beauty", "food", "travel"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getAllPosts();
-  const categorySlugsWithPosts = new Set(
-    posts.flatMap((post) => post.categories.map((category) => category.slug)),
-  );
 
   const staticRoutes = [
     "",
@@ -31,12 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const categories = getAllCategories()
-    .filter(
-      (cat) =>
-        !MAIN_CATEGORY_SLUGS.includes(cat.slug) &&
-        cat.count > 0 &&
-        categorySlugsWithPosts.has(cat.slug),
-    )
+    .filter((cat) => !MAIN_CATEGORY_SLUGS.includes(cat.slug) && cat.count > 0)
     .map((category) => ({
       url: `${SITE_URL}/category/${category.slug}`,
       changeFrequency: "weekly" as const,

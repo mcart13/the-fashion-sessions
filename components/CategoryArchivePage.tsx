@@ -83,24 +83,24 @@ export default function CategoryArchivePage({
       />
       {/* Hero Section */}
       {hasHero && (
-        <section className="bg-[#F5F3ED]">
+        <section className="bg-cream">
           <div className="mx-auto max-w-[1120px] px-5 py-14">
             {/* Top decorative heading */}
             <AnimateOnScroll animation="fadeInUp">
               <div className="mb-8 text-center">
                 {heroHeading.topScript ? (
-                  <h1 className="font-moontime text-[clamp(3rem,1.7309rem+1.813vw,4rem)] font-light leading-none text-[#936740]">
+                  <h1 className="font-moontime text-[clamp(3rem,1.7309rem+1.813vw,4rem)] font-light leading-none text-script-brown">
                     {heroHeading.topScript}
                   </h1>
                 ) : (
                   <div>
                     {heroHeading.topSmall && (
-                      <p className="font-poppins text-[14px] uppercase tracking-[2px] text-[#282828]">
+                      <p className="font-poppins text-[14px] uppercase tracking-[2px] text-text-dark">
                         {heroHeading.topSmall}
                       </p>
                     )}
                     {heroHeading.topLarge && (
-                      <h1 className="mt-1 font-butler text-[clamp(2.2rem,1.5482rem+1.3598vw,3rem)] font-extralight leading-tight text-[#282828]">
+                      <h1 className="mt-1 font-butler text-[clamp(2.2rem,1.5482rem+1.3598vw,3rem)] font-extralight leading-tight text-text-dark">
                         {heroHeading.topLarge}
                       </h1>
                     )}
@@ -129,11 +129,11 @@ export default function CategoryArchivePage({
                 className="flex items-center justify-center"
               >
                 <div className="max-w-[550px] bg-[#FFFFFFDE] px-10 py-12 text-center md:px-14 md:py-16">
-                  <h2 className="font-butler text-[clamp(1.6rem,1.1rem+1.1vw,2rem)] font-extralight leading-snug text-[#282828]">
+                  <h2 className="font-butler text-[clamp(1.6rem,1.1rem+1.1vw,2rem)] font-extralight leading-snug text-text-dark">
                     {heroOverlay.heading}
                   </h2>
                   {heroOverlay.subtitle && (
-                    <p className="mt-4 font-poppins text-[15px] leading-relaxed text-[#282828]">
+                    <p className="mt-4 font-poppins text-[15px] leading-relaxed text-text-dark">
                       {heroOverlay.subtitle}
                     </p>
                   )}

@@ -90,7 +90,7 @@ export default function ContactForm() {
   };
 
   const inputClass =
-    "w-full border border-[#ddd] bg-[#fafafa] px-4 py-3 font-poppins text-base text-text-dark outline-none transition-colors focus:border-accent-gold focus:outline-2 focus:outline-[#282828]";
+    "w-full border border-[#ddd] bg-[#fafafa] px-4 py-3 font-poppins text-base text-text-dark outline-none transition-colors focus:border-accent-gold focus:outline-2 focus:outline-text-dark";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -146,7 +146,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] tracking-[0.9px] text-[#282828] transition-[background-color,transform] hover:bg-tan active:scale-[0.97]"
+        className="bg-btn-cta px-[30px] py-[15px] font-poppins text-[12px] tracking-[0.9px] text-text-dark transition-[background-color,transform] hover:bg-tan active:scale-[0.97]"
       >
         {isSubmitting ? "Sending..." : "Submit"}
       </button>

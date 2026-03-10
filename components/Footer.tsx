@@ -34,7 +34,7 @@ export default function Footer() {
       {/* Follow Along Section */}
       <section className="bg-cream py-10 text-center">
         <AnimateOnScroll animation="fadeIn">
-          <h2 className="font-moontime text-[clamp(3rem,1.7309rem+1.813vw,4rem)] leading-none text-[#282828]">
+          <h2 className="font-moontime text-[clamp(3rem,1.7309rem+1.813vw,4rem)] leading-none text-text-dark">
             follow along!
           </h2>
         </AnimateOnScroll>
@@ -63,14 +63,14 @@ export default function Footer() {
       </section>
 
       {/* Dark Footer Section */}
-      <section className="bg-[#282828] px-6 pt-5 pb-3 md:px-12">
+      <section className="bg-text-dark px-6 pt-5 pb-3 md:px-12">
         <div className="mx-auto grid max-w-[1140px] grid-cols-1 gap-10 md:grid-cols-2">
           {/* Shops */}
           <div>
-            <h3 className="font-butler text-[clamp(1.8rem,1.3654rem+0.9065vw,2rem)] font-extralight text-[#E6DDD9]">
+            <h3 className="font-butler text-[clamp(1.8rem,1.3654rem+0.9065vw,2rem)] font-extralight text-footer-text">
               Shops
             </h3>
-            <div className="mt-2 mb-4 h-px w-12 bg-[#E6DDD9]/30" />
+            <div className="mt-2 mb-4 h-px w-12 bg-tan/30" />
             <ul className="space-y-2">
               {shopLinks.map((link) => (
                 <li key={link.label}>
@@ -82,7 +82,7 @@ export default function Footer() {
                         ? "noopener noreferrer"
                         : undefined
                     }
-                    className="font-poppins text-[15px] text-[#E6DDD9] transition-colors hover:text-footer-hover"
+                    className="font-poppins text-[15px] text-footer-text transition-colors hover:text-footer-hover"
                   >
                     {link.label}
                   </Link>
@@ -93,7 +93,7 @@ export default function Footer() {
 
           {/* Instagram Feed */}
           <div>
-            <p className="text-center font-roboto text-[14px] text-[#E6DDD9]">
+            <p className="text-center font-roboto text-[14px] text-footer-text">
               Instagram Feed
             </p>
             <div className="mt-4">
@@ -116,7 +116,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.name}
-                className="flex h-[44px] w-[44px] items-center justify-center text-[#E6DDD9] transition-colors hover:text-footer-hover md:h-auto md:w-auto"
+                className="flex h-[44px] w-[44px] items-center justify-center text-footer-text transition-colors hover:text-footer-hover md:h-auto md:w-auto"
               >
                 <SocialIcon name={social.name} className="w-[14px] h-[14px]" />
               </Link>

@@ -132,22 +132,22 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
       <div className="mt-[30px] bg-white px-6">
         <div className="mx-auto max-w-[1240px] text-center">
           {primaryCategory ? (
-            <p className="font-poppins text-[11px] uppercase tracking-[1.2px] text-[#282828]">
+            <p className="font-poppins text-[11px] uppercase tracking-[1.2px] text-text-dark">
               <Link
                 href={getCategoryHref(primaryCategory.slug)}
-                className="transition-colors hover:text-[#BA9D95]"
+                className="transition-colors hover:text-accent-gold"
               >
                 {primaryCategory.name}
               </Link>
             </p>
           ) : null}
-          <h1 className="mt-2 font-butler text-[clamp(1.6rem,1rem+2vw,2.5rem)] font-extralight text-[#282828]">
+          <h1 className="mt-2 font-butler text-[clamp(1.6rem,1rem+2vw,2.5rem)] font-extralight text-text-dark">
             {post.title}
           </h1>
-          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-poppins text-[11px] uppercase text-[#282828]">
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-poppins text-[11px] uppercase text-text-dark">
             <div className="flex items-center gap-[11px]">
               <svg
-                className="h-3 w-3 text-[#BA9D95]"
+                className="h-3 w-3 text-accent-gold"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -171,7 +171,7 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
             {primaryCategory ? (
               <div className="flex items-center gap-[11px]">
                 <svg
-                  className="h-3 w-3 text-[#BA9D95]"
+                  className="h-3 w-3 text-accent-gold"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -185,7 +185,7 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
                 </svg>
                 <Link
                   href={getCategoryHref(primaryCategory.slug)}
-                  className="transition-colors hover:text-[#BA9D95]"
+                  className="transition-colors hover:text-accent-gold"
                 >
                   {primaryCategory.name}
                 </Link>
@@ -200,14 +200,14 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Share on ${share.label}`}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#BA9D95] text-white transition-colors hover:bg-[#E6DDD9] hover:text-[#525050]"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-gold text-white transition-colors hover:bg-tan hover:text-[#525050]"
               >
                 <SocialIcon name={share.icon} className="h-[18px] w-[18px]" />
               </Link>
             ))}
           </div>
           <div className="mx-auto mt-3 max-w-[1240px]">
-            <hr className="border-[#B98F67]" />
+            <hr className="border-divider" />
           </div>
         </div>
       </div>
@@ -222,7 +222,7 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
               html={post.contentHtml}
             />
 
-            <div className="mt-8 flex items-start gap-5 border-t border-b border-[#E6DDD9] py-6">
+            <div className="mt-8 flex items-start gap-5 border-t border-b border-tan py-6">
               <Image
                 src="/images/sidebar-tracy.jpg"
                 alt="Tracy Cartwright"
@@ -231,10 +231,10 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
                 className="shrink-0 rounded object-cover"
               />
               <div>
-                <p className="font-butler text-lg font-extralight text-[#282828]">
+                <p className="font-butler text-lg font-extralight text-text-dark">
                   Tracy Cartwright
                 </p>
-                <p className="mt-1 font-poppins text-[13px] leading-relaxed text-[#282828]">
+                <p className="mt-1 font-poppins text-[13px] leading-relaxed text-text-dark">
                   Tracy is a fashion and lifestyle blogger helping women feel
                   confident through personal style. A former CPA turned
                   full-time content creator, she has been styling and inspiring
@@ -242,7 +242,7 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
                 </p>
                 <Link
                   href="/about"
-                  className="mt-2 inline-block font-poppins text-[12px] uppercase tracking-[1px] text-[#BA9D95] transition-colors hover:text-[#282828]"
+                  className="mt-2 inline-block font-poppins text-[12px] uppercase tracking-[1px] text-accent-gold transition-colors hover:text-text-dark"
                 >
                   More About Tracy
                 </Link>
@@ -254,7 +254,7 @@ export default function CatchAllPage({ params }: CatchAllPageProps) {
                 href={
                   primaryCategory ? getCategoryHref(primaryCategory.slug) : "/"
                 }
-                className="font-poppins text-sm uppercase tracking-[1.2px] text-[#BA9D95] transition-colors hover:text-[#282828]"
+                className="font-poppins text-sm uppercase tracking-[1.2px] text-accent-gold transition-colors hover:text-text-dark"
               >
                 Back to {primaryCategory ? primaryCategory.name : "Home"}
               </Link>

@@ -25,10 +25,10 @@ export default function Sidebar() {
             className="object-cover"
           />
         </div>
-        <h2 className="mb-0 font-moontime text-[clamp(3rem,1.7309rem+1.813vw,4rem)] leading-none text-[#936740]">
+        <h2 className="mb-0 font-moontime text-[clamp(3rem,1.7309rem+1.813vw,4rem)] leading-none text-script-brown">
           Hi!
         </h2>
-        <p className="mt-[9px] px-[13px] font-butler text-[19px] font-thin leading-[24px] tracking-[0.1px] text-[#282828]">
+        <p className="mt-[9px] px-[13px] font-butler text-[19px] font-thin leading-[24px] tracking-[0.1px] text-text-dark">
           I&apos;m Tracy. I&apos;m a mom of two (and new empty nester!) who
           loves a good denim jacket, chips and queso, and dinner dates with my
           hubby. I believe fashion should be fun, versatile, and always express
@@ -45,7 +45,7 @@ export default function Sidebar() {
             href={social.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-[44px] w-[44px] items-center justify-center text-[#282828] transition-colors hover:text-[#BA9D95]"
+            className="flex h-[44px] w-[44px] items-center justify-center text-text-dark transition-colors hover:text-accent-gold"
             aria-label={social.name}
           >
             <SocialIcon name={social.name} className="w-5 h-5" />
@@ -55,11 +55,11 @@ export default function Sidebar() {
 
       {/* Shop Feed divider */}
       <div className="mt-5 flex items-center gap-3">
-        <div className="flex-1 h-px bg-[#282828]" />
-        <span className="font-poppins text-[13px] text-[#282828]">
+        <div className="flex-1 h-px bg-text-dark" />
+        <span className="font-poppins text-[13px] text-text-dark">
           Shop Feed
         </span>
-        <div className="flex-1 h-px bg-[#282828]" />
+        <div className="flex-1 h-px bg-text-dark" />
       </div>
 
       <div className="mt-2 min-h-[320px]">
@@ -75,17 +75,17 @@ export default function Sidebar() {
       </div>
 
       {/* Trending posts */}
-      <div className="mt-[30px] border border-[#936740] p-[10px]">
-        <h3 className="text-center font-moontime text-[50px] font-medium leading-[52px] text-[#936740]">
+      <div className="mt-[30px] border border-script-brown p-[10px]">
+        <h3 className="text-center font-moontime text-[50px] font-medium leading-[52px] text-script-brown">
           trending posts
         </h3>
-        <div className="mx-auto mb-4 mt-1 w-[20%] border-t border-[#936740]" />
+        <div className="mx-auto mb-4 mt-1 w-[20%] border-t border-script-brown" />
         <ul className="space-y-3 px-4 pb-4">
           {trendingPosts.map((post) => (
             <li key={post.id}>
               <Link
                 href={getPostHref(post)}
-                className="font-poppins text-[14px] leading-[1.65] text-[#282828] transition-colors hover:text-[#BA9D95]"
+                className="font-poppins text-[14px] leading-[1.65] text-text-dark transition-colors hover:text-accent-gold"
               >
                 {post.title}
               </Link>

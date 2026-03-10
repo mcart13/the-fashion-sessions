@@ -42,14 +42,14 @@ export default function HomePage({ searchParams }: HomePageProps) {
       <section className="bg-white px-6 py-20">
         <AnimateOnScroll animation="fadeInUp">
           <div className="mx-auto max-w-[1140px] text-center">
-            <h2 className="font-butler text-[clamp(3rem,1.7309rem+1.813vw,4rem)] font-extralight leading-[1.1] text-[#282828] md:px-[70px]">
+            <h2 className="font-butler text-[clamp(3rem,1.7309rem+1.813vw,4rem)] font-extralight leading-[1.1] text-text-dark md:px-[70px]">
               FASHION RULES DON&apos;T EXIST IN MY WORLD.
             </h2>
           </div>
         </AnimateOnScroll>
         <AnimateOnScroll animation="fadeInUp">
           <div className="mx-auto max-w-[1140px] text-center">
-            <p className="mx-auto mt-6 max-w-[665px] font-poppins text-[1rem] leading-[1.7] text-[#282828]">
+            <p className="mx-auto mt-6 max-w-[665px] font-poppins text-[1rem] leading-[1.7] text-text-dark">
               When I see fashion do&apos;s and don&apos;ts, I throw them out the
               window. While I believe we can all find fashions that flatter
               parts of our bodies that we love, I truly believe that fashion is
@@ -63,10 +63,10 @@ export default function HomePage({ searchParams }: HomePageProps) {
       <section className="bg-tan px-6 py-14">
         <AnimateOnScroll animation="fadeInDown">
           <div className="mx-auto max-w-5xl text-center">
-            <p className="font-poppins text-[14px] uppercase tracking-[1.3px] text-[#282828]">
+            <p className="font-poppins text-[14px] uppercase tracking-[1.3px] text-text-dark">
               Catch some of my favorite products I&apos;m loving right now
             </p>
-            <h2 className="mt-2 font-butler text-[clamp(2.2rem,1.5482rem+1.3598vw,2.5rem)] font-extralight italic leading-none text-[#282828]">
+            <h2 className="mt-2 font-butler text-[clamp(2.2rem,1.5482rem+1.3598vw,2.5rem)] font-extralight italic leading-none text-text-dark">
               shop my favorites
             </h2>
           </div>
@@ -75,7 +75,7 @@ export default function HomePage({ searchParams }: HomePageProps) {
           <div className="mx-auto max-w-5xl text-center">
             <div className="mt-10 grid gap-10 md:grid-cols-2">
               <div>
-                <h3 className="font-moontime text-[clamp(3rem,1.7309rem+1.813vw,4rem)] font-light leading-none text-[#936740]">
+                <h3 className="font-moontime text-[clamp(3rem,1.7309rem+1.813vw,4rem)] font-light leading-none text-script-brown">
                   beauty &amp; hair!
                 </h3>
                 <div className="mx-auto mt-4 max-w-4xl bg-white/50 p-4">
@@ -86,7 +86,7 @@ export default function HomePage({ searchParams }: HomePageProps) {
               </div>
 
               <div>
-                <h3 className="font-moontime text-[clamp(3rem,1.7309rem+1.813vw,4rem)] font-light leading-none text-[#936740]">
+                <h3 className="font-moontime text-[clamp(3rem,1.7309rem+1.813vw,4rem)] font-light leading-none text-script-brown">
                   must-haves!
                 </h3>
                 <div className="mx-auto mt-4 max-w-4xl bg-white/50 p-4">
@@ -150,19 +150,19 @@ export default function HomePage({ searchParams }: HomePageProps) {
             className="flex w-full items-center md:w-[62.27%]"
           >
             <div className="px-8 py-12 md:px-14 md:py-16">
-              <p className="font-poppins text-[16px] tracking-[2.3px] text-[#282828]">
+              <p className="font-poppins text-[16px] tracking-[2.3px] text-text-dark">
                 MEET THE FOUNDER
               </p>
-              <h2 className="mt-3 font-butler text-[42px] font-extralight leading-tight text-[#282828]">
+              <h2 className="mt-3 font-butler text-[42px] font-extralight leading-tight text-text-dark">
                 Hey, I&apos;m Tracy!
               </h2>
-              <p className="mt-4 font-poppins text-[1rem] leading-[1.9rem] text-[#282828]">
+              <p className="mt-4 font-poppins text-[1rem] leading-[1.9rem] text-text-dark">
                 I get asked a lot how I came to be in the world of fashion.
                 Click below, and I&apos;ll tell you a little more about me!
               </p>
               <Link
                 href="/about"
-                className="mt-8 inline-block bg-[#EADFD2] px-[30px] py-[15px] font-poppins text-[12px] tracking-[0.9px] text-[#282828] transition-[background-color,transform] hover:bg-tan active:scale-[0.97]"
+                className="mt-8 inline-block bg-btn-cta px-[30px] py-[15px] font-poppins text-[12px] tracking-[0.9px] text-text-dark transition-[background-color,transform] hover:bg-tan active:scale-[0.97]"
               >
                 READ MY STORY
               </Link>

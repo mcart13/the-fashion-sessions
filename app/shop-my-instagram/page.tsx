@@ -18,13 +18,13 @@ export default function ShopMyInstagramPage() {
       {/* Header */}
       <AnimateOnScroll animation="fadeInUp">
         <div className="pt-[30px] text-center">
-          <h2 className="font-moontime text-[clamp(3.5rem,2.5rem+3vw,5rem)] font-extralight leading-none text-[#282828]">
+          <h2 className="font-moontime text-[clamp(3.5rem,2.5rem+3vw,5rem)] font-extralight leading-none text-text-dark">
             Tracy&apos;s
           </h2>
-          <h1 className="-mt-3 font-butler text-[clamp(2.6rem,1.7309rem+1.813vw,3rem)] font-thin text-[#282828]">
+          <h1 className="-mt-3 font-butler text-[clamp(2.6rem,1.7309rem+1.813vw,3rem)] font-thin text-text-dark">
             Shop My Instagram
           </h1>
-          <div className="mx-auto mt-[5px] h-px w-[5%] bg-[#282828]" />
+          <div className="mx-auto mt-[5px] h-px w-[5%] bg-text-dark" />
         </div>
       </AnimateOnScroll>
 

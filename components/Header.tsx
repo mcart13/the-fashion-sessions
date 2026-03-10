@@ -175,12 +175,12 @@ export default function Header() {
 
   const desktopLinkClass = (active: boolean) =>
     `block px-[15px] py-2 font-poppins text-[11px] uppercase tracking-[1.2px] transition-colors duration-200 ${
-      active ? "text-[#BA9D95]" : "text-[#282828] hover:text-[#BA9D95]"
+      active ? "text-accent-gold" : "text-text-dark hover:text-accent-gold"
     }`;
 
   const desktopMenuButtonClass = (active: boolean) =>
     `flex items-center gap-1 px-[15px] py-2 font-poppins text-[11px] uppercase tracking-[1.2px] transition-colors duration-200 ${
-      active ? "text-[#BA9D95]" : "text-[#282828] hover:text-[#BA9D95]"
+      active ? "text-accent-gold" : "text-text-dark hover:text-accent-gold"
     }`;
 
   return (
@@ -193,7 +193,7 @@ export default function Header() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={social.name}
-            className="flex h-[44px] w-[44px] items-center justify-center text-[#282828] transition-colors duration-200 hover:text-[#BA9D95] md:h-auto md:w-auto"
+            className="flex h-[44px] w-[44px] items-center justify-center text-text-dark transition-colors duration-200 hover:text-accent-gold md:h-auto md:w-auto"
           >
             <SocialIcon name={social.name} className="h-[15px] w-[15px]" />
           </a>
@@ -272,14 +272,14 @@ export default function Header() {
                                   href={subItem.href}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="block whitespace-nowrap px-4 py-2 font-poppins text-[11px] uppercase tracking-[1.2px] text-[#282828] transition-colors duration-150 hover:text-[#BA9D95]"
+                                  className="block whitespace-nowrap px-4 py-2 font-poppins text-[11px] uppercase tracking-[1.2px] text-text-dark transition-colors duration-150 hover:text-accent-gold"
                                 >
                                   {subItem.label}
                                 </a>
                               ) : (
                                 <Link
                                   href={subItem.href}
-                                  className="block whitespace-nowrap px-4 py-2 font-poppins text-[11px] uppercase tracking-[1.2px] text-[#282828] transition-colors duration-150 hover:text-[#BA9D95]"
+                                  className="block whitespace-nowrap px-4 py-2 font-poppins text-[11px] uppercase tracking-[1.2px] text-text-dark transition-colors duration-150 hover:text-accent-gold"
                                 >
                                   {subItem.label}
                                 </Link>
@@ -314,7 +314,7 @@ export default function Header() {
           onClick={() => setMobileMenuOpen((current) => !current)}
           aria-label="Toggle menu"
           aria-expanded={mobileMenuOpen}
-          className="p-2 text-[#282828] transition-opacity duration-200 hover:opacity-60 lg:hidden"
+          className="p-2 text-text-dark transition-opacity duration-200 hover:opacity-60 lg:hidden"
         >
           <svg
             className="h-6 w-6"
@@ -351,7 +351,7 @@ export default function Header() {
             type="button"
             onClick={() => setMobileMenuOpen(false)}
             aria-label="Close menu"
-            className="p-1 text-[#282828] transition-opacity hover:opacity-60"
+            className="p-1 text-text-dark transition-opacity hover:opacity-60"
           >
             <svg
               className="h-6 w-6"
@@ -382,7 +382,7 @@ export default function Header() {
                           current === item.id ? null : item.id,
                         )
                       }
-                      className="flex w-full items-center justify-between border-b border-gray-100 py-3 font-poppins text-[15px] text-[#282828] transition-colors hover:text-[#BA9D95]"
+                      className="flex w-full items-center justify-between border-b border-gray-100 py-3 font-poppins text-[15px] text-text-dark transition-colors hover:text-accent-gold"
                       aria-expanded={openMobileMenu === item.id}
                     >
                       {item.label}
@@ -415,7 +415,7 @@ export default function Header() {
                               href={subItem.href}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="block py-2.5 pl-4 font-poppins text-[15px] text-[#282828] transition-colors hover:text-[#BA9D95]"
+                              className="block py-2.5 pl-4 font-poppins text-[15px] text-text-dark transition-colors hover:text-accent-gold"
                               onClick={() => setMobileMenuOpen(false)}
                             >
                               {subItem.label}
@@ -423,7 +423,7 @@ export default function Header() {
                           ) : (
                             <Link
                               href={subItem.href}
-                              className="block py-2.5 pl-4 font-poppins text-[15px] text-[#282828] transition-colors hover:text-[#BA9D95]"
+                              className="block py-2.5 pl-4 font-poppins text-[15px] text-text-dark transition-colors hover:text-accent-gold"
                               onClick={() => setMobileMenuOpen(false)}
                             >
                               {subItem.label}
@@ -438,7 +438,7 @@ export default function Header() {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block border-b border-gray-100 py-3 font-poppins text-[15px] text-[#282828] transition-colors hover:text-[#BA9D95]"
+                    className="block border-b border-gray-100 py-3 font-poppins text-[15px] text-text-dark transition-colors hover:text-accent-gold"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.label}
@@ -446,7 +446,7 @@ export default function Header() {
                 ) : (
                   <Link
                     href={item.href}
-                    className="block border-b border-gray-100 py-3 font-poppins text-[15px] text-[#282828] transition-colors hover:text-[#BA9D95]"
+                    className="block border-b border-gray-100 py-3 font-poppins text-[15px] text-text-dark transition-colors hover:text-accent-gold"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.label}
@@ -464,7 +464,7 @@ export default function Header() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.name}
-                className="flex h-[44px] w-[44px] items-center justify-center text-[#282828] transition-colors duration-200 hover:text-[#BA9D95]"
+                className="flex h-[44px] w-[44px] items-center justify-center text-text-dark transition-colors duration-200 hover:text-accent-gold"
               >
                 <SocialIcon name={social.name} className="h-[15px] w-[15px]" />
               </a>
