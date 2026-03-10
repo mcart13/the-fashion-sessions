@@ -5,6 +5,43 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
 
+/** Hand-drawn squiggly arrow that draws itself in. */
+function SquigglyArrow({ show }: { show: boolean }) {
+  return (
+    <svg
+      width="70"
+      height="14"
+      viewBox="0 0 70 14"
+      fill="none"
+      className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]"
+      aria-hidden="true"
+    >
+      <path
+        d="M 3 7 Q 9 2, 15 7 Q 21 12, 27 7 Q 33 2, 39 7 Q 45 12, 51 7 Q 57 2, 60 7"
+        stroke="white"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        style={{
+          strokeDasharray: 80,
+          strokeDashoffset: show ? 0 : 80,
+          transition: "stroke-dashoffset 0.8s ease-out 0.2s",
+        }}
+      />
+      <path
+        d="M 56 3 L 64 7 L 56 11"
+        stroke="white"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{
+          opacity: show ? 1 : 0,
+          transition: "opacity 0.3s ease-out 0.9s",
+        }}
+      />
+    </svg>
+  );
+}
+
 const heroSlides = [
   {
     src: "/images/hero-home-slide-1.jpg",
@@ -22,15 +59,32 @@ const AUTOPLAY_MS = 5000;
 
 export default function HomeHero() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [showAnnotation, setShowAnnotation] = useState(false);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (reducedMotion) {
+      setShowAnnotation(true);
+      return;
+    }
 
     const interval = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % heroSlides.length);
     }, AUTOPLAY_MS);
 
-    return () => window.clearInterval(interval);
+    // Show annotation after hero entrance animation (500ms) + a beat
+    const annotationTimer = window.setTimeout(
+      () => setShowAnnotation(true),
+      1200,
+    );
+
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(annotationTimer);
+    };
   }, []);
 
   return (
@@ -65,6 +119,22 @@ export default function HomeHero() {
                     />
                   </div>
                 ))}
+
+                {/* "Try this look" annotation */}
+                <Link
+                  href="/try-on?look=date-night"
+                  className={`absolute right-4 top-4 z-10 flex flex-col items-end gap-0.5 transition-all duration-700 ease-out md:right-6 md:top-5 ${
+                    showAnnotation
+                      ? "translate-y-0 opacity-100"
+                      : "-translate-y-2 opacity-0"
+                  }`}
+                  aria-label="Try on this outfit virtually"
+                >
+                  <span className="font-moontime text-[1.3rem] leading-none text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.35)] md:text-[1.5rem]">
+                    Try this look
+                  </span>
+                  <SquigglyArrow show={showAnnotation} />
+                </Link>
               </div>
             </AnimateOnScroll>
 

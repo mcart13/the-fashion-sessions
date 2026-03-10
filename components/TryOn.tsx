@@ -186,6 +186,16 @@ export default function TryOn() {
     trackEvent("look_select", { look_id: look.id });
   }, []);
 
+  // Pre-select look from URL parameter (e.g. ?look=date-night)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const lookParam = params.get("look");
+    if (lookParam) {
+      const look = tryOnLooks.find((l) => l.id === lookParam);
+      if (look) handleSelectLook(look);
+    }
+  }, [handleSelectLook]);
+
   const handlePhotoUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
