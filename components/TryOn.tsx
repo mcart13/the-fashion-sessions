@@ -34,6 +34,8 @@ const SUBCATEGORY_LABELS: Record<ClothingCategory, string> = {
   dresses: "Dresses",
 };
 
+type Mode = "shop" | "create";
+
 function resizeImage(dataUrl: string): Promise<string> {
   return new Promise((resolve) => {
     const img = new window.Image();
@@ -119,6 +121,14 @@ function ShareIcon() {
   );
 }
 
+function StepBadge({ number }: { number: number }) {
+  return (
+    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-gold font-poppins text-[11px] font-medium text-white">
+      {number}
+    </span>
+  );
+}
+
 const clothingByCategory = SUBCATEGORY_ORDER.map((cat) => ({
   category: cat,
   label: SUBCATEGORY_LABELS[cat],
@@ -128,6 +138,7 @@ const clothingByCategory = SUBCATEGORY_ORDER.map((cat) => ({
 const accessoryItems = tryOnItems.filter((i) => i.type === "accessory");
 
 export default function TryOn() {
+  const [mode, setMode] = useState<Mode>("shop");
   const [selectedItems, setSelectedItems] = useState<TryOnItem[]>([]);
   const [activeLook, setActiveLook] = useState<string | null>(null);
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
@@ -314,7 +325,409 @@ export default function TryOn() {
     }
   }, [resultImage]);
 
+  const handleModeSwitch = useCallback((newMode: Mode) => {
+    setMode(newMode);
+    setSelectedItems([]);
+    setActiveLook(null);
+    setResultImage(null);
+    setError(null);
+  }, []);
+
   const isSelected = (id: string) => selectedItems.some((i) => i.id === id);
+
+  // ── Shared sub-sections ───────────────────────────────────
+
+  const modeSelector = (
+    <div className="relative flex overflow-hidden rounded-sm border border-tan">
+      {/* Sliding background indicator */}
+      <span
+        className="pointer-events-none absolute inset-y-0 w-1/2 rounded-sm bg-accent-gold transition-transform duration-300 ease-out"
+        style={{
+          transform: mode === "create" ? "translateX(100%)" : "translateX(0)",
+        }}
+        aria-hidden="true"
+      />
+      <button
+        type="button"
+        onClick={() => handleModeSwitch("shop")}
+        className={`relative z-10 flex-1 py-3 font-poppins text-[11px] uppercase tracking-[1px] transition-colors duration-200 [touch-action:manipulation] ${
+          mode === "shop"
+            ? "text-white"
+            : "text-text-dark/50 hover:text-text-dark/70"
+        }`}
+      >
+        Shop Her Posts
+      </button>
+      <button
+        type="button"
+        onClick={() => handleModeSwitch("create")}
+        className={`relative z-10 flex-1 py-3 font-poppins text-[11px] uppercase tracking-[1px] transition-colors duration-200 [touch-action:manipulation] ${
+          mode === "create"
+            ? "text-white"
+            : "text-text-dark/50 hover:text-text-dark/70"
+        }`}
+      >
+        Create Your Own
+      </button>
+    </div>
+  );
+
+  const instagramLooksGallery = (
+    <div className="mt-4">
+      <div className="flex gap-3 overflow-x-auto pb-2">
+        {tryOnLooks.map((look) => (
+          <button
+            key={look.id}
+            type="button"
+            onClick={() => handleSelectLook(look)}
+            className="group shrink-0 [touch-action:manipulation]"
+          >
+            <div
+              className={`relative h-[120px] w-[120px] overflow-hidden rounded-sm transition-shadow duration-200 ease-out ${
+                activeLook === look.id
+                  ? "shadow-[0_0_0_2px_#BA9D95]"
+                  : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)] group-hover:shadow-[0_0_0_2px_#BA9D95]"
+              }`}
+            >
+              <Image
+                src={look.image}
+                alt={look.name}
+                fill
+                className="object-cover"
+              />
+              {activeLook === look.id && (
+                <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent-gold text-white">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+              )}
+            </div>
+            <p
+              className={`mt-1.5 max-w-[120px] truncate px-0.5 font-poppins text-[11px] leading-tight transition-colors duration-150 ${
+                activeLook === look.id
+                  ? "text-text-dark"
+                  : "text-text-dark/50 group-hover:text-text-dark/70"
+              }`}
+            >
+              {look.name}
+            </p>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const photoUploadContent = (
+    <>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handlePhotoUpload}
+        className="hidden"
+      />
+      {userPhoto ? (
+        <div className="flex items-start gap-4">
+          <div className="relative h-[100px] w-[75px] shrink-0 overflow-hidden rounded-sm bg-cream shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
+            <Image
+              src={userPhoto}
+              alt="Your uploaded photo"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setUserPhoto(null);
+              setResultImage(null);
+              if (fileInputRef.current) fileInputRef.current.value = "";
+            }}
+            className="mt-1 font-poppins text-[12px] text-accent-gold underline underline-offset-2 [touch-action:manipulation]"
+            style={{ minHeight: 44 }}
+          >
+            Remove
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="flex h-[100px] w-full flex-col items-center justify-center gap-3 rounded-sm border border-dashed border-tan bg-[#FAFAF7] transition-[border-color,background-color] duration-150 ease-out [touch-action:manipulation] hover:border-accent-gold hover:bg-cream"
+        >
+          <span className="text-accent-gold">
+            <UploadIcon />
+          </span>
+          <span className="font-poppins text-[13px] text-text-dark/50">
+            Tap to upload a full-body photo
+          </span>
+        </button>
+      )}
+      <p className="mt-2 font-poppins text-[11px] text-text-dark/40">
+        Your photo is processed securely and never saved.
+      </p>
+    </>
+  );
+
+  const tryOnButton = (stepNumber: number) => (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <StepBadge number={stepNumber} />
+        <button
+          type="button"
+          onClick={handleTryOn}
+          disabled={!userPhoto || selectedItems.length === 0 || loading}
+          className="inline-flex items-center gap-2 bg-text-dark px-8 py-4 font-poppins text-[12px] uppercase tracking-[1.2px] text-white transition-[opacity,transform] duration-150 ease-out [touch-action:manipulation] hover:opacity-90 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30"
+          style={{ minHeight: 48 }}
+        >
+          {loading ? "Generating\u2026" : "Try It On"}
+        </button>
+      </div>
+
+      {error && (
+        <div className="flex items-start gap-2 rounded-sm border border-red-200 bg-red-50 px-4 py-3">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="mt-0.5 shrink-0 text-red-500"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <p className="font-poppins text-[13px] leading-relaxed text-red-700">
+            {error}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+
+  const addToClosetSection = (
+    <div>
+      <div className="mb-3 flex items-center gap-3">
+        <StepBadge number={4} />
+        <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-text-dark">
+          Add to Closet
+        </p>
+      </div>
+      {resultImage ? (
+        <div className="flex flex-col gap-2">
+          {selectedItems.map((item) => {
+            const hasLink = !!item.url;
+            const Wrapper = hasLink ? "a" : "div";
+            const linkProps = hasLink
+              ? {
+                  href: item.url!,
+                  target: "_blank" as const,
+                  rel: "noopener noreferrer",
+                  onClick: () => trackEvent("ltk_click", { item_id: item.id }),
+                }
+              : {};
+            return (
+              <Wrapper
+                key={item.id}
+                {...linkProps}
+                className={`flex items-center gap-3 rounded-sm border border-tan px-3 py-2.5 transition-[border-color,background-color] duration-150 ${
+                  hasLink
+                    ? "cursor-pointer hover:border-accent-gold hover:bg-[#FAFAF7]"
+                    : ""
+                }`}
+              >
+                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-cream">
+                  <Image
+                    src={item.thumbnail}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <span className="flex-1 font-poppins text-[12px] text-text-dark">
+                  {item.name}
+                </span>
+                {hasLink ? (
+                  <span className="font-poppins text-[11px] uppercase tracking-[0.8px] text-accent-gold">
+                    Shop
+                  </span>
+                ) : (
+                  <span className="font-poppins text-[10px] uppercase tracking-[0.8px] text-text-dark/30">
+                    Coming soon
+                  </span>
+                )}
+              </Wrapper>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="py-4 font-poppins text-[12px] text-text-dark/30">
+          Complete the try-on to see your items here
+        </p>
+      )}
+    </div>
+  );
+
+  const buildYourLookSection = (stepNumber: number) => (
+    <div>
+      <div className="mb-3 flex items-center gap-3">
+        <StepBadge number={stepNumber} />
+        <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-text-dark">
+          Build your look
+        </p>
+        {selectedItems.length > 0 && (
+          <span className="font-poppins text-[12px] text-accent-gold">
+            {selectedItems.length} item
+            {selectedItems.length > 1 ? "s" : ""}
+          </span>
+        )}
+      </div>
+
+      <div className="space-y-3">
+        {clothingByCategory.map(({ category, label, items }) => {
+          const catCount = selectedItems.filter(
+            (i) => i.type === "clothing" && i.category === category,
+          ).length;
+          return (
+            <CollapsibleSection
+              key={category}
+              title={label}
+              indicator={catCount > 0 ? `${catCount}` : undefined}
+            >
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {items.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => toggleItem(item)}
+                    className="group overflow-hidden rounded-sm [touch-action:manipulation]"
+                    style={{ minHeight: 44 }}
+                  >
+                    <div
+                      className={`relative aspect-[3/4] w-full overflow-hidden bg-cream transition-shadow duration-200 ease-out ${
+                        isSelected(item.id)
+                          ? "shadow-[0_0_0_2px_#BA9D95]"
+                          : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
+                      }`}
+                    >
+                      <Image
+                        src={item.thumbnail}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                      />
+                      {isSelected(item.id) && (
+                        <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-accent-gold text-white">
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </span>
+                      )}
+                    </div>
+                    <p
+                      className={`px-1 py-2 font-poppins text-[11px] leading-tight transition-color duration-150 ${
+                        isSelected(item.id)
+                          ? "text-text-dark"
+                          : "text-text-dark/60"
+                      }`}
+                    >
+                      {item.name}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </CollapsibleSection>
+          );
+        })}
+
+        <CollapsibleSection
+          title="Accessories"
+          indicator={
+            selectedItems.filter((i) => i.type === "accessory").length > 0
+              ? `${selectedItems.filter((i) => i.type === "accessory").length}`
+              : undefined
+          }
+        >
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            {accessoryItems.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => toggleItem(item)}
+                className="group shrink-0 [touch-action:manipulation]"
+                style={{ minHeight: 44 }}
+              >
+                <div
+                  className={`relative h-[80px] w-[80px] overflow-hidden bg-cream transition-shadow duration-200 ease-out ${
+                    isSelected(item.id)
+                      ? "shadow-[0_0_0_2px_#BA9D95]"
+                      : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
+                  }`}
+                >
+                  <Image
+                    src={item.thumbnail}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                  />
+                  {isSelected(item.id) && (
+                    <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent-gold text-white">
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </span>
+                  )}
+                </div>
+                <p
+                  className={`px-1 py-1.5 font-poppins text-[11px] transition-color duration-150 ${
+                    isSelected(item.id) ? "text-text-dark" : "text-text-dark/60"
+                  }`}
+                >
+                  {item.name}
+                </p>
+              </button>
+            ))}
+          </div>
+        </CollapsibleSection>
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
@@ -395,388 +808,112 @@ export default function TryOn() {
 
       {/* Right column: Controls */}
       <div className="order-1 space-y-6 lg:order-2 lg:w-[45%]">
-        {/* Instagram Looks */}
-        <div className="mb-6">
-          <div className="mb-3 flex items-center gap-2">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-accent-gold"
-              aria-hidden="true"
-            >
-              <rect x="2" y="2" width="20" height="20" rx="5" />
-              <circle cx="12" cy="12" r="5" />
-              <circle
-                cx="17.5"
-                cy="6.5"
-                r="1.5"
-                fill="currentColor"
-                stroke="none"
-              />
-            </svg>
-            <p className="font-poppins text-[11px] uppercase tracking-[1px] text-accent-gold">
-              Shop Her Posts
-            </p>
-          </div>
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {tryOnLooks.map((look) => (
-              <button
-                key={look.id}
-                type="button"
-                onClick={() => handleSelectLook(look)}
-                className="group shrink-0 [touch-action:manipulation]"
-              >
-                <div
-                  className={`relative h-[120px] w-[120px] overflow-hidden rounded-sm transition-shadow duration-200 ease-out ${
-                    activeLook === look.id
-                      ? "shadow-[0_0_0_2px_#BA9D95]"
-                      : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)] group-hover:shadow-[0_0_0_2px_#BA9D95]"
-                  }`}
-                >
-                  <Image
-                    src={look.image}
-                    alt={look.name}
-                    fill
-                    className="object-cover"
-                  />
-                  {activeLook === look.id && (
-                    <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent-gold text-white">
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </span>
-                  )}
-                </div>
-                <p
-                  className={`mt-1.5 max-w-[120px] truncate px-0.5 font-poppins text-[11px] leading-tight transition-colors duration-150 ${
-                    activeLook === look.id
-                      ? "text-text-dark"
-                      : "text-text-dark/50 group-hover:text-text-dark/70"
-                  }`}
-                >
-                  {look.name}
-                </p>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Step 1: Build your look */}
+        {/* Step 1: Mode selector */}
         <div>
           <div className="mb-3 flex items-center gap-3">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-gold font-poppins text-[11px] font-medium text-white">
-              1
-            </span>
+            <StepBadge number={1} />
             <p className="font-poppins text-[13px] uppercase tracking-[1.3px] text-text-dark">
-              Build your look
+              Choose your style
             </p>
-            {selectedItems.length > 0 && (
-              <span className="font-poppins text-[12px] text-accent-gold">
-                {selectedItems.length} item
-                {selectedItems.length > 1 ? "s" : ""}
-              </span>
-            )}
           </div>
+          {modeSelector}
+          {mode === "shop" && instagramLooksGallery}
+        </div>
 
-          <div className="space-y-3">
-            {clothingByCategory.map(({ category, label, items }) => {
-              const catCount = selectedItems.filter(
-                (i) => i.type === "clothing" && i.category === category,
-              ).length;
-              return (
-                <CollapsibleSection
-                  key={category}
-                  title={label}
-                  indicator={catCount > 0 ? `${catCount}` : undefined}
-                >
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                    {items.map((item) => (
-                      <button
+        {mode === "shop" ? (
+          <>
+            {/* Shop mode: Step 2 = Upload, Step 3 = Try On, Step 4 = Add to closet */}
+            <CollapsibleSection
+              step={2}
+              title="Upload your photo"
+              indicator={userPhoto ? "\u2713" : undefined}
+              open={uploadOpen}
+              onToggle={setUploadOpen}
+            >
+              {photoUploadContent}
+            </CollapsibleSection>
+
+            {tryOnButton(3)}
+
+            {addToClosetSection}
+          </>
+        ) : (
+          <>
+            {/* Create mode: Step 2 = Build look, Step 3 = Upload, Step 4 = Try On */}
+            {buildYourLookSection(2)}
+
+            <CollapsibleSection
+              step={3}
+              title="Upload your photo"
+              indicator={userPhoto ? "\u2713" : undefined}
+              open={uploadOpen}
+              onToggle={setUploadOpen}
+            >
+              {photoUploadContent}
+            </CollapsibleSection>
+
+            {tryOnButton(4)}
+
+            {/* Show shop items after result in create mode too */}
+            {resultImage && (
+              <div>
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="h-px flex-1 bg-tan" aria-hidden="true" />
+                  <p className="font-poppins text-[11px] uppercase tracking-[1px] text-accent-gold">
+                    Shop this look
+                  </p>
+                  <span className="h-px flex-1 bg-tan" aria-hidden="true" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  {selectedItems.map((item) => {
+                    const hasLink = !!item.url;
+                    const Wrapper = hasLink ? "a" : "div";
+                    const linkProps = hasLink
+                      ? {
+                          href: item.url!,
+                          target: "_blank" as const,
+                          rel: "noopener noreferrer",
+                          onClick: () =>
+                            trackEvent("ltk_click", { item_id: item.id }),
+                        }
+                      : {};
+                    return (
+                      <Wrapper
                         key={item.id}
-                        type="button"
-                        onClick={() => toggleItem(item)}
-                        className="group overflow-hidden rounded-sm [touch-action:manipulation]"
-                        style={{ minHeight: 44 }}
+                        {...linkProps}
+                        className={`flex items-center gap-3 rounded-sm border border-tan px-3 py-2.5 transition-[border-color,background-color] duration-150 ${
+                          hasLink
+                            ? "cursor-pointer hover:border-accent-gold hover:bg-[#FAFAF7]"
+                            : ""
+                        }`}
                       >
-                        <div
-                          className={`relative aspect-[3/4] w-full overflow-hidden bg-cream transition-shadow duration-200 ease-out ${
-                            isSelected(item.id)
-                              ? "shadow-[0_0_0_2px_#BA9D95]"
-                              : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
-                          }`}
-                        >
+                        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-cream">
                           <Image
                             src={item.thumbnail}
                             alt={item.name}
                             fill
                             className="object-cover"
                           />
-                          {isSelected(item.id) && (
-                            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-accent-gold text-white">
-                              <svg
-                                width="12"
-                                height="12"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="3"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                aria-hidden="true"
-                              >
-                                <polyline points="20 6 9 17 4 12" />
-                              </svg>
-                            </span>
-                          )}
                         </div>
-                        <p
-                          className={`px-1 py-2 font-poppins text-[11px] leading-tight transition-color duration-150 ${
-                            isSelected(item.id)
-                              ? "text-text-dark"
-                              : "text-text-dark/60"
-                          }`}
-                        >
+                        <span className="flex-1 font-poppins text-[12px] text-text-dark">
                           {item.name}
-                        </p>
-                      </button>
-                    ))}
-                  </div>
-                </CollapsibleSection>
-              );
-            })}
-
-            <CollapsibleSection
-              title="Accessories"
-              indicator={
-                selectedItems.filter((i) => i.type === "accessory").length > 0
-                  ? `${selectedItems.filter((i) => i.type === "accessory").length}`
-                  : undefined
-              }
-            >
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                {accessoryItems.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => toggleItem(item)}
-                    className="group shrink-0 [touch-action:manipulation]"
-                    style={{ minHeight: 44 }}
-                  >
-                    <div
-                      className={`relative h-[80px] w-[80px] overflow-hidden bg-cream transition-shadow duration-200 ease-out ${
-                        isSelected(item.id)
-                          ? "shadow-[0_0_0_2px_#BA9D95]"
-                          : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]"
-                      }`}
-                    >
-                      <Image
-                        src={item.thumbnail}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                      />
-                      {isSelected(item.id) && (
-                        <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent-gold text-white">
-                          <svg
-                            width="10"
-                            height="10"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            aria-hidden="true"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
                         </span>
-                      )}
-                    </div>
-                    <p
-                      className={`px-1 py-1.5 font-poppins text-[11px] transition-color duration-150 ${
-                        isSelected(item.id)
-                          ? "text-text-dark"
-                          : "text-text-dark/60"
-                      }`}
-                    >
-                      {item.name}
-                    </p>
-                  </button>
-                ))}
+                        {hasLink ? (
+                          <span className="font-poppins text-[11px] uppercase tracking-[0.8px] text-accent-gold">
+                            Shop
+                          </span>
+                        ) : (
+                          <span className="font-poppins text-[10px] uppercase tracking-[0.8px] text-text-dark/30">
+                            Coming soon
+                          </span>
+                        )}
+                      </Wrapper>
+                    );
+                  })}
+                </div>
               </div>
-            </CollapsibleSection>
-          </div>
-        </div>
-
-        {/* Step 2: Photo upload */}
-        <CollapsibleSection
-          step={2}
-          title="Upload your photo"
-          indicator={userPhoto ? "\u2713" : undefined}
-          open={uploadOpen}
-          onToggle={setUploadOpen}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoUpload}
-            className="hidden"
-          />
-          {userPhoto ? (
-            <div className="flex items-start gap-4">
-              <div className="relative h-[100px] w-[75px] shrink-0 overflow-hidden rounded-sm bg-cream shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
-                <Image
-                  src={userPhoto}
-                  alt="Your uploaded photo"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setUserPhoto(null);
-                  setResultImage(null);
-                  if (fileInputRef.current) fileInputRef.current.value = "";
-                }}
-                className="mt-1 font-poppins text-[12px] text-accent-gold underline underline-offset-2 [touch-action:manipulation]"
-                style={{ minHeight: 44 }}
-              >
-                Remove
-              </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="flex h-[100px] w-full flex-col items-center justify-center gap-3 rounded-sm border border-dashed border-tan bg-[#FAFAF7] transition-[border-color,background-color] duration-150 ease-out [touch-action:manipulation] hover:border-accent-gold hover:bg-cream"
-            >
-              <span className="text-accent-gold">
-                <UploadIcon />
-              </span>
-              <span className="font-poppins text-[13px] text-text-dark/50">
-                Tap to upload a full-body photo
-              </span>
-            </button>
-          )}
-          <p className="mt-2 font-poppins text-[11px] text-text-dark/40">
-            Your photo is processed securely and never saved.
-          </p>
-        </CollapsibleSection>
-
-        {/* Try it on button + error */}
-        <div className="space-y-4">
-          <button
-            type="button"
-            onClick={handleTryOn}
-            disabled={!userPhoto || selectedItems.length === 0 || loading}
-            className="inline-flex items-center gap-2 bg-text-dark px-8 py-4 font-poppins text-[12px] uppercase tracking-[1.2px] text-white transition-[opacity,transform] duration-150 ease-out [touch-action:manipulation] hover:opacity-90 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30"
-            style={{ minHeight: 48 }}
-          >
-            {loading ? "Generating\u2026" : "Try It On"}
-          </button>
-
-          {error && (
-            <div className="flex items-start gap-2 rounded-sm border border-red-200 bg-red-50 px-4 py-3">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mt-0.5 shrink-0 text-red-500"
-                aria-hidden="true"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-              <p className="font-poppins text-[13px] leading-relaxed text-red-700">
-                {error}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Shop This Look */}
-        {resultImage && (
-          <div>
-            <div className="mb-3 flex items-center gap-3">
-              <span className="h-px flex-1 bg-tan" aria-hidden="true" />
-              <p className="font-poppins text-[11px] uppercase tracking-[1px] text-accent-gold">
-                Shop this look
-              </p>
-              <span className="h-px flex-1 bg-tan" aria-hidden="true" />
-            </div>
-            <div className="flex flex-col gap-2">
-              {selectedItems.map((item) => {
-                const hasLink = !!item.url;
-                const Wrapper = hasLink ? "a" : "div";
-                const linkProps = hasLink
-                  ? {
-                      href: item.url!,
-                      target: "_blank" as const,
-                      rel: "noopener noreferrer",
-                      onClick: () =>
-                        trackEvent("ltk_click", { item_id: item.id }),
-                    }
-                  : {};
-                return (
-                  <Wrapper
-                    key={item.id}
-                    {...linkProps}
-                    className={`flex items-center gap-3 rounded-sm border border-tan px-3 py-2.5 transition-[border-color,background-color] duration-150 ${
-                      hasLink
-                        ? "cursor-pointer hover:border-accent-gold hover:bg-[#FAFAF7]"
-                        : ""
-                    }`}
-                  >
-                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-cream">
-                      <Image
-                        src={item.thumbnail}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <span className="flex-1 font-poppins text-[12px] text-text-dark">
-                      {item.name}
-                    </span>
-                    {hasLink ? (
-                      <span className="font-poppins text-[11px] uppercase tracking-[0.8px] text-accent-gold">
-                        Shop
-                      </span>
-                    ) : (
-                      <span className="font-poppins text-[10px] uppercase tracking-[0.8px] text-text-dark/30">
-                        Coming soon
-                      </span>
-                    )}
-                  </Wrapper>
-                );
-              })}
-            </div>
-          </div>
+            )}
+          </>
         )}
       </div>
     </div>
