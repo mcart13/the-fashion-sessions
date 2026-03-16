@@ -9,6 +9,8 @@ import {
 } from "@/data/try-on-items";
 import { tryOnLooks, type TryOnLook } from "@/data/try-on-looks";
 import { trackEvent } from "@/lib/analytics";
+import { getElfsightAppId } from "@/lib/siteContent";
+import { ElfsightFeed } from "@/components/ThirdPartyEmbeds";
 import CollapsibleSection from "@/components/CollapsibleSection";
 
 const MAX_IMAGE_DIMENSION = 1024;
@@ -372,59 +374,13 @@ export default function TryOn() {
     </div>
   );
 
-  const instagramLooksGallery = (
+  const elfsightAppId = getElfsightAppId();
+
+  const instagramFeedSection = (
     <div className="mt-4">
-      <div className="flex gap-3 overflow-x-auto pb-2">
-        {tryOnLooks.map((look) => (
-          <button
-            key={look.id}
-            type="button"
-            onClick={() => handleSelectLook(look)}
-            className="group shrink-0 [touch-action:manipulation]"
-          >
-            <div
-              className={`relative h-[120px] w-[120px] overflow-hidden rounded-sm transition-shadow duration-200 ease-out ${
-                activeLook === look.id
-                  ? "shadow-[0_0_0_2px_#BA9D95]"
-                  : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)] group-hover:shadow-[0_0_0_2px_#BA9D95]"
-              }`}
-            >
-              <Image
-                src={look.image}
-                alt={look.name}
-                fill
-                className="object-cover"
-              />
-              {activeLook === look.id && (
-                <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent-gold text-white">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </span>
-              )}
-            </div>
-            <p
-              className={`mt-1.5 max-w-[120px] truncate px-0.5 font-poppins text-[11px] leading-tight transition-colors duration-150 ${
-                activeLook === look.id
-                  ? "text-text-dark"
-                  : "text-text-dark/50 group-hover:text-text-dark/70"
-              }`}
-            >
-              {look.name}
-            </p>
-          </button>
-        ))}
-      </div>
+      {elfsightAppId ? (
+        <ElfsightFeed appId={elfsightAppId} loading="eager" />
+      ) : null}
     </div>
   );
 
@@ -817,104 +773,120 @@ export default function TryOn() {
             </p>
           </div>
           {modeSelector}
-          {mode === "shop" && instagramLooksGallery}
+          {/* Instagram feed - smooth collapse/expand */}
+          <div
+            className="grid transition-[grid-template-rows] duration-300 ease-out"
+            style={{ gridTemplateRows: mode === "shop" ? "1fr" : "0fr" }}
+          >
+            <div className="overflow-hidden">{instagramFeedSection}</div>
+          </div>
         </div>
 
-        {mode === "shop" ? (
-          <>
-            {/* Shop mode: Step 2 = Upload, Step 3 = Try On, Step 4 = Add to closet */}
-            <CollapsibleSection
-              step={2}
-              title="Upload your photo"
-              indicator={userPhoto ? "\u2713" : undefined}
-              open={uploadOpen}
-              onToggle={setUploadOpen}
-            >
-              {photoUploadContent}
-            </CollapsibleSection>
+        {/* Shop mode content */}
+        <div
+          className={`space-y-6 transition-[opacity] duration-200 ease-out ${
+            mode === "shop"
+              ? "opacity-100"
+              : "pointer-events-none hidden opacity-0"
+          }`}
+        >
+          <CollapsibleSection
+            step={2}
+            title="Upload your photo"
+            indicator={userPhoto ? "\u2713" : undefined}
+            open={uploadOpen}
+            onToggle={setUploadOpen}
+          >
+            {photoUploadContent}
+          </CollapsibleSection>
 
-            {tryOnButton(3)}
+          {tryOnButton(3)}
 
-            {addToClosetSection}
-          </>
-        ) : (
-          <>
-            {/* Create mode: Step 2 = Build look, Step 3 = Upload, Step 4 = Try On */}
-            {buildYourLookSection(2)}
+          {addToClosetSection}
+        </div>
 
-            <CollapsibleSection
-              step={3}
-              title="Upload your photo"
-              indicator={userPhoto ? "\u2713" : undefined}
-              open={uploadOpen}
-              onToggle={setUploadOpen}
-            >
-              {photoUploadContent}
-            </CollapsibleSection>
+        {/* Create mode content */}
+        <div
+          className={`space-y-6 transition-[opacity] duration-200 ease-out ${
+            mode === "create"
+              ? "opacity-100"
+              : "pointer-events-none hidden opacity-0"
+          }`}
+        >
+          {buildYourLookSection(2)}
 
-            {tryOnButton(4)}
+          <CollapsibleSection
+            step={3}
+            title="Upload your photo"
+            indicator={userPhoto ? "\u2713" : undefined}
+            open={uploadOpen}
+            onToggle={setUploadOpen}
+          >
+            {photoUploadContent}
+          </CollapsibleSection>
 
-            {/* Show shop items after result in create mode too */}
-            {resultImage && (
-              <div>
-                <div className="mb-3 flex items-center gap-3">
-                  <span className="h-px flex-1 bg-tan" aria-hidden="true" />
-                  <p className="font-poppins text-[11px] uppercase tracking-[1px] text-accent-gold">
-                    Shop this look
-                  </p>
-                  <span className="h-px flex-1 bg-tan" aria-hidden="true" />
-                </div>
-                <div className="flex flex-col gap-2">
-                  {selectedItems.map((item) => {
-                    const hasLink = !!item.url;
-                    const Wrapper = hasLink ? "a" : "div";
-                    const linkProps = hasLink
-                      ? {
-                          href: item.url!,
-                          target: "_blank" as const,
-                          rel: "noopener noreferrer",
-                          onClick: () =>
-                            trackEvent("ltk_click", { item_id: item.id }),
-                        }
-                      : {};
-                    return (
-                      <Wrapper
-                        key={item.id}
-                        {...linkProps}
-                        className={`flex items-center gap-3 rounded-sm border border-tan px-3 py-2.5 transition-[border-color,background-color] duration-150 ${
-                          hasLink
-                            ? "cursor-pointer hover:border-accent-gold hover:bg-[#FAFAF7]"
-                            : ""
-                        }`}
-                      >
-                        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-cream">
-                          <Image
-                            src={item.thumbnail}
-                            alt={item.name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                        <span className="flex-1 font-poppins text-[12px] text-text-dark">
-                          {item.name}
-                        </span>
-                        {hasLink ? (
-                          <span className="font-poppins text-[11px] uppercase tracking-[0.8px] text-accent-gold">
-                            Shop
-                          </span>
-                        ) : (
-                          <span className="font-poppins text-[10px] uppercase tracking-[0.8px] text-text-dark/30">
-                            Coming soon
-                          </span>
-                        )}
-                      </Wrapper>
-                    );
-                  })}
-                </div>
+          {tryOnButton(4)}
+
+          {/* Show shop items after result in create mode too */}
+          {resultImage && (
+            <div>
+              <div className="mb-3 flex items-center gap-3">
+                <span className="h-px flex-1 bg-tan" aria-hidden="true" />
+                <p className="font-poppins text-[11px] uppercase tracking-[1px] text-accent-gold">
+                  Shop this look
+                </p>
+                <span className="h-px flex-1 bg-tan" aria-hidden="true" />
               </div>
-            )}
-          </>
-        )}
+              <div className="flex flex-col gap-2">
+                {selectedItems.map((item) => {
+                  const hasLink = !!item.url;
+                  const Wrapper = hasLink ? "a" : "div";
+                  const linkProps = hasLink
+                    ? {
+                        href: item.url!,
+                        target: "_blank" as const,
+                        rel: "noopener noreferrer",
+                        onClick: () =>
+                          trackEvent("ltk_click", { item_id: item.id }),
+                      }
+                    : {};
+                  return (
+                    <Wrapper
+                      key={item.id}
+                      {...linkProps}
+                      className={`flex items-center gap-3 rounded-sm border border-tan px-3 py-2.5 transition-[border-color,background-color] duration-150 ${
+                        hasLink
+                          ? "cursor-pointer hover:border-accent-gold hover:bg-[#FAFAF7]"
+                          : ""
+                      }`}
+                    >
+                      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-sm bg-cream">
+                        <Image
+                          src={item.thumbnail}
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <span className="flex-1 font-poppins text-[12px] text-text-dark">
+                        {item.name}
+                      </span>
+                      {hasLink ? (
+                        <span className="font-poppins text-[11px] uppercase tracking-[0.8px] text-accent-gold">
+                          Shop
+                        </span>
+                      ) : (
+                        <span className="font-poppins text-[10px] uppercase tracking-[0.8px] text-text-dark/30">
+                          Coming soon
+                        </span>
+                      )}
+                    </Wrapper>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
