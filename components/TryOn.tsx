@@ -9,8 +9,6 @@ import {
 } from "@/data/try-on-items";
 import { tryOnLooks, type TryOnLook } from "@/data/try-on-looks";
 import { trackEvent } from "@/lib/analytics";
-import { getElfsightAppId } from "@/lib/siteContent";
-import { ElfsightFeed } from "@/components/ThirdPartyEmbeds";
 import CollapsibleSection from "@/components/CollapsibleSection";
 
 const MAX_IMAGE_DIMENSION = 1024;
@@ -374,13 +372,51 @@ export default function TryOn() {
     </div>
   );
 
-  const elfsightAppId = getElfsightAppId();
-
   const instagramFeedSection = (
-    <div className="mt-4">
-      {elfsightAppId ? (
-        <ElfsightFeed appId={elfsightAppId} loading="eager" />
-      ) : null}
+    <div className="mt-4 grid grid-cols-3 gap-1 overflow-hidden rounded-sm sm:grid-cols-5">
+      {tryOnLooks.map((look) => (
+        <button
+          key={look.id}
+          type="button"
+          onClick={() => handleSelectLook(look)}
+          className="group relative aspect-square overflow-hidden bg-cream [touch-action:manipulation]"
+        >
+          <Image
+            src={look.image}
+            alt={look.name}
+            fill
+            className="object-cover transition-[transform,filter] duration-300 ease-out group-hover:scale-105"
+          />
+          {/* Hover overlay */}
+          <span className="absolute inset-0 bg-black/0 transition-[background-color] duration-200 group-hover:bg-black/20" />
+          {/* Selected state */}
+          {activeLook === look.id && (
+            <span className="absolute inset-0 flex items-center justify-center bg-black/30">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent-gold text-white">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </span>
+            </span>
+          )}
+          {/* Look name on hover */}
+          <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2 pb-2 pt-6 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <span className="block truncate font-poppins text-[10px] leading-tight text-white">
+              {look.name}
+            </span>
+          </span>
+        </button>
+      ))}
     </div>
   );
 
