@@ -20,7 +20,7 @@ Most pages are static and driven from local content data (`data/site-content.jso
 
 **Next.js 14 App Router** with TypeScript and Tailwind CSS. Static-first architecture with local content helpers, feed/SEO routes, and a small contact API route. No server actions, CMS, or dynamic database-backed data fetching.
 
-`app/layout.tsx` wraps all pages with Header, Footer, NewsletterPopup (2s delay, sessionStorage key `newsletter-popup-shown`), and ScrollToTop. Google Fonts (Roboto, Roboto Slab, Poppins) are loaded via `next/font/google` as CSS variables.
+`app/layout.tsx` wraps all pages with Header, Footer, NewsletterPopup (exit-intent trigger when mouse leaves viewport top, armed after 2s, sessionStorage key `newsletter-popup-shown`), and ScrollToTop. Google Fonts (Roboto, Roboto Slab, Poppins) are loaded via `next/font/google` as CSS variables.
 
 ## Font System
 

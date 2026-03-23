@@ -23,7 +23,7 @@ export default function NewsletterPopup({ formId }: NewsletterPopupProps) {
     const alreadyShown = sessionStorage.getItem("newsletter-popup-shown");
     if (alreadyShown) return;
 
-    const timer = setTimeout(() => {
+    const showPopup = () => {
       setIsOpen(true);
       sessionStorage.setItem("newsletter-popup-shown", "true");
       requestAnimationFrame(() => {
@@ -31,9 +31,24 @@ export default function NewsletterPopup({ formId }: NewsletterPopupProps) {
           setIsAnimating(true);
         });
       });
+    };
+
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 0) {
+        showPopup();
+        document.removeEventListener("mouseleave", handleMouseLeave);
+      }
+    };
+
+    // Arm the exit-intent listener after a short delay to avoid false triggers
+    const armTimer = setTimeout(() => {
+      document.addEventListener("mouseleave", handleMouseLeave);
     }, 2000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(armTimer);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+    };
   }, []);
 
   const handleClose = () => {
